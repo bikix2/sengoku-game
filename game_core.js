@@ -1,6 +1,6 @@
-// game_core.js - Ver 31.0 (Food Log Display)
+// game_core.js - Ver 31.0 (Enemy Skills & Data Transfer)
 
-const SAVE_KEY = 'sengoku_idle_save_v31_foodlog';
+const SAVE_KEY = 'sengoku_idle_save_v31_full';
 const SECONDS_PER_DAY = 10; 
 
 // --- ■1. 兵種相関図 ---
@@ -44,11 +44,11 @@ const REGION_REWARDS = {
 // --- ■3. クエストデータ ---
 const QUEST_DATA = [
     { id: 101, region:"尾張", name: "稲生", diff: 1, money: 100, food: 4, boss_r: "N", type: "足軽", terrain: "平原", interference: [], s_cond: "R織田信長", s_reward_char: "R竹中半兵衛" },
-    { id: 102, region:"尾張", name: "桶狭間", diff: 3, money: 300, food: 9, boss_r: "C", type: "弓兵", terrain: "山岳", interference: ["悪天候"], s_cond: "R織田信長", s_reward_char: "R竹中半兵衛" },
+    { id: 102, region:"尾張", name: "桶狭間", diff: 2, money: 300, food: 9, boss_r: "C", type: "弓兵", terrain: "山岳", interference: ["悪天候"], s_cond: "R織田信長", s_reward_char: "R竹中半兵衛" },
     { id: 103, region:"美濃", name: "稲葉山城", diff: 3, money: 350, food: 15, boss_r: "R", type: "足軽", terrain: "城郭", interference: [], s_cond: "R竹中半兵衛", s_reward_char: "C明智光秀" },
-    { id: 201, region:"山城", name: "比叡山", diff: 2, money: 200, food: 9, boss_r: "C", type: "足軽", terrain: "山岳", interference: [], s_cond: "C明智光秀", s_reward_char: "R三好長慶" },
+    { id: 201, region:"山城", name: "比叡山", diff: 3, money: 200, food: 9, boss_r: "C", type: "足軽", terrain: "山岳", interference: [], s_cond: "C明智光秀", s_reward_char: "R三好長慶" },
     { id: 202, region:"山城", name: "二条城", diff: 4, money: 400, food: 15, boss_r: "SR", type: "足軽", terrain: "城郭", interference: [], s_cond: "R織田信長", s_reward_char: "R三好長慶" },
-    { id: 301, region:"河内", name: "飯盛山城", diff: 3, money: 250, food: 10, boss_r: "C", type: "弓兵", terrain: "山岳", interference: [], s_cond: "R三好長慶" },
+    { id: 301, region:"河内", name: "飯盛山城", diff: 4, money: 250, food: 10, boss_r: "C", type: "弓兵", terrain: "山岳", interference: [], s_cond: "R三好長慶" }, 
     { id: 302, region:"河内", name: "大坂城", diff: 6, money: 600, food: 26, boss_r: "R", type: "弓兵", terrain: "城郭", interference: ["足止め罠"], s_cond: "UR徳川家康", s_reward_char: "R朝倉宗滴" },
     { id: 401, region:"越前", name: "九頭竜川", diff: 4, money: 400, food: 24, boss_r: "N", type: "騎馬", terrain: "平原", interference: ["悪天候"], s_cond: "R朝倉宗滴", s_reward_char: "R織田信長" },
     { id: 402, region:"越前", name: "一乗谷城", diff: 6, money: 600, food: 36, boss_r: "R", type: "騎馬", terrain: "城郭", interference: ["悪天候"], s_cond: "R織田信長", s_reward_char: "R浅井長政" },
@@ -58,7 +58,7 @@ const QUEST_DATA = [
     { id: 602, region:"紀伊", name: "信貴山城", diff: 8, money: 800, food: 45, boss_r: "R", type: "鉄砲", terrain: "城郭", interference: ["計略"], s_cond: "R羽柴秀吉", s_reward_char: "R織田信長" },
     { id: 701, region:"摂津", name: "榎並城", diff: 6, money: 550, food: 27, boss_r: "C", type: "足軽", terrain: "城郭", interference: ["布陣失敗"], s_cond: "R織田信長", s_reward_char: "R雑賀孫市" },
     { id: 702, region:"摂津", name: "石山本願寺", diff: 8, money: 900, food: 42, boss_r: "R", type: "足軽", terrain: "城郭", interference: ["布陣失敗"], s_cond: "R雑賀孫市", s_reward_char: "C今川義元" },
-    { id: 801, region:"駿河", name: "小豆坂", diff: 6, money: 500, food: 30, boss_r: "C", type: "弓兵", terrain: "平原", interference: ["足止め罠"], s_cond: "C今川義元" },
+    { id: 801, region:"駿河", name: "小豆坂", diff: 6, money: 500, food: 30, boss_r: "C", type: "弓兵", terrain: "平原", interference: ["足止め罠"], s_cond: "C今川義元" }, 
     { id: 802, region:"駿河", name: "高天神城", diff: 8, money: 800, food: 45, boss_r: "R", type: "弓兵", terrain: "城郭", interference: ["足止め罠"], s_cond: "SR太原雪斎", s_reward_char: "R島津家久" },
     { id: 901, region:"豊後", name: "戸次川", diff: 7, money: 600, food: 24, boss_r: "R", type: "弓兵", terrain: "平原", interference: ["悪天候", "計略"], s_cond: "R島津家久" },
     { id: 902, region:"豊後", name: "勢場ケ原", diff: 7, money: 700, food: 42, boss_r: "SR", type: "弓兵", terrain: "平原", interference: ["悪天候", "計略"], s_cond: "SR立花誾千代", s_reward_char: "R黒田官兵衛" },
@@ -108,7 +108,7 @@ function loadSaveData() {
     if (!data.items) data.items = { ticket: 0, kokoro: 0 };
     if (typeof data.items.kokoro === 'undefined') data.items.kokoro = 0;
 
-    // ★配布チェック (強制配布ロジック)
+    // 配布チェック
     if (window.characterData && window.characterData.length > 0) {
         let starter = window.characterData.find(c => c.name.includes("織田信長") && c.rarity === "R");
         if (!starter) starter = window.characterData.find(c => c.name.includes("織田信長"));
@@ -132,6 +132,28 @@ function getCharacterById(id) {
     return window.characterData.find(c => c.id == id);
 }
 
+// ★データ引き継ぎ用関数 (Base64化)
+function exportSaveData() {
+    const data = loadSaveData();
+    // 日本語が含まれるとbtoaでエラーになる可能性があるため、encodeURIComponentを通す
+    return btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+}
+
+function importSaveData(code) {
+    try {
+        const jsonStr = decodeURIComponent(escape(atob(code)));
+        const data = JSON.parse(jsonStr);
+        if(data && data.money !== undefined && data.owned_ids) {
+            saveData(data);
+            return true;
+        }
+        return false;
+    } catch(e) {
+        console.error("Import Error:", e);
+        return false;
+    }
+}
+
 function checkAndDistributeStarter() {
     if (!window.characterData || window.characterData.length === 0) return { success: false };
     const currentSave = loadSaveData();
@@ -141,8 +163,6 @@ function checkAndDistributeStarter() {
 
     if (starterChar) {
         if (!currentSave.owned_ids.includes(starterChar.id)) {
-            // ここで追加処理は loadSaveData で行われているため、確認のみ返す
-            // もし loadSaveData で処理されていないケースがあればここで追加
             currentSave.owned_ids.push(starterChar.id);
             saveData(currentSave);
             return { success: true, name: starterChar.name, rarity: starterChar.rarity };
@@ -207,6 +227,7 @@ function parseSkill(char) {
     return effect;
 }
 
+// ★修正: 敵のスキル発動ロジックを追加
 function simulateBattle(deck, enemy, quest) {
     const battleLog = [];
     let myParty = deck.map((c, i) => {
@@ -220,13 +241,28 @@ function simulateBattle(deck, enemy, quest) {
         skill: parseSkill(enemy)
     };
     battleLog.push(`敵将【${enemyUnit.name}】(${enemyUnit.type})と遭遇！`);
+    
+    // 味方の開幕スキル
     myParty.forEach(c => {
         if (c && !c.isDead && c.skill.type === 'instant_kill' && Math.random() < c.skill.rate) {
             enemyUnit.hp = 0; battleLog.push(`<span class="ev-skill">【${c.name}】の一撃必殺！</span>`);
         }
     });
+    // 敵の開幕スキル(一撃必殺のみ)
+    if (enemyUnit.hp > 0 && enemyUnit.skill.type === 'instant_kill' && Math.random() < enemyUnit.skill.rate) {
+        // ランダムな味方を一人即死させる
+        let targets = myParty.filter(c => c && !c.isDead);
+        if (targets.length > 0) {
+            let victim = targets[Math.floor(Math.random() * targets.length)];
+            victim.currentHp = 0; victim.isDead = true;
+            battleLog.push(`<span class="ev-bad">敵【${enemyUnit.name}】の一撃必殺！【${victim.name}】は倒れた...</span>`);
+        }
+    }
+
     if (enemyUnit.hp <= 0) return { result: 'win', log: battleLog, remainingHpRate: 1.0, deadCount: 0 };
+
     for (let turn = 1; turn <= 10; turn++) {
+        // --- 味方の攻撃ターン ---
         let totalDmg = 0;
         myParty.forEach(c => {
             if (!c || c.isDead) return;
@@ -236,12 +272,15 @@ function simulateBattle(deck, enemy, quest) {
         });
         enemyUnit.hp -= totalDmg;
         battleLog.push(`味方攻撃: ${totalDmg}ダメ (敵残:${Math.max(0, enemyUnit.hp)})`);
+        
         if (enemyUnit.hp <= 0) {
             battleLog.push(`<span class="ev-good">敵撃破！</span>`);
             let currentTotal = 0, maxTotal = 0, dead = 0;
             myParty.forEach(c => { if(c) { currentTotal += Math.max(0, c.currentHp); maxTotal += c.hp; if(c.isDead) dead++; } });
             return { result: 'win', log: battleLog, remainingHpRate: (currentTotal/maxTotal), deadCount: dead };
         }
+
+        // --- 敵の攻撃ターン ---
         const pref = TARGET_PREF[enemyUnit.type] || "random";
         let targets = myParty.filter(c => c && !c.isDead);
         if (targets.length === 0) break;
@@ -249,8 +288,19 @@ function simulateBattle(deck, enemy, quest) {
         if (pref === "front") victim = targets.find(c => c.pos === 0) || targets.find(c => c.pos === 1) || targets.find(c => c.pos === 2);
         else if (pref === "back") victim = targets.find(c => c.pos === 2) || targets.find(c => c.pos === 1) || targets.find(c => c.pos === 0);
         else victim = targets[Math.floor(Math.random() * targets.length)];
+
         if (victim) {
+            let enemyAtkPower = enemyUnit.war;
+            
+            // ★敵の攻撃UPスキル発動判定
+            if (enemyUnit.skill.type === 'buff_atk' && Math.random() < enemyUnit.skill.rate) {
+                enemyAtkPower *= enemyUnit.skill.power;
+                battleLog.push(`<span class="ev-bad">敵【${enemyUnit.name}】の${enemyUnit.skill.name}！攻撃力が上がった！</span>`);
+            }
+
             let m = TYPE_MATRIX[enemyUnit.type][victim.type] || 1.0;
+            
+            // 味方の反射スキル
             if (victim.skill.type === 'reflect' && (victim.skill.reflectTarget === 'all' || victim.skill.reflectTarget === enemyUnit.type)) {
                 enemyUnit.hp -= Math.floor(enemyUnit.war * 1.5);
                 battleLog.push(`<span class="ev-reflect">【${victim.name}】反射！</span>`);
@@ -260,18 +310,25 @@ function simulateBattle(deck, enemy, quest) {
                      return { result: 'win', log: battleLog, remainingHpRate: (currentTotal/maxTotal), deadCount: dead };
                 }
             } else {
-                let dmg = Math.floor(enemyUnit.war * m * (0.9 + Math.random() * 0.2));
+                let dmg = Math.floor(enemyAtkPower * m * (0.9 + Math.random() * 0.2));
                 victim.currentHp -= dmg;
                 battleLog.push(`敵攻撃: 【${victim.name}】に${dmg}`);
                 if (victim.currentHp <= 0) { victim.isDead = true; battleLog.push(`<span class="ev-bad">【${victim.name}】撤退</span>`); }
             }
         }
+        
+        // 敵の回復スキル
+        if (enemyUnit.hp > 0 && enemyUnit.skill.type === 'heal_hp' && Math.random() < enemyUnit.skill.rate) {
+             let heal = Math.floor(enemyUnit.war * 2); // 回復量は適当
+             enemyUnit.hp += heal;
+             battleLog.push(`<span class="ev-bad">敵【${enemyUnit.name}】が兵力を${heal}回復した！</span>`);
+        }
+
         if (myParty.every(c => !c || c.isDead)) { battleLog.push("全滅..."); return { result: 'defeat', log: battleLog, remainingHpRate: 0, deadCount: 3 }; }
     }
     return { result: 'draw', log: battleLog, remainingHpRate: 0, deadCount: 0 };
 }
 
-// ★修正: ログに (糧:xx) を表示
 function simulateExpeditionLoop(quest, deck, weather, bossChar) {
     const events = [];
     const capturedIds = [];

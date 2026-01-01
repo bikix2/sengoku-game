@@ -3,121 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>戦国放置RPG - ホーム</title>
+    <title>ホーム - 戦国放置RPG</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .news-box { background: #222; border: 1px solid #444; padding: 10px; margin-bottom: 20px; border-radius: 4px; }
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .menu-btn { background: #333; color: #fff; padding: 20px; text-align: center; text-decoration: none; border: 1px solid #555; border-radius: 8px; font-weight: bold; display: block; transition: background 0.2s; }
+        .menu-btn:hover { background: #444; }
+        .menu-icon { font-size: 2rem; display: block; margin-bottom: 5px; }
+        
+        /* 引き継ぎモーダル用 */
+        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; align-items:center; justify-content:center; }
+        .modal-content { background:#222; border:2px solid #d4af37; padding:20px; width:90%; max-width:400px; border-radius:8px; text-align:center; color:#fff; }
+        textarea { width:100%; height:100px; background:#111; color:#fff; border:1px solid #555; margin-bottom:10px; font-size:0.8rem; }
+        .btn-trans { padding:10px; width:100%; margin-bottom:5px; cursor:pointer; font-weight:bold; }
+        .btn-copy { background:#446; color:#fff; border:1px solid #668; }
+        .btn-load { background:#d4af37; color:#000; border:none; }
+    </style>
 </head>
 <body>
 
 <header>
-    <h1>戦国テンカトリガー風</h1>
+    <h1>戦国放置RPG</h1>
 </header>
 
 <div class="container">
-    <div class="box" style="display:flex; justify-content:space-between;">
-        <div>所持金: <span id="money-display" class="text-gold">0</span> 銭</div>
-        <div>手形: <span id="ticket-display">0</span> 枚</div>
+    
+    <div class="news-box">
+        <div style="color:#d4af37; font-weight:bold; margin-bottom:5px;">◆ 更新情報</div>
+        <ul style="font-size:0.85rem; padding-left:20px; color:#ccc;">
+            <li>Ver31.0: 敵特技実装＆引き継ぎ機能追加</li>
+            <li>Ver30.0: 初期配布ロジック強化</li>
+            <li>Ver29.0: Sランク報酬の連鎖調整</li>
+        </ul>
     </div>
 
-    <div class="box" style="text-align:center; min-height: 200px;">
-        <div id="leader-area">
-            <p style="color:#666; padding-top:80px;">大将が不在です<br>編成を行ってください</p>
+    <div class="menu-grid">
+        <a href="battle.html" class="menu-btn">
+            <span class="menu-icon">⚔️</span>
+            出陣
+        </a>
+        <a href="deck.html" class="menu-btn">
+            <span class="menu-icon">🏯</span>
+            編成・武将
+        </a>
+        <a href="gacha.html" class="menu-btn">
+            <span class="menu-icon">🎴</span>
+            ガチャ
+        </a>
+        <div onclick="openTransferModal()" class="menu-btn" style="cursor:pointer;">
+            <span class="menu-icon">📲</span>
+            引き継ぎ
         </div>
     </div>
 
-    <div id="expedition-status" class="box" style="text-align:center; display:none; border-color: #d4af37;">
-        <p class="text-gold">★ 現在遠征中 ★</p>
-        <p>帰還まで: <span id="time-left">--:--</span></p>
-        <a href="battle.html" class="btn-link">戦況確認</a>
-    </div>
-
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-        <a href="battle.html" class="btn-link" style="background:#a33; border-color:#d4af37; color:#fff;">出陣 (Battle)</a>
-        <a href="gacha.html" class="btn-link">武将くじ (Gacha)</a> <a href="deck.html" class="btn-link">編成 (Deck)</a>
-        <a href="book.html" class="btn-link" style="background:#345;">名鑑 (Book)</a>
-        
-        <button onclick="resetGame()" style="background:#333; color:#aaa; font-size:0.8rem; grid-column: 1 / -1; margin-top:10px;">データ初期化</button>
+    <div style="margin-top:20px; text-align:center; font-size:0.8rem; color:#666;">
+        &copy; 2025 Sengoku Idle RPG
     </div>
 </div>
 
-<nav class="bottom-nav">
-    <a href="index.html" class="active">ホーム</a>
-    <a href="deck.html">編成</a>
-    <a href="battle.html">出陣</a>
-    <a href="gacha.html">ガチャ</a>
-</nav>
+<div id="transfer-modal" class="modal">
+    <div class="modal-content">
+        <h3 style="color:#d4af37; margin-top:0;">データ引き継ぎ</h3>
+        
+        <div style="text-align:left; font-size:0.9rem; margin-bottom:5px;">▼ 現在のデータを保存 (コピー)</div>
+        <textarea id="export-area" readonly onclick="this.select()"></textarea>
+        <button class="btn-trans btn-copy" onclick="copyCode()">コードをコピー</button>
+        
+        <hr style="border-color:#444; margin:15px 0;">
+        
+        <div style="text-align:left; font-size:0.9rem; margin-bottom:5px;">▼ データを読み込む (上書き)</div>
+        <textarea id="import-area" placeholder="ここにコードを貼り付け"></textarea>
+        <button class="btn-trans btn-load" onclick="loadCode()">データを復元する</button>
+        
+        <button class="btn-trans" style="background:#333; border:1px solid #555; color:#ccc; margin-top:10px;" onclick="closeTransferModal()">閉じる</button>
+    </div>
+</div>
 
 <script src="character_data.js"></script>
 <script src="game_core.js"></script>
 <script>
-    window.onload = function() {
-        if (!window.characterData) { alert("データ読込エラー: character_data.jsがありません"); return; }
-        const save = loadSaveData();
-        
-        document.getElementById('money-display').textContent = save.money.toLocaleString();
-        document.getElementById('ticket-display').textContent = save.items.ticket;
+    // モーダル操作
+    function openTransferModal() {
+        document.getElementById('transfer-modal').style.display = 'flex';
+        // コード発行
+        const code = exportSaveData();
+        document.getElementById('export-area').value = code;
+    }
+    
+    function closeTransferModal() {
+        document.getElementById('transfer-modal').style.display = 'none';
+    }
 
-        // リーダー表示
-        const leaderId = save.deck[0];
-        const leaderArea = document.getElementById('leader-area');
-        
-        if (leaderId) {
-            const char = getCharacterById(leaderId);
-            if (char) {
-                // レアリティごとの枠色
-                const rColor = getRarityColor(char.rarity);
-                leaderArea.innerHTML = `
-                    <div style="font-size:0.8rem; color:#aaa; margin-bottom:5px;">現在の筆頭武将</div>
-                    <img src="jpg/${char.image}" alt="${char.name}" style="height:150px; border:2px solid ${rColor}; box-shadow: 0 0 10px ${rColor};" onerror="this.style.display='none'">
-                    <div style="font-weight:bold; margin-top:5px; font-size:1.2rem;">${char.name}</div>
-                    <div style="font-size:0.8rem; color:#888;">[${char.type||'足軽'}] / ${char.clan||'その他'}</div>
-                `;
-            }
-        }
+    function copyCode() {
+        const copyText = document.getElementById("export-area");
+        copyText.select();
+        document.execCommand("copy"); // 古いブラウザ対応
+        if(navigator.clipboard) navigator.clipboard.writeText(copyText.value);
+        alert("コードをコピーしました！\n新しい端末で「データを復元する」に貼り付けてください。");
+    }
 
-        // 遠征中チェック
-        if (save.expedition) {
-            document.getElementById('expedition-status').style.display = 'block';
-            if (save.expedition.returnTime > Date.now()) {
-                updateTimer(save.expedition.returnTime);
+    function loadCode() {
+        const code = document.getElementById("import-area").value;
+        if(!code) return;
+        
+        if(confirm("現在のデータを上書きして復元しますか？\n(今のデータは消えます)")) {
+            const success = importSaveData(code);
+            if(success) {
+                alert("復元に成功しました！");
+                location.reload();
             } else {
-                document.getElementById('expedition-status').innerHTML = `
-                    <p class="text-gold">遠征から帰還しました！</p>
-                    <a href="battle.html" class="btn-link">結果を見る</a>
-                `;
+                alert("コードが間違っているか、壊れています。");
             }
         }
-    };
-
-    function updateTimer(endTime) {
-        const el = document.getElementById('time-left');
-        setInterval(() => {
-            const diff = endTime - Date.now();
-            if (diff <= 0) {
-                location.reload(); 
-                return;
-            }
-            const m = Math.floor(diff / 60000);
-            const s = Math.floor((diff % 60000) / 1000);
-            el.textContent = `${m}:${s.toString().padStart(2, '0')}`;
-        }, 1000);
     }
-
-    function resetGame() {
-        if(confirm("本当にデータを初期化しますか？\n（入手した武将もすべて消えます）")) {
-            localStorage.removeItem(SAVE_KEY);
-            location.reload();
-        }
-    }
-
-    function getRarityColor(rarity) {
-        switch(rarity) {
-            case 'UR': return '#ff00ff';
-            case 'SSR': return '#ffd700';
-            case 'SR': return '#c0c0c0';
-            case 'R': return '#cd7f32';
-            default: return '#fff';
+    
+    // 初期配布チェック (ここでも呼んでおく)
+    window.onload = function() {
+        if(typeof checkAndDistributeStarter === 'function') {
+            checkAndDistributeStarter();
         }
     }
 </script>
+
 </body>
 </html>
