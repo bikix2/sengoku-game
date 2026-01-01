@@ -12,11 +12,11 @@
         .menu-btn:hover { background: #444; }
         .menu-icon { font-size: 2rem; display: block; margin-bottom: 5px; }
         
-        /* 引き継ぎモーダル用 */
+        /* モーダル用 */
         .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; align-items:center; justify-content:center; }
         .modal-content { background:#222; border:2px solid #d4af37; padding:20px; width:90%; max-width:400px; border-radius:8px; text-align:center; color:#fff; }
         textarea { width:100%; height:100px; background:#111; color:#fff; border:1px solid #555; margin-bottom:10px; font-size:0.8rem; }
-        .btn-trans { padding:10px; width:100%; margin-bottom:5px; cursor:pointer; font-weight:bold; }
+        .btn-trans { padding:10px; width:100%; margin-bottom:5px; cursor:pointer; font-weight:bold; border-radius:4px; }
         .btn-copy { background:#446; color:#fff; border:1px solid #668; }
         .btn-load { background:#d4af37; color:#000; border:none; }
     </style>
@@ -32,9 +32,9 @@
     <div class="news-box">
         <div style="color:#d4af37; font-weight:bold; margin-bottom:5px;">◆ 更新情報</div>
         <ul style="font-size:0.85rem; padding-left:20px; color:#ccc;">
-            <li>Ver31.0: 敵特技実装＆引き継ぎ機能追加</li>
-            <li>Ver30.0: 初期配布ロジック強化</li>
-            <li>Ver29.0: Sランク報酬の連鎖調整</li>
+            <li>Ver32.0: データ初期化機能追加</li>
+            <li>Ver31.0: 敵特技・引き継ぎ実装</li>
+            <li>Ver30.0: R織田信長 配布確定</li>
         </ul>
     </div>
 
@@ -53,7 +53,7 @@
         </a>
         <div onclick="openTransferModal()" class="menu-btn" style="cursor:pointer;">
             <span class="menu-icon">📲</span>
-            引き継ぎ
+            データ管理
         </div>
     </div>
 
@@ -64,17 +64,22 @@
 
 <div id="transfer-modal" class="modal">
     <div class="modal-content">
-        <h3 style="color:#d4af37; margin-top:0;">データ引き継ぎ</h3>
+        <h3 style="color:#d4af37; margin-top:0;">データ管理</h3>
         
-        <div style="text-align:left; font-size:0.9rem; margin-bottom:5px;">▼ 現在のデータを保存 (コピー)</div>
+        <div style="text-align:left; font-size:0.9rem; margin-bottom:5px;">▼ 引き継ぎコード発行 (コピー)</div>
         <textarea id="export-area" readonly onclick="this.select()"></textarea>
         <button class="btn-trans btn-copy" onclick="copyCode()">コードをコピー</button>
         
         <hr style="border-color:#444; margin:15px 0;">
         
-        <div style="text-align:left; font-size:0.9rem; margin-bottom:5px;">▼ データを読み込む (上書き)</div>
+        <div style="text-align:left; font-size:0.9rem; margin-bottom:5px;">▼ データを復元 (上書き)</div>
         <textarea id="import-area" placeholder="ここにコードを貼り付け"></textarea>
         <button class="btn-trans btn-load" onclick="loadCode()">データを復元する</button>
+
+        <hr style="border-color:#444; margin:15px 0;">
+        
+        <div style="text-align:left; font-size:0.9rem; margin-bottom:5px; color:#f55;">▼ データを初期化 (最初から遊ぶ)</div>
+        <button class="btn-trans" style="background:#522; border:1px solid #844; color:#fcc;" onclick="performReset()">データを削除して初期化</button>
         
         <button class="btn-trans" style="background:#333; border:1px solid #555; color:#ccc; margin-top:10px;" onclick="closeTransferModal()">閉じる</button>
     </div>
@@ -83,10 +88,8 @@
 <script src="character_data.js"></script>
 <script src="game_core.js"></script>
 <script>
-    // モーダル操作
     function openTransferModal() {
         document.getElementById('transfer-modal').style.display = 'flex';
-        // コード発行
         const code = exportSaveData();
         document.getElementById('export-area').value = code;
     }
@@ -98,30 +101,41 @@
     function copyCode() {
         const copyText = document.getElementById("export-area");
         copyText.select();
-        document.execCommand("copy"); // 古いブラウザ対応
+        document.execCommand("copy"); 
         if(navigator.clipboard) navigator.clipboard.writeText(copyText.value);
-        alert("コードをコピーしました！\n新しい端末で「データを復元する」に貼り付けてください。");
+        alert("コードをコピーしました！");
     }
 
     function loadCode() {
         const code = document.getElementById("import-area").value;
         if(!code) return;
-        
         if(confirm("現在のデータを上書きして復元しますか？\n(今のデータは消えます)")) {
             const success = importSaveData(code);
-            if(success) {
-                alert("復元に成功しました！");
+            if(success) { alert("復元に成功しました！"); location.reload(); }
+            else alert("コードが間違っているか、壊れています。");
+        }
+    }
+
+    // ★初期化処理
+    function performReset() {
+        if(confirm("本当にデータを初期化しますか？\nこの操作は取り消せません。\n(所持金や武将など全てのデータが消えます)")) {
+            if(confirm("本当に削除してよろしいですか？")) {
+                resetSaveData();
+                alert("データを初期化しました。");
                 location.reload();
-            } else {
-                alert("コードが間違っているか、壊れています。");
             }
         }
     }
     
-    // 初期配布チェック (ここでも呼んでおく)
+    // 初期配布チェック
     window.onload = function() {
         if(typeof checkAndDistributeStarter === 'function') {
-            checkAndDistributeStarter();
+            const res = checkAndDistributeStarter();
+            if (res.success) {
+                alert(`【初期特典】「${res.rarity}${res.name}」を獲得しました！`);
+                // リロードして反映
+                location.reload(); 
+            }
         }
     }
 </script>
