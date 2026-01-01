@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>武将くじ - 戦国放置RPG</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* --- レイアウト --- */
+        .gacha-container { display: flex; flex-direction: column; gap: 15px; }
+        
+        .gacha-box { 
+            background: #222; border: 1px solid #444; border-radius: 8px; 
+            padding: 15px; text-align: center; position: relative; overflow: hidden;
+        }
+        .gacha-box.premium { border-color: #d4af37; background: linear-gradient(135deg, #222 0%, #2a2a22 100%); }
+        
+        .gacha-title { margin: 0 0 5px 0; font-size: 1.2rem; color: #ddd; }
+        .premium .gacha-title { color: #d4af37; text-shadow: 0 0 5px rgba(212, 175, 55, 0.3); }
+        
+        .rate-info { font-size: 0.75rem; color: #888; margin-bottom: 10px; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 4px; display: inline-block; }
+
+        .btn-group { display: flex; gap: 10px; justify-content: center; }
+        .gacha-btn { 
+            flex: 1; padding: 12px 5px; border: none; border-radius: 4px; 
+            font-weight: bold; cursor: pointer; transition: transform 0.1s;
+            line-height: 1.2; font-size: 0.9rem;
+        }
+        .gacha-btn:active { transform: scale(0.95); }
+        
+        .btn-money { background: #345; color: #fff; border: 1px solid #567; box-shadow: 0 2px 0 #234; }
+        .btn-ticket { background: #d4af37; color: #000; border: 1px solid #aa8822; box-shadow: 0 2px 0 #886611; }
+
+        /* --- モーダル共通 --- */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); z-index: 2000;
+            align-items: center; justify-content: center;
+            animation: fadeIn 0.2s ease-out;
+        }
+        #detail-modal { z-index: 2100; background: rgba(0,0,0,0.9); }
+
+        .modal-content {
+            background: #2a2a2a; border: 2px solid #d4af37; padding: 20px; 
+            width: 95%; max-width: 450px; max-height: 85vh; overflow-y: auto; 
+            border-radius: 8px; text-align: center; position: relative; 
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+            animation: popIn 0.3s forwards;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn { from { transform: scale(0.8); } to { transform: scale(1); } }
+
+        /* --- 結果グリッド --- */
+        .result-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; margin-top: 10px;
+        }
+        .mini-card {
+            background: #111; border: 1px solid #444; border-radius: 4px; padding: 4px;
+            position: relative; cursor: pointer; transition: transform 0.1s;
+        }
+        .mini-card:active { transform: scale(0.95); }
+        .mini-card img { width: 100%; height: auto; display: block; border: 1px solid #333; }
+        
+        .status-badge {
+            position: absolute; top: 2px; left: 2px;
+            font-size: 0.6rem; font-weight: bold; padding: 1px 4px; border-radius: 3px;
+            box-shadow: 1px 1px 2px #000; z-index: 5;
+        }
+        .badge-new { background: #00aa00; color: #fff; }
+        .badge-sold { background: #aa0000; color: #ffcccc; }
+
+        /* --- 詳細カード --- */
+        .detail-card {
+            background: #111; padding: 15px; border-radius: 8px; margin: 10px 0; border: 1px solid #444; text-align: center;
+        }
+        .detail-img {
+            max-width: 160px; height: auto; border: 3px solid #333; margin: 10px auto; display: block;
+            box-shadow: 0 0 15px rgba(0,0,0,0.8);
+        }
+        
+        .btn-close {
+            background: #333; color: #fff; border: 1px solid #666; padding: 10px 30px;
+            margin-top: 15px; width: 100%; cursor: pointer;
+        }
+        .detail-close-btn {
+            position: absolute; top: 10px; right: 10px;
+            background: #500; color: #fff; border: 1px solid #f88;
+            border-radius: 50%; width: 30px; height: 30px; font-weight: bold; cursor: pointer;
+        }
+
+        /* レアリティ色定義 */
+        .rarity-UR { color: #ff00ff; border-color: #ff00ff !important; box-shadow: 0 0 5px #ff00ff; }
+        .rarity-SSR { color: #ffd700; border-color: #ffd700 !important; box-shadow: 0 0 5px #ffd700; }
+        .rarity-SR { color: #c0c0c0; border-color: #c0c0c0 !important; }
+        .rarity-R { color: #cd7f32; border-color: #cd7f32 !important; }
+        .rarity-C { color: #fff; border-color: #666 !important; }
+        .rarity-N { color: #aaa; border-color: #444 !important; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>武将くじ (Gacha)</h1>
+</header>
+
+<div class="container">
+    <div class="box">
+        <div style="display:flex; justify-content:space-around;">
+            <div>所持金: <span id="money-display" class="text-gold">---</span> 銭</div>
+            <div>手形: <span id="ticket-display">---</span> 枚</div>
+        </div>
+    </div>
+
+    <div class="gacha-container">
+        <div class="gacha-box">
+            <h2 class="gacha-title">銭くじ (Normal)</h2>
+            <div class="rate-info">SSR:0.5% / SR:3% / R:30%</div>
+            <div class="btn-group">
+                <button class="gacha-btn btn-money" onclick="pullGacha('money', 1)">100銭<br>(1回)</button>
+                <button class="gacha-btn btn-money" onclick="pullGacha('money', 10)">1000銭<br>(10連)</button>
+            </div>
+        </div>
+
+        <div class="gacha-box premium">
+            <h2 class="gacha-title">名将くじ (Premium)</h2>
+            <div class="rate-info" style="color:#ffebb7;">UR:2% / SSR:10% / SR:30%</div>
+            <div class="btn-group">
+                <button class="gacha-btn btn-ticket" onclick="pullGacha('ticket', 1)">手形1枚<br>(1回)</button>
+                <button class="gacha-btn btn-ticket" onclick="pullGacha('ticket', 10)">手形10枚<br>(10連)</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="result-modal" class="modal-overlay">
+    <div class="modal-content">
+        <h3 id="result-title" style="color:#fff; margin:0 0 5px 0;">獲得結果</h3>
+        
+        <div id="result-balance" style="background:#111; padding:8px; margin-bottom:10px; border-radius:4px; font-size:0.85rem; border:1px solid #444; color:#ccc;">
+            </div>
+
+        <div id="result-content"></div>
+        
+        <div id="result-buttons"></div>
+    </div>
+</div>
+
+<div id="detail-modal" class="modal-overlay">
+    <div class="modal-content" style="max-width:350px;">
+        <button class="detail-close-btn" onclick="closeDetail()">×</button>
+        <div id="detail-content"></div>
+    </div>
+</div>
+
+<nav class="bottom-nav">
+    <a href="index.html">ホーム</a>
+    <a href="deck.html">編成</a>
+    <a href="battle.html">出陣</a>
+    <a href="gacha.html" class="active">ガチャ</a>
+</nav>
+
+<script src="character_data.js"></script>
+<script src="game_core.js"></script>
+<script>
+    let currentSave = null;
+    let lastGachaResults = [];
+    let lastGachaConfig = null; 
+
+    window.onload = function() {
+        if (!window.characterData || window.characterData.length === 0) {
+            alert("武将データ(character_data.js)が見つかりません。");
+            return;
+        }
+        if (typeof loadSaveData !== 'function') { alert("プログラム読込エラー"); return; }
+        currentSave = loadSaveData();
+        updateDisplay();
+    };
+
+    function updateDisplay() {
+        if (currentSave) {
+            document.getElementById('money-display').textContent = currentSave.money.toLocaleString();
+            document.getElementById('ticket-display').textContent = (currentSave.items.ticket || 0).toLocaleString();
+        }
+    }
+
+    // ガチャ実行
+    function pullGacha(type, count) {
+        if (!currentSave) return;
+
+        if (type === 'money') {
+            const cost = 100 * count;
+            if (currentSave.money < cost) { alert("銭が足りません！"); return; }
+            currentSave.money -= cost;
+        } else if (type === 'ticket') {
+            const cost = 1 * count;
+            if ((currentSave.items.ticket || 0) < cost) { alert("手形が足りません！"); return; }
+            currentSave.items.ticket -= cost;
+        }
+
+        lastGachaConfig = { type: type, count: count };
+
+        let rates;
+        if (type === 'money') rates = { SSR: 0.5, SR: 3.0, R: 30.0 }; 
+        else rates = { UR: 2.0, SSR: 10.0, SR: 30.0, R: 58.0 };
+
+        lastGachaResults = []; 
+        if (!currentSave.owned_ids) currentSave.owned_ids = [];
+
+        for (let i = 0; i < count; i++) {
+            const rand = Math.random() * 100;
+            let rarity = 'N'; 
+
+            if (type === 'money') {
+                if (rand < rates.SSR) rarity = 'SSR';
+                else if (rand < rates.SSR + rates.SR) rarity = 'SR';
+                else if (rand < rates.SSR + rates.SR + rates.R) rarity = 'R';
+                else rarity = 'C';
+            } else {
+                if (rand < rates.UR) rarity = 'UR';
+                else if (rand < rates.UR + rates.SSR) rarity = 'SSR';
+                else if (rand < rates.UR + rates.SSR + rates.SR) rarity = 'SR';
+                else rarity = 'R';
+            }
+
+            let candidates = window.characterData.filter(c => c.rarity === rarity);
+            let resultChar;
+            if (candidates.length === 0) {
+                const fallback = window.characterData.filter(c => c.rarity === 'C' || c.rarity === 'N'); 
+                resultChar = fallback[Math.floor(Math.random() * fallback.length)];
+            } else {
+                resultChar = candidates[Math.floor(Math.random() * candidates.length)];
+            }
+
+            let isNew = false;
+            let refund = 0;
+            if (currentSave.owned_ids.includes(resultChar.id)) {
+                if (resultChar.rarity === 'UR') refund = 5000;
+                else if (resultChar.rarity === 'SSR') refund = 1000;
+                else if (resultChar.rarity === 'SR') refund = 300;
+                else refund = 50;
+                currentSave.money += refund;
+            } else {
+                currentSave.owned_ids.push(resultChar.id);
+                isNew = true;
+            }
+            lastGachaResults.push({ char: resultChar, isNew: isNew, refund: refund });
+        }
+
+        saveData(currentSave);
+        updateDisplay();
+        showResultModal();
+    }
+
+    function retryGacha() {
+        if (!lastGachaConfig) return;
+        pullGacha(lastGachaConfig.type, lastGachaConfig.count);
+    }
+
+    function showResultModal() {
+        const modal = document.getElementById('result-modal');
+        const content = document.getElementById('result-content');
+        const btnArea = document.getElementById('result-buttons');
+        const balanceArea = document.getElementById('result-balance'); // ★追加: 残高表示エリア
+        const results = lastGachaResults;
+        
+        // ★残高更新
+        balanceArea.innerHTML = `
+            <span style="margin-right:15px;">残金: <span style="color:#ffd700; font-weight:bold;">${currentSave.money.toLocaleString()}</span> 銭</span>
+            <span>手形: <span style="color:#ffd700; font-weight:bold;">${(currentSave.items.ticket||0).toLocaleString()}</span> 枚</span>
+        `;
+
+        let listHtml = '<div class="result-grid">';
+        let totalRefund = 0;
+
+        results.forEach((res, index) => {
+            const char = res.char;
+            const rColor = getRarityColor(char.rarity);
+            let badge = res.isNew 
+                ? `<span class="status-badge badge-new">NEW</span>` 
+                : `<span class="status-badge badge-sold">売却</span>`;
+            
+            if (!res.isNew) totalRefund += res.refund;
+
+            listHtml += `
+                <div class="mini-card rarity-${char.rarity}" style="border-color:${rColor}" onclick="openDetail(${index})">
+                    ${badge}
+                    <div style="font-size:0.7rem; color:${rColor}; font-weight:bold; text-align:right;">${char.rarity}</div>
+                    <img src="jpg/${char.image}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzMzMyIvPjwvc3ZnPg=='">
+                    <div style="font-size:0.6rem; margin-top:3px; overflow:hidden; white-space:nowrap; text-align:center;">${char.name}</div>
+                </div>
+            `;
+        });
+        listHtml += '</div>';
+
+        if (totalRefund > 0) {
+            listHtml += `
+                <div style="margin-top:10px; padding:5px; background:#442222; border:1px solid #ff5555; border-radius:4px; color:#ffcccc; font-size:0.8rem;">
+                    重複分売却: <span style="color:#ffff00; font-weight:bold;">+${totalRefund} 銭</span>
+                </div>
+            `;
+        }
+        content.innerHTML = listHtml;
+
+        let retryBtnText = "";
+        if (lastGachaConfig.type === 'money') {
+            retryBtnText = `もう一度引く (${100 * lastGachaConfig.count}銭)`;
+        } else {
+            retryBtnText = `もう一度引く (手形${1 * lastGachaConfig.count}枚)`;
+        }
+
+        btnArea.innerHTML = `
+            <div style="display:flex; gap:10px; margin-top:15px; width:100%;">
+                <button class="gacha-btn" style="flex:1; background:#d4af37; color:#000;" onclick="retryGacha()">${retryBtnText}</button>
+                <button class="gacha-btn" style="flex:1; background:#444; color:#fff; border:1px solid #666;" onclick="closeResult()">閉じる</button>
+            </div>
+        `;
+
+        modal.style.display = 'flex';
+    }
+
+    function openDetail(index) {
+        const res = lastGachaResults[index];
+        const detailModal = document.getElementById('detail-modal');
+        const detailContent = document.getElementById('detail-content');
+        
+        detailContent.innerHTML = generateDetailHtml(res);
+        detailModal.style.display = 'flex';
+    }
+
+    function closeDetail() {
+        document.getElementById('detail-modal').style.display = 'none';
+    }
+
+    function closeResult() {
+        document.getElementById('result-modal').style.display = 'none';
+    }
+
+    function generateDetailHtml(res) {
+        const char = res.char;
+        const rColor = getRarityColor(char.rarity);
+        const imgHtml = char.image ? `<img src="jpg/${char.image}" class="detail-img" style="border-color:${rColor}" onerror="this.style.display='none'">` : '';
+        const profileText = char.profile || "詳細な情報はありません。";
+
+        let statusMsg = "";
+        if (res.isNew) {
+            statusMsg = `<div style="color:#5f5; font-weight:bold; margin-bottom:5px;">New Character!</div>`;
+        } else {
+            statusMsg = `
+                <div style="background:#500; color:#fcc; padding:5px; margin-bottom:5px; border-radius:4px; font-weight:bold; font-size:0.8rem;">
+                    所持済み → <span style="color:#ff0">${res.refund} 銭</span>
+                </div>
+            `;
+        }
+        
+        let skillInfo = '特技なし';
+        if (char.skill) {
+             skillInfo = `<b>[${char.skill.name}]</b><br>${char.skill.desc}`;
+        }
+
+        return `
+            <div class="detail-card rarity-${char.rarity}" style="border-color:${rColor}">
+                ${statusMsg}
+                <div style="font-size:2rem; font-weight:bold; margin-bottom:5px; color:${rColor}">${char.rarity}</div>
+                ${imgHtml}
+                <div style="font-size:1.3rem; font-weight:bold; color:#fff; margin:10px 0;">${char.name}</div>
+                
+                <div style="font-size:0.8rem; color:#aaa; margin-bottom:5px;">
+                     [${char.type||'足軽'}] / 勢力: ${char.clan||'その他'}
+                </div>
+
+                <div style="font-size:0.85rem; color:#ccc; margin:10px; line-height:1.4; text-align:left; background:#222; padding:8px; border-radius:4px;">
+                    ${profileText}
+                </div>
+                
+                <div style="font-size:0.9rem; color:#aaa; border-top:1px solid #333; padding-top:10px;">
+                    戦力: ${char.war} / 兵数: ${char.hp}
+                </div>
+                
+                <div style="font-size:0.8rem; color:#d4af37; margin-top:10px; background:#252525; padding:8px; border-radius:4px; text-align:left;">
+                    ${skillInfo}
+                </div>
+            </div>
+        `;
+    }
+
+    function getRarityColor(rarity) {
+        switch(rarity) {
+            case 'UR': return '#ff00ff';
+            case 'SSR': return '#ffd700';
+            case 'SR': return '#c0c0c0';
+            case 'R': return '#cd7f32';
+            case 'C': return '#aaddff';
+            default: return '#555';
+        }
+    }
+</script>
+</body>
+</html>

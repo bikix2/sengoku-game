@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>出陣 - 戦国放置RPG</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .log-area { background: #111; padding: 15px; height: 380px; overflow-y: scroll; font-family: monospace; font-size: 0.85rem; color: #ccc; border: 1px solid #444; line-height: 1.6; }
+        .log-line { margin-bottom: 6px; border-bottom: 1px dashed #222; padding-bottom: 2px; }
+        .ev-battle { color: #fa8; font-weight: bold; border-left: 3px solid #fa8; padding-left: 5px; background: rgba(60, 30, 0, 0.5); display:block; margin:5px 0;}
+        .ev-bad { color: #f66; font-weight:bold; } .ev-good { color: #6f6; font-weight:bold; }
+        .ev-skill { color: #6cf; font-weight:bold; } .ev-reflect { color: #f0f; font-weight:bold; background:#202; padding:0 4px; }
+        .ev-capture-ssr { color: #fff; font-weight: bold; font-size: 1.1rem; background: linear-gradient(45deg, #f00, #fa0, #ff0, #0f0, #0ff, #00f, #f0f); background-size: 400% 400%; border: 2px solid #fff; padding: 10px; text-align: center; display: block; margin: 10px 0; animation: rainbow 3s ease infinite; text-shadow: 0 0 5px #000; }
+        @keyframes rainbow { 0% {background-position:0% 50%} 50% {background-position:100% 50%} 100% {background-position:0% 50%} }
+
+        .region-header { background: #333; color: #aaa; padding: 5px 10px; font-size: 0.85rem; margin-top: 15px; margin-bottom: 5px; border-left: 4px solid #d4af37; font-weight: bold; }
+        .quest-badges { font-size:0.7rem; margin-top:3px; }
+        .badge { display:inline-block; padding:1px 4px; border-radius:3px; margin-right:4px; border:1px solid #555; }
+        .badge-danger { color:#f55; border-color:#f55; background:#200; }
+        .badge-weather { color:#aad; border-color:#aad; }
+        .s-cond { font-size: 0.75rem; color: #aaa; margin-top: 2px; }
+        .s-cond-ok { color: #0f0; font-weight: bold; }
+        .s-mark { color: #ffd700; font-weight: bold; margin-right: 5px; text-shadow: 0 0 3px #d4af37; }
+
+        .bulk-controls { display: flex; gap: 5px; margin-bottom: 10px; padding: 10px; background: #222; border-bottom: 1px solid #444; }
+        .btn-bulk { padding: 8px; font-size: 0.8rem; cursor: pointer; border-radius: 4px; border: 1px solid #666; background: #333; color: #fff; flex:1; }
+        .btn-bulk-sell { background: #522; border-color: #844; color: #fcc; flex: 2; font-weight: bold; }
+        .prisoner-row { display:flex; align-items:center; border-bottom:1px solid #444; padding: 8px; justify-content: space-between; background: #1a1a1a; }
+        .prisoner-check { transform: scale(1.5); margin-right: 15px; cursor: pointer; }
+        .prisoner-thumb { width: 45px; height: 45px; object-fit: cover; border: 1px solid #555; margin-right: 10px; }
+        
+        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:2000; align-items:center; justify-content:center; }
+        .modal-content { background:#222; border:2px solid #d4af37; padding:20px; width:95%; max-width:400px; border-radius:8px; text-align:center; max-height:90vh; overflow-y:auto; }
+        .char-img { max-width: 140px; border: 2px solid #555; margin: 10px auto; display:block; }
+        .detail-table { width:100%; font-size:0.9rem; margin-bottom:15px; border-collapse: collapse; }
+        .detail-table td { padding: 6px; border-bottom: 1px solid #333; text-align:left; color:#ccc; }
+        .btn-act { width:100%; padding:12px; margin-top:8px; border:none; cursor:pointer; font-weight:bold; border-radius:4px; font-size:0.95rem; }
+        .btn-key { background: #d4af37; color:#000; box-shadow:0 2px 0 #886622; }
+        .btn-coin { background: #446; color:#fff; border:1px solid #668; box-shadow:0 2px 0 #224; }
+        .btn-close { background: #444; color: #fff; border: 1px solid #666; margin-top: 15px; }
+        .debug-btn { margin-top:10px; background:#444; color:#ccc; border:1px solid #666; padding:5px; }
+        
+        .resource-bar { display:flex; justify-content:space-around; background:#111; padding:5px; border-bottom:1px solid #444; font-size:0.9rem; color:#ccc; }
+        .res-icon { color:#ffd700; margin-right:3px; }
+
+        .r-UR { color: #f0f; font-weight:bold; } .r-SSR { color: #ffd700; font-weight:bold; } 
+        .r-SR { color: #c0c0c0; font-weight:bold; } .r-R { color: #d94; font-weight:bold; }
+    </style>
+</head>
+<body>
+
+<header><h1>戦況報告</h1></header>
+
+<div class="resource-bar">
+    <div><span class="res-icon">💰</span><span id="money-disp">0</span></div>
+    <div><span class="res-icon">🎫</span><span id="ticket-disp">0</span></div>
+    <div><span class="res-icon">🗝️</span><span id="kokoro-disp">0</span></div>
+</div>
+
+<div class="container">
+    <div style="display:flex; justify-content:center; margin-bottom:10px;">
+        <button onclick="switchTab('quest')" style="flex:1;">出陣</button>
+        <button onclick="switchTab('prisoner')" style="flex:1;">捕虜蔵</button>
+    </div>
+
+    <div id="tab-quest">
+        <div id="scene-select">
+            <p style="font-size:0.8rem; color:#aaa; text-align:center;">
+                S評価条件: 勝利 + 死者0 + 兵力70% + <span style="color:#d4af37;">指定武将</span><br>
+                (S評価で「ココロの鍵」獲得のチャンス！)
+            </p>
+            <div id="quest-list"></div>
+        </div>
+
+        <div id="scene-progress" style="display:none;">
+            <div class="box" style="text-align:center; border-color:#d4af37;">
+                <h3 id="quest-title" style="margin:0; color:#d4af37;">進軍中</h3>
+                <div id="weather-info" style="font-size:0.8rem; margin:5px 0;"></div>
+                <div id="timer" style="font-size:1.5rem; font-weight:bold; color:#f55;">00:00</div>
+                <div id="log-container" class="log-area"></div>
+                
+                <button id="btn-finish" onclick="finishExpedition()" style="display:none; width:100%; margin-top:10px; padding:10px; background:#d4af37; color:#000; font-weight:bold;">戦果を確認する</button>
+                <button onclick="debugSkip()" class="debug-btn">🛠️ 早期終了 (Debug)</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-prisoner" style="display:none;">
+        <div class="box">
+            <h3>捕らえた武将</h3>
+            <div class="bulk-controls">
+                <button class="btn-bulk" onclick="setAllChecks(true)">全選択</button>
+                <button class="btn-bulk" onclick="setAllChecks(false)">全解除</button>
+                <button class="btn-bulk btn-bulk-sell" onclick="bulkRelease()">選択を一括解放</button>
+            </div>
+            <div id="prisoner-list"></div>
+        </div>
+    </div>
+</div>
+
+<div id="prisoner-modal" class="modal">
+    <div class="modal-content">
+        <h3 id="pm-name" style="color:#d4af37; font-size:1.3rem; margin:5px 0;"></h3>
+        <div id="pm-rarity" style="font-weight:bold; font-size:1.1rem; margin-bottom:5px;"></div>
+        <img id="pm-img" src="" class="char-img" onerror="this.style.display='none'">
+        <table class="detail-table">
+            <tr><td style="color:#888; width:70px;">兵種</td><td id="pm-type"></td></tr>
+            <tr><td style="color:#888;">勢力</td><td id="pm-clan"></td></tr>
+            <tr><td style="color:#888;">戦力</td><td id="pm-war" style="color:#f88; font-weight:bold;"></td></tr>
+            <tr><td style="color:#888;">兵数</td><td id="pm-hp" style="color:#8f8; font-weight:bold;"></td></tr>
+        </table>
+        <div style="background:#332200; border:1px solid #664400; padding:10px; margin-bottom:15px; border-radius:4px; text-align:left;">
+            <div id="pm-skill-name" style="color:#d4af37; font-weight:bold; margin-bottom:3px;"></div>
+            <div id="pm-skill-desc" style="font-size:0.85rem; color:#ccc; line-height:1.4;"></div>
+        </div>
+        <div style="background:#222; padding:10px; border-top:1px solid #444;">
+            <div id="act-buttons"></div>
+            <button class="btn-act btn-close" onclick="closeModal()">閉じる</button>
+        </div>
+    </div>
+</div>
+
+<nav class="bottom-nav">
+    <a href="index.html">ホーム</a>
+    <a href="deck.html">編成</a>
+    <a href="battle.html" class="active">出陣</a>
+    <a href="gacha.html">ガチャ</a>
+</nav>
+
+<script src="character_data.js"></script>
+<script src="game_core.js"></script>
+<script>
+    let currentSave = loadSaveData();
+    let timerId = null;
+    let selectedPrisonerIndex = -1;
+    const RELEASE_RATES = { 'N':{t:'m',v:50}, 'C':{t:'m',v:100}, 'R':{t:'m',v:300}, 'SR':{t:'t',v:1}, 'SSR':{t:'t',v:3}, 'UR':{t:'t',v:10}, 'LOB':{t:'t',v:30} };
+
+    window.onload = function() {
+        // ★初期化時に配布チェックを実行
+        if (typeof checkAndDistributeStarter === 'function') {
+            const distributed = checkAndDistributeStarter();
+            if (distributed) {
+                alert("【初期特典】「R織田信長」を獲得しました！");
+                currentSave = loadSaveData(); // データ再読み込み
+            }
+        }
+        
+        updateResourceDisplay();
+        if(currentSave.expedition) { switchTab('quest'); resumeExpedition(); }
+        else { renderQuestList(); renderPrisoners(); }
+    };
+
+    function updateResourceDisplay() {
+        document.getElementById('money-disp').textContent = (currentSave.money || 0).toLocaleString();
+        document.getElementById('ticket-disp').textContent = (currentSave.items.ticket || 0).toLocaleString();
+        document.getElementById('kokoro-disp').textContent = (currentSave.items.kokoro || 0).toLocaleString();
+    }
+
+    function switchTab(tab) {
+        document.getElementById('tab-quest').style.display = (tab==='quest') ? 'block' : 'none';
+        document.getElementById('tab-prisoner').style.display = (tab==='prisoner') ? 'block' : 'none';
+        if(tab==='prisoner') renderPrisoners();
+    }
+
+    function renderQuestList() {
+        const list = document.getElementById('quest-list'); list.innerHTML = '';
+        let lastRegion = "";
+        const ownedKeys = currentSave.owned_ids.map(id => { const c = getCharacterById(id); return c ? (c.rarity + c.name) : ""; });
+
+        QUEST_DATA.forEach(q => {
+            const w = determineWeather(q.id);
+            let badges = `<span class="badge badge-weather">${w}</span>`;
+            if (q.interference) q.interference.forEach(inf => badges += ` <span class="badge badge-danger">⚠${inf}</span>`);
+            
+            let sMark = currentSave.s_ranks.includes(q.id) ? `<span class="s-mark">★</span>` : "";
+            
+            let sCondHTML = "";
+            if (q.s_cond) {
+                const hasCondChar = ownedKeys.includes(q.s_cond);
+                const colorClass = hasCondChar ? "s-cond-ok" : "";
+                sCondHTML = `<div class="s-cond">S条件: <span class="${colorClass}">${q.s_cond}</span></div>`;
+            }
+
+            if (q.region !== lastRegion) {
+                let isRegionComplete = currentSave.completed_regions.includes(q.region);
+                let completeBadge = isRegionComplete ? " <span style='color:#fd0;margin-left:5px;'>★制覇済</span>" : "";
+                const h = document.createElement('div'); h.className = 'region-header'; 
+                h.innerHTML = `■ ${q.region}${completeBadge}`;
+                list.appendChild(h); lastRegion = q.region;
+            }
+
+            const div = document.createElement('div'); div.className = 'box';
+            div.style.cssText = 'cursor:pointer; margin-bottom:8px; border:1px solid #444; padding:10px; display:flex; justify-content:space-between; align-items:center;';
+            div.innerHTML = `
+                <div>
+                    <div style="font-weight:bold; color:#d4af37;">${sMark}${q.name} <span style="font-size:0.8rem; color:#aaa;">(${q.terrain}) / ${q.food}日</span></div>
+                    <div style="font-size:0.75rem; color:#ccc; margin-bottom:3px;">BOSS:<span class="r-${q.boss_r}">${q.boss_r}</span> / 敵:${q.type}</div>
+                    <div class="quest-badges">${badges}</div>
+                    ${sCondHTML}
+                </div>
+                <div style="font-weight:bold; font-size:1.2rem; color:#666;">▶</div>
+            `;
+            div.onclick = () => startExpedition(q);
+            list.appendChild(div);
+        });
+        document.getElementById('scene-select').style.display = 'block';
+        document.getElementById('scene-progress').style.display = 'none';
+    }
+
+    function startExpedition(quest) {
+        const res = startExpeditionCore(quest.id);
+        if (res.error) { alert(res.error); return; }
+        currentSave = loadSaveData();
+        resumeExpedition();
+    }
+
+    function resumeExpedition(){
+        document.getElementById('scene-select').style.display='none'; 
+        document.getElementById('scene-progress').style.display='block';
+        document.getElementById('btn-finish').style.display = 'none';
+        const q=QUEST_DATA.find(x=>x.id===currentSave.expedition.questId);
+        document.getElementById('quest-title').textContent=q.name; 
+        document.getElementById('weather-info').textContent=`天候:${currentSave.expedition.weather}`;
+        updateLogs(); 
+        if(timerId) clearInterval(timerId); 
+        timerId = setInterval(updateLogs, 1000);
+    }
+
+    function updateLogs() {
+        const exp = currentSave.expedition; if (!exp) return;
+        const now = Date.now();
+        const totalDuration = exp.endTime - exp.startTime;
+        const elapsedTime = now - exp.startTime;
+        const timeLeft = exp.endTime - now;
+        const q = QUEST_DATA.find(x => x.id === exp.questId);
+        const maxDays = (exp.result === 'retired' || exp.result === 'defeat') ? exp.logs.daysTraveled : q.food;
+        const currentDay = Math.min(maxDays, (elapsedTime / totalDuration) * maxDays);
+
+        const logDiv = document.getElementById('log-container');
+        let html = "";
+        exp.logs.events.forEach(ev => { if (ev.day <= currentDay || timeLeft <= 0) html += `<div class="log-line">${ev.text}</div>`; });
+        if (logDiv.innerHTML !== html) { logDiv.innerHTML = html; logDiv.scrollTop = logDiv.scrollHeight; }
+
+        if (timeLeft <= 0) {
+            document.getElementById('timer').textContent = "到着";
+            document.getElementById('btn-finish').style.display = 'block';
+            clearInterval(timerId);
+        } else {
+            const m = Math.floor(timeLeft / 60000);
+            const s = Math.floor((timeLeft % 60000) / 1000);
+            document.getElementById('timer').textContent = `残り ${m}分${s.toString().padStart(2,'0')}秒`;
+        }
+    }
+
+    function finishExpedition() {
+        const exp = currentSave.expedition; if (!exp) return;
+        const q = QUEST_DATA.find(x => x.id === exp.questId);
+        if (exp.captured) exp.captured.forEach(id => currentSave.prisoners.push({ id: id, time: Date.now() }));
+
+        let msg = "";
+        let rank = "D";
+
+        if (exp.result === 'win') {
+            const deck = currentSave.deck.map(id => getCharacterById(id));
+            let condMet = true;
+            if (q.s_cond) { condMet = deck.some(c => c && (c.rarity + c.name) === q.s_cond); }
+
+            if (exp.stats.dead > 0) rank = "B";
+            else if (exp.stats.hpRate < 0.7) rank = "C";
+            else if (!condMet) rank = "A";
+            else rank = "S";
+
+            currentSave.money += q.money;
+            msg = `【戦闘結果: 勝利！】\n評価: ${rank}ランク\n報酬: ${q.money}銭\n`;
+
+            if (rank === "S") {
+                if (!currentSave.s_ranks.includes(q.id)) {
+                    currentSave.s_ranks.push(q.id);
+                    currentSave.items.kokoro = (currentSave.items.kokoro || 0) + 1;
+                    msg += `\n✨【初回S達成】貴重品「ココロの鍵」を獲得！✨\n`;
+
+                    // ★修正: S報酬武将 (所持リストへ直接追加)
+                    if (q.s_reward_char) {
+                        const rewardChar = findCharacterByNameAndRarity(q.s_reward_char);
+                        if (rewardChar) {
+                            if (currentSave.owned_ids.includes(rewardChar.id)) {
+                                const refund = 100; // 重複時銀貨
+                                currentSave.money += refund;
+                                msg += `\n★次への鍵【${rewardChar.name}】は所持済みのため、銀貨${refund}枚になりました★\n`;
+                            } else {
+                                currentSave.owned_ids.push(rewardChar.id);
+                                msg += `\n★次への鍵【${rewardChar.name}】が仲間になりました！(所持枠へ)★\n`;
+                            }
+                        }
+                    }
+
+                    // 地域制覇報酬
+                    const regionQuests = QUEST_DATA.filter(qu => qu.region === q.region);
+                    const allS = regionQuests.every(qu => currentSave.s_ranks.includes(qu.id));
+                    if (allS && !currentSave.completed_regions.includes(q.region) && REGION_REWARDS[q.region]) {
+                        currentSave.completed_regions.push(q.region);
+                        const rewardDef = REGION_REWARDS[q.region];
+                        const rewardChar = window.characterData.find(c => c.name === rewardDef.name && c.rarity === rewardDef.rarity);
+                        if (rewardChar) {
+                            if (currentSave.owned_ids.includes(rewardChar.id)) {
+                                currentSave.money += 300;
+                                msg += `\n★★★ ${q.region}制覇！【${rewardChar.name}】(所持済)の代わりに銀貨300枚を獲得！ ★★★\n`;
+                            } else {
+                                currentSave.owned_ids.push(rewardChar.id);
+                                msg += `\n★★★ ${q.region}制覇！報酬: 【${rewardChar.name}】が仲間になりました！ ★★★\n`;
+                            }
+                        }
+                    }
+                } else {
+                    msg += `(Sランク済ボーナス +100銭)\n`;
+                    currentSave.money += 100;
+                    
+                    const keyRate = 10 + (q.diff * 2);
+                    if (Math.random() * 100 < keyRate) {
+                        currentSave.items.kokoro = (currentSave.items.kokoro || 0) + 1;
+                        msg += `\n✨「ココロの鍵」をドロップしました！✨\n`;
+                    }
+                }
+            } else {
+                if (q.s_cond && !condMet) msg += `\n[Hint] S評価には ${q.s_cond} が必要です\n`;
+                if (exp.stats.dead > 0) msg += `\n[Hint] 撤退者を出さずに勝利せよ\n`;
+            }
+
+            const rate = calculateCaptureProb(deck, q.boss_r);
+            if (Math.random() * 100 < rate) {
+                currentSave.prisoners.push({ id: exp.bossId, time: Date.now() });
+                msg += `\n敵大将を捕縛しました！`;
+            }
+        } else {
+            msg = "【戦闘結果: 敗北...】\n評価: Dランク\n戦利品はありません。";
+        }
+
+        alert(msg);
+        currentSave.expedition = null;
+        saveData(currentSave);
+        updateResourceDisplay();
+        renderQuestList();
+        renderPrisoners();
+    }
+
+    function renderPrisoners(){
+        const l=document.getElementById('prisoner-list'); l.innerHTML='';
+        if(currentSave.prisoners.length===0){l.innerHTML='<div style="padding:20px;text-align:center;">なし</div>';return;}
+        currentSave.prisoners.forEach((p,i)=>{
+            const c=getCharacterById(p.id);
+            const d=document.createElement('div'); d.className='prisoner-row';
+            d.innerHTML=`<div style="display:flex;align-items:center;flex:1;"><input type="checkbox" class="prisoner-check" value="${i}"><img src="jpg/${c.image}" class="prisoner-thumb" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzMzMyIvPjwvc3ZnPg=='"><div class="prisoner-info"><div><span style="color:${getRarityColor(c.rarity)}">[${c.rarity}]</span> ${c.name}</div><div style="font-size:0.7rem;">戦:${c.war}</div></div></div><button onclick="openPrisonerModal(${i})" style="padding:8px 12px;background:#335;color:#fff;border:1px solid #66a;">詳細</button>`;
+            l.appendChild(d);
+        });
+    }
+    
+    function setAllChecks(b){document.querySelectorAll('.prisoner-check').forEach(c=>c.checked=b);}
+    function bulkRelease(){
+        const chk=document.querySelectorAll('.prisoner-check:checked'); if(chk.length===0)return;
+        if(confirm(`${chk.length}名を解放しますか？`)){
+            let idxs=[]; chk.forEach(c=>idxs.push(parseInt(c.value)));
+            idxs.sort((a,b)=>b-a); idxs.forEach(i=>{
+                const c=getCharacterById(currentSave.prisoners[i].id);
+                const r=RELEASE_RATES[c.rarity];
+                if(r.t==='t')currentSave.items.ticket=(currentSave.items.ticket||0)+r.v; else currentSave.money+=r.v;
+                currentSave.prisoners.splice(i,1);
+            });
+            saveData(currentSave); updateResourceDisplay(); renderPrisoners(); alert("解放しました");
+        }
+    }
+
+    function openPrisonerModal(i){
+        selectedPrisonerIndex=i; const c=getCharacterById(currentSave.prisoners[i].id);
+        document.getElementById('pm-name').textContent=c.name;
+        document.getElementById('pm-rarity').innerHTML=`<span style="color:${getRarityColor(c.rarity)}">${c.rarity}</span>`;
+        document.getElementById('pm-img').src=`jpg/${c.image}`;
+        document.getElementById('pm-type').textContent=c.type; document.getElementById('pm-clan').textContent=c.clan;
+        document.getElementById('pm-war').textContent=c.war; document.getElementById('pm-hp').textContent=c.hp;
+        document.getElementById('pm-skill-name').textContent=c.skill?c.skill.name:'なし';
+        document.getElementById('pm-skill-desc').textContent=c.skill?c.skill.desc:'-';
+        
+        const isOwned=currentSave.owned_ids.includes(c.id);
+        const ctr=document.getElementById('act-buttons'); ctr.innerHTML='';
+        
+        if(isOwned) {
+            ctr.innerHTML='<div style="color:#f55;margin-bottom:10px;border:1px solid #f55;padding:5px;">所持済み</div>';
+        } else {
+            let reqKeys = (c.rarity==='UR'||c.rarity==='SSR') ? 3 : 1;
+            let rate = 0;
+            if(c.rarity==='N') rate = 90; else if(c.rarity==='C') rate = 60; else if(c.rarity==='R') rate = 30;
+            
+            ctr.innerHTML += `<button class="btn-act btn-key" onclick="actionPrisoner('key', ${reqKeys})">ココロの鍵で登用 (100%)<br><span style="font-size:0.7rem">消費: ${reqKeys}個 (所持:${currentSave.items.kokoro||0})</span></button>`;
+            
+            if(rate > 0) {
+                ctr.innerHTML += `<button class="btn-act btn-coin" onclick="actionPrisoner('persuade', ${rate})">説得する (成功率${rate}%)<br><span style="font-size:0.7rem">無料</span></button>`;
+            } else {
+                ctr.innerHTML += `<div style="margin-top:5px; font-size:0.8rem; color:#888;">※高レアリティのため説得不可</div>`;
+            }
+        }
+        
+        const r=RELEASE_RATES[c.rarity];
+        const rText = r.t==='t' ? `手形${r.v}枚` : `銀貨${r.v}`;
+        ctr.innerHTML+=`<button class="btn-act" onclick="actionPrisoner('release')" style="background:#333;border:1px solid #555;">解放する (報酬: ${rText})</button>`;
+        
+        document.getElementById('prisoner-modal').style.display='flex';
+    }
+
+    function closeModal(){document.getElementById('prisoner-modal').style.display='none';}
+
+    function actionPrisoner(act, param){
+        if(selectedPrisonerIndex===-1)return;
+        const p=currentSave.prisoners[selectedPrisonerIndex]; const c=getCharacterById(p.id);
+        
+        if(act==='key'){
+            const req = param;
+            if((currentSave.items.kokoro||0) >= req) {
+                currentSave.items.kokoro -= req;
+                currentSave.owned_ids.push(c.id);
+                currentSave.prisoners.splice(selectedPrisonerIndex,1);
+                saveData(currentSave); updateResourceDisplay(); closeModal(); renderPrisoners();
+                alert(`「${c.name}」が仲間になりました！`);
+            } else {
+                alert("ココロの鍵が足りません！");
+            }
+        } 
+        else if(act==='persuade'){
+            const rate = param;
+            if(Math.random()*100 < rate){
+                currentSave.owned_ids.push(c.id); 
+                alert("説得成功！仲間になりました。");
+                currentSave.prisoners.splice(selectedPrisonerIndex,1);
+            } else {
+                alert("説得失敗... 武将は去っていきました。");
+                currentSave.prisoners.splice(selectedPrisonerIndex,1);
+            }
+            saveData(currentSave); updateResourceDisplay(); closeModal(); renderPrisoners();
+        } 
+        else if(act==='release'){
+            const r=RELEASE_RATES[c.rarity];
+            if(r.t==='t') currentSave.items.ticket=(currentSave.items.ticket||0)+r.v; else currentSave.money+=r.v;
+            currentSave.prisoners.splice(selectedPrisonerIndex,1); 
+            saveData(currentSave); updateResourceDisplay(); closeModal(); renderPrisoners(); alert("解放しました");
+        }
+    }
+
+    function debugSkip(){if(currentSave.expedition){currentSave.expedition.startTime=0;currentSave.expedition.endTime=1;saveData(currentSave);updateLogs();}}
+    function getRarityColor(r){if(r==='UR')return '#f0f';if(r==='SSR')return '#fd0';if(r==='SR')return '#ccc';if(r==='R')return '#d94';return '#fff';}
+</script>
+</body>
+</html>

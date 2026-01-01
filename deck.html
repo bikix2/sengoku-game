@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>編成 - 戦国放置RPG</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* デッキエリア */
+        .deck-container {
+            display: flex; justify-content: space-around; gap: 5px; margin-bottom: 20px;
+            background: #222; padding: 15px; border: 1px solid #444; border-radius: 8px;
+        }
+        .deck-slot {
+            width: 30%; position: relative; text-align: center; cursor: pointer;
+            border: 2px dashed #555; min-height: 100px; border-radius: 4px;
+            background: rgba(0,0,0,0.3); transition: background 0.2s;
+        }
+        .deck-slot.filled { border-style: solid; border-color: #d4af37; background: #000; }
+        
+        .slot-img { width: 100%; height: auto; display: block; }
+        
+        /* リストエリア */
+        .list-container {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); gap: 8px;
+            padding-bottom: 60px;
+        }
+        .card {
+            background: #111; border: 1px solid #444; border-radius: 4px; 
+            padding: 4px; cursor: pointer; position: relative;
+        }
+        .card.in-deck { opacity: 0.5; filter: grayscale(100%); cursor: default; }
+        .card img { width: 100%; height: auto; display: block; border: 1px solid #333; }
+        
+        /* ステータスバッジ */
+        .status-icon {
+            position: absolute; top: 2px; left: 2px; z-index: 5;
+            background: rgba(0,0,0,0.7); color: #fff; font-size: 0.8rem;
+            padding: 2px 4px; border-radius: 3px;
+        }
+
+        /* モーダル */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; }
+        .modal-content { background: #222; border: 2px solid #d4af37; padding: 20px; width: 90%; max-width: 350px; border-radius: 8px; text-align: center; position:relative; }
+        
+        /* レアリティ色 */
+        .rarity-UR { color: #ff00ff; border-color: #ff00ff !important; }
+        .rarity-SSR { color: #ffd700; border-color: #ffd700 !important; }
+        .rarity-SR { color: #c0c0c0; border-color: #c0c0c0 !important; }
+        .rarity-R { color: #cd7f32; border-color: #cd7f32 !important; }
+        .rarity-C { color: #aaddff; border-color: #6688aa !important; }
+        
+        /* ボタン類 */
+        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-main { flex: 2; background: #d4af37; color: #000; border: none; padding: 12px; font-weight: bold; cursor: pointer; border-radius: 4px; }
+        .btn-sub { flex: 1; background: #444; color: #fff; border: 1px solid #666; cursor: pointer; border-radius: 4px; }
+        
+        .btn-sell {
+            background: #522; color: #fcc; border: 1px solid #844; 
+            padding: 10px; margin-top: 15px; width: 100%; cursor: pointer; 
+            font-size: 0.85rem; border-radius: 4px;
+        }
+        .btn-lock {
+            position: absolute; top: 10px; right: 10px;
+            background: #333; color: #aaa; border: 1px solid #555;
+            width: 40px; height: 40px; font-size: 1.2rem; cursor: pointer; border-radius: 50%;
+        }
+        .btn-lock.locked { background: #d4af37; color: #000; border-color: #fff; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>部隊編成</h1>
+</header>
+
+<div class="container">
+    <div style="text-align:center; margin-bottom:5px; color:#aaa; font-size:0.8rem;">
+        現在の総コスト: <span id="total-cost" style="color:#fff; font-weight:bold;">0</span> 
+    </div>
+
+    <div class="deck-container">
+        <div class="deck-slot" id="slot-0" onclick="removeDeck(0)">
+            <div id="view-0" style="padding-top:40px; color:#555; font-size:0.8rem;">空</div>
+        </div>
+        <div class="deck-slot" id="slot-1" onclick="removeDeck(1)">
+            <div id="view-1" style="padding-top:40px; color:#555; font-size:0.8rem;">空</div>
+        </div>
+        <div class="deck-slot" id="slot-2" onclick="removeDeck(2)">
+            <div id="view-2" style="padding-top:40px; color:#555; font-size:0.8rem;">空</div>
+        </div>
+    </div>
+
+    <div style="margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="margin:0; border-left:4px solid #d4af37; padding-left:10px;">所持武将</h3>
+        <div style="font-size:0.8rem; color:#888;">
+            所持: <span id="count-display">0</span>
+        </div>
+    </div>
+
+    <div id="char-list" class="list-container"></div>
+</div>
+
+<div id="detail-modal" class="modal">
+    <div class="modal-content">
+        <button id="btn-lock" class="btn-lock" onclick="toggleLock()">🔓</button>
+
+        <h3 id="dm-name" style="margin:5px 0; color:#fff;"></h3>
+        <div id="dm-rarity" style="font-weight:bold; margin-bottom:10px;"></div>
+        <img id="dm-img" src="" style="max-width:150px; border:2px solid #555; margin:0 auto; display:block;">
+        
+        <div style="background:#111; padding:10px; margin:10px 0; border-radius:4px; text-align:left; font-size:0.85rem; color:#ccc;">
+            <div id="dm-stats"></div>
+            <hr style="border:0; border-top:1px solid #444; margin:5px 0;">
+            <div id="dm-skill" style="color:#d4af37;"></div>
+            <div id="dm-skill-desc" style="font-size:0.75rem; color:#aaa; margin-top:3px;"></div>
+        </div>
+
+        <div class="btn-group">
+            <button onclick="equipChar()" class="btn-main">編成する</button>
+            <button onclick="closeModal()" class="btn-sub">閉じる</button>
+        </div>
+
+        <button id="btn-sell-char" class="btn-sell" onclick="sellChar()">この武将を解放(売却)する</button>
+    </div>
+</div>
+
+<nav class="bottom-nav">
+    <a href="index.html">ホーム</a>
+    <a href="deck.html" class="active">編成</a>
+    <a href="battle.html">出陣</a>
+    <a href="gacha.html">ガチャ</a>
+</nav>
+
+<script src="character_data.js"></script>
+<script src="game_core.js"></script>
+<script>
+    let currentSave = null;
+    let selectedCharId = null;
+    
+    // 売却レート
+    const RELEASE_RATES = { 'N':{t:'m',v:50}, 'C':{t:'m',v:100}, 'R':{t:'m',v:300}, 'SR':{t:'t',v:1}, 'SSR':{t:'t',v:3}, 'UR':{t:'t',v:10}, 'LOB':{t:'t',v:30} };
+
+    window.onload = function() {
+        if (!window.characterData) { alert("データ読込エラー"); return; }
+        currentSave = loadSaveData();
+        
+        // データ補正
+        if (!currentSave.owned_ids) currentSave.owned_ids = [];
+        if (!currentSave.locked_ids) currentSave.locked_ids = [];
+        
+        renderDeck();
+        renderList();
+    };
+
+    // デッキ描画
+    function renderDeck() {
+        let totalCost = 0;
+        for (let i = 0; i < 3; i++) {
+            const slot = document.getElementById(`slot-${i}`);
+            const view = document.getElementById(`view-${i}`);
+            const charId = currentSave.deck[i];
+
+            if (charId) {
+                const char = getCharacterById(charId);
+                if (char) {
+                    slot.className = `deck-slot filled rarity-${char.rarity}`;
+                    slot.style.borderColor = getRarityColor(char.rarity);
+                    view.innerHTML = `
+                        <img src="jpg/${char.image}" class="slot-img">
+                        <div style="font-size:0.7rem; color:#fff; background:rgba(0,0,0,0.7); position:absolute; bottom:0; width:100%;">${char.name}</div>
+                    `;
+                    totalCost += (char.cost || 10);
+                }
+            } else {
+                slot.className = 'deck-slot';
+                slot.style.borderColor = '#555';
+                view.innerHTML = '<div style="padding-top:40px; color:#555; font-size:0.8rem;">空</div>';
+            }
+        }
+        document.getElementById('total-cost').textContent = totalCost;
+    }
+
+    // デッキから外す
+    function removeDeck(index) {
+        if (currentSave.deck[index]) {
+            currentSave.deck[index] = null;
+            saveData(currentSave);
+            renderDeck();
+            renderList();
+        }
+    }
+
+    // 所持リスト描画
+    function renderList() {
+        const list = document.getElementById('char-list');
+        list.innerHTML = '';
+
+        const myChars = currentSave.owned_ids.map(id => getCharacterById(id)).filter(c => c);
+        // ソート順定義
+        const rarityVal = { 'LOB':7, 'UR':6, 'SSR':5, 'SR':4, 'R':3, 'C':2, 'N':1 };
+        
+        // ソート: レアリティ > 戦力
+        myChars.sort((a, b) => {
+            const rA = rarityVal[a.rarity] || 0;
+            const rB = rarityVal[b.rarity] || 0;
+            if (rA !== rB) return rB - rA;
+            return b.war - a.war;
+        });
+
+        document.getElementById('count-display').textContent = myChars.length;
+
+        if (myChars.length === 0) {
+            list.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:20px; color:#666;">武将がいません</div>';
+            return;
+        }
+
+        myChars.forEach(char => {
+            const isDeck = currentSave.deck.includes(char.id);
+            const isLocked = currentSave.locked_ids.includes(char.id);
+            
+            const div = document.createElement('div');
+            div.className = `card rarity-${char.rarity} ${isDeck ? 'in-deck' : ''}`;
+            div.style.borderColor = getRarityColor(char.rarity);
+            div.onclick = () => openDetail(char);
+
+            let lockIcon = isLocked ? '<div class="status-icon">🔒</div>' : '';
+            let deckOverlay = isDeck ? '<div style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.8rem;">編成中</div>' : '';
+
+            div.innerHTML = `
+                ${lockIcon}
+                <div style="font-size:0.6rem; color:${getRarityColor(char.rarity)}; text-align:right;">${char.rarity}</div>
+                <img src="jpg/${char.image}">
+                <div style="font-size:0.6rem; margin-top:2px; text-align:center;">${char.name}</div>
+                ${deckOverlay}
+            `;
+            list.appendChild(div);
+        });
+    }
+
+    // 詳細モーダル
+    function openDetail(char) {
+        selectedCharId = char.id;
+        const modal = document.getElementById('detail-modal');
+        
+        // 基本情報
+        document.getElementById('dm-name').textContent = char.name;
+        document.getElementById('dm-rarity').innerHTML = `<span style="color:${getRarityColor(char.rarity)}">${char.rarity}</span>`;
+        document.getElementById('dm-img').src = `jpg/${char.image}`;
+        document.getElementById('dm-stats').innerHTML = `戦力: <b>${char.war}</b> / 兵数: <b>${char.hp}</b><br>兵種: ${char.type} / コスト: ${char.cost||10}`;
+        
+        // スキル
+        const skill = char.skill || {name:'なし', desc:'-'};
+        document.getElementById('dm-skill').innerHTML = `<b>【${skill.name}】</b>`;
+        document.getElementById('dm-skill-desc').textContent = skill.desc;
+
+        // ロックボタン状態
+        updateLockButton();
+
+        // 売却ボタンの制御
+        const isDeck = currentSave.deck.includes(char.id);
+        const isLocked = currentSave.locked_ids.includes(char.id);
+        const btnSell = document.getElementById('btn-sell-char');
+        
+        if (isDeck) {
+            btnSell.style.display = 'none'; // 編成中は売れない
+        } else if (isLocked) {
+            btnSell.style.display = 'block';
+            btnSell.textContent = "ロック中のため解放不可";
+            btnSell.style.opacity = 0.5;
+            btnSell.style.cursor = "not-allowed";
+        } else {
+            btnSell.style.display = 'block';
+            btnSell.style.opacity = 1;
+            btnSell.style.cursor = "pointer";
+            
+            const r = RELEASE_RATES[char.rarity];
+            const valText = (r.t==='t') ? `手形 ${r.v}枚` : `銀貨 ${r.v}銭`;
+            btnSell.textContent = `解放する (${valText} を獲得)`;
+        }
+
+        modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('detail-modal').style.display = 'none';
+        selectedCharId = null;
+    }
+
+    // ロック切り替え
+    function toggleLock() {
+        if (!selectedCharId) return;
+        const index = currentSave.locked_ids.indexOf(selectedCharId);
+        
+        if (index > -1) {
+            currentSave.locked_ids.splice(index, 1); // ロック解除
+        } else {
+            currentSave.locked_ids.push(selectedCharId); // ロック
+        }
+        
+        saveData(currentSave);
+        updateLockButton();
+        // 売却ボタンの表示更新のため再描画に近い処理
+        openDetail(getCharacterById(selectedCharId)); 
+        renderList(); // リストのアイコン更新
+    }
+
+    function updateLockButton() {
+        const btn = document.getElementById('btn-lock');
+        if (currentSave.locked_ids.includes(selectedCharId)) {
+            btn.textContent = '🔒';
+            btn.className = 'btn-lock locked';
+        } else {
+            btn.textContent = '🔓';
+            btn.className = 'btn-lock';
+        }
+    }
+
+    // 編成
+    function equipChar() {
+        if (!selectedCharId) return;
+        if (currentSave.deck.includes(selectedCharId)) { alert("すでに編成されています"); return; }
+
+        let slotIndex = currentSave.deck.indexOf(null);
+        if (slotIndex === -1) {
+            if(confirm("部隊がいっぱいです。大将と入れ替えますか？")) {
+                slotIndex = 0;
+            } else {
+                return;
+            }
+        }
+        currentSave.deck[slotIndex] = selectedCharId;
+        saveData(currentSave);
+        closeModal();
+        renderDeck();
+        renderList();
+    }
+
+    // 売却（解放）
+    function sellChar() {
+        if (!selectedCharId) return;
+        
+        // ロックチェック
+        if (currentSave.locked_ids.includes(selectedCharId)) {
+            alert("この武将はロックされています。\n鍵アイコンをタップして解除してください。");
+            return;
+        }
+
+        const char = getCharacterById(selectedCharId);
+        const r = RELEASE_RATES[char.rarity];
+        const valText = (r.t==='t') ? `手形 ${r.v}枚` : `銀貨 ${r.v}銭`;
+
+        if (confirm(`【${char.name}】を解放して、${valText} を受け取りますか？\n（この武将は失われます）`)) {
+            const idx = currentSave.owned_ids.indexOf(selectedCharId);
+            if (idx > -1) currentSave.owned_ids.splice(idx, 1);
+            
+            if (r.t === 't') {
+                currentSave.items.ticket = (currentSave.items.ticket || 0) + r.v;
+            } else {
+                currentSave.money += r.v;
+            }
+            
+            saveData(currentSave);
+            alert(`解放しました。${valText} を獲得しました。`);
+            closeModal();
+            renderList();
+            renderDeck();
+        }
+    }
+
+    function getRarityColor(r) { return r==='UR'?'#f0f':r==='SSR'?'#gd0':r==='SR'?'#aaa':r==='R'?'#d94':'#888'; }
+</script>
+</body>
+</html>

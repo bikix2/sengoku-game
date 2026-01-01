@@ -1,0 +1,79 @@
+/* style.css */
+body {
+    background-color: #202020;
+    color: #e0e0e0;
+    font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+    margin: 0;
+    padding: 0;
+    padding-bottom: 80px; /* フッター用余白 */
+}
+
+/* ヘッダー */
+header {
+    background: linear-gradient(to bottom, #4a3b2a, #2b2218);
+    padding: 15px;
+    text-align: center;
+    border-bottom: 3px solid #d4af37;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+h1 { margin: 0; font-size: 1.4rem; color: #d4af37; text-shadow: 1px 1px 0 #000; }
+
+/* コンテナ */
+.container {
+    padding: 15px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* ボタン共通 */
+button, .btn-link {
+    background: #d4af37;
+    color: #2b2218;
+    border: 1px solid #8a7020;
+    padding: 10px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    font-size: 1rem;
+    margin: 5px;
+}
+button:hover, .btn-link:hover { background: #e5c14d; }
+button:disabled { background: #555; border-color: #333; color: #888; cursor: not-allowed; }
+
+/* ボックススタイル */
+.box { background: #333; border: 1px solid #555; padding: 15px; border-radius: 5px; margin-bottom: 15px; }
+
+/* 画像プレースホルダー（画像がない時用） */
+img { background: #000; display: inline-block; object-fit: cover; }
+
+/* ナビゲーション（フッター固定） */
+nav.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #333;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    border-top: 2px solid #d4af37;
+    z-index: 100;
+}
+nav.bottom-nav a {
+    color: #aaa;
+    text-decoration: none;
+    font-size: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+nav.bottom-nav a.active { color: #d4af37; font-weight: bold; }
+
+/* ユーティリティ */
+.text-gold { color: #d4af37; font-weight: bold; }
+.rarity-SSR { color: #ffd700; border: 1px solid #ffd700; }
+.rarity-R { color: #silver; border: 1px solid #silver; }
+.rarity-N { color: #cd7f32; border: 1px solid #cd7f32; }

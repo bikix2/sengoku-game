@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>武将名鑑 - 戦国放置RPG</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; padding: 10px; }
+        .book-card { border: 1px solid #444; background: #222; text-align: center; position: relative; overflow: hidden; }
+        .book-card.unknown { border-color: #333; }
+        
+        /* 画像 */
+        .book-card img { width: 100%; height: auto; display: block; min-height: 80px; object-fit: cover; }
+        
+        /* 未取得時の「？」表示エリア */
+        .unknown-img {
+            width: 100%; 
+            height: 100px; /* 画像の代わりの高さ */
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            background: #111; 
+            color: #333; 
+            font-size: 2.5rem; 
+            font-weight: bold;
+            user-select: none;
+        }
+
+        .book-card .num { position: absolute; top: 0; left: 0; background: rgba(0,0,0,0.7); font-size: 0.7rem; color: #fff; padding: 2px 4px; z-index: 2; }
+        .book-card .name { font-size: 0.7rem; padding: 4px 2px; color: #ccc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background: #252525; }
+        
+        .collected-count { text-align: center; color: #d4af37; margin-bottom: 10px; font-weight: bold; }
+        
+        /* 詳細モーダル */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-content { background: #2a2a2a; border: 2px solid #d4af37; padding: 20px; width: 80%; max-width: 400px; border-radius: 8px; text-align: center; position: relative; }
+        .close-btn { background: #333; color: #fff; border: 1px solid #666; padding: 5px 15px; margin-top: 10px; cursor: pointer; }
+        
+        /* 詳細内のスタイル */
+        .detail-rarity { display: inline-block; padding: 2px 8px; border-radius: 4px; background: #000; margin-bottom: 5px; font-weight: bold; }
+        .detail-profile { font-size: 0.85rem; color: #ddd; text-align: left; background: #151515; padding: 10px; border-radius: 4px; margin: 10px 0; line-height: 1.5; max-height: 100px; overflow-y: auto; border: 1px solid #444; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>武将名鑑</h1>
+</header>
+
+<div class="container">
+    <div id="collection-status" class="collected-count">収集率: --%</div>
+    <div id="book-list" class="book-grid"></div>
+</div>
+
+<div id="detail-modal" class="modal-overlay" onclick="closeModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div id="modal-body"></div>
+        <button class="close-btn" onclick="closeModal()">閉じる</button>
+    </div>
+</div>
+
+<nav class="bottom-nav">
+    <a href="index.html">ホーム</a>
+    <a href="deck.html">編成</a>
+    <a href="battle.html">出陣</a>
+    <a href="gacha.html">ガチャ</a>
+</nav>
+
+<script src="character_data.js"></script>
+<script src="game_core.js"></script>
+<script>
+    window.onload = function() {
+        if (!window.characterData) {
+            alert("データ読込エラー: character_data.jsがありません");
+            return;
+        }
+        const save = loadSaveData();
+        // 重複IDを除去して種類数をカウント
+        const uniqueOwnedIds = new Set(save.owned_ids || []);
+        
+        // 収集率計算
+        const total = window.characterData.length;
+        const count = uniqueOwnedIds.size;
+        document.getElementById('collection-status').innerText = `収集率: ${count} / ${total} (${Math.floor(count/total*100)}%)`;
+
+        const list = document.getElementById('book-list');
+        list.innerHTML = '';
+
+        window.characterData.forEach(char => {
+            const isOwned = uniqueOwnedIds.has(char.id);
+            
+            const div = document.createElement('div');
+            div.className = `book-card ${isOwned ? '' : 'unknown'}`;
+            
+            // 画像エリアの生成
+            let imgHtml = '';
+            if (isOwned) {
+                // 所持している場合：画像を表示
+                // エラー時はダミー画像(SVG)を表示
+                imgHtml = `<img src="jpg/${char.image}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzMzMyIvPjwvc3ZnPg=='">`;
+            } else {
+                // 未所持の場合：画像タグを作らず、「？」マークを表示
+                imgHtml = `<div class="unknown-img">?</div>`;
+            }
+            
+            div.innerHTML = `
+                <div class="num">No.${char.id}</div>
+                ${imgHtml}
+                <div class="name">${isOwned ? char.name : '？？？'}</div>
+            `;
+            
+            // 所持している場合のみ、クリックで詳細を開く
+            if (isOwned) {
+                div.style.cursor = 'pointer';
+                div.onclick = () => showDetail(char);
+            }
+            list.appendChild(div);
+        });
+    };
+
+    function showDetail(char) {
+        const modal = document.getElementById('detail-modal');
+        const body = document.getElementById('modal-body');
+        
+        const rColor = getRarityColor(char.rarity);
+        const profileText = char.profile || "詳細な情報はありません。";
+
+        body.innerHTML = `
+            <div class="detail-rarity" style="color:${rColor}; border:1px solid ${rColor};">${char.rarity}</div>
+            <h3 style="color:#fff; margin:5px 0 10px 0;">${char.name}</h3>
+            
+            <div style="font-size:0.8rem; color:#aaa; margin-bottom:10px;">
+                [${char.type || '足軽'}] / 勢力: ${char.clan || 'その他'}
+            </div>
+
+            <img src="jpg/${char.image}" style="max-width:150px; border:2px solid ${rColor}; display:block; margin:0 auto;" onerror="this.style.display='none'">
+            
+            <div class="detail-profile">${profileText}</div>
+            
+            <div style="font-size:0.8rem; margin-top:5px; color:#888;">
+                 No.${char.id} / 戦力:${char.war} / 兵数:${char.hp}
+            </div>
+        `;
+        modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('detail-modal').style.display = 'none';
+    }
+
+    function getRarityColor(rarity) {
+        switch(rarity) {
+            case 'UR': return '#ff00ff';
+            case 'SSR': return '#ffd700';
+            case 'SR': return '#c0c0c0';
+            case 'R': return '#cd7f32';
+            default: return '#fff';
+        }
+    }
+</script>
+</body>
+</html>

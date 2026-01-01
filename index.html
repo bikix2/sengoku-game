@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>戦国放置RPG - ホーム</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <h1>戦国テンカトリガー風</h1>
+</header>
+
+<div class="container">
+    <div class="box" style="display:flex; justify-content:space-between;">
+        <div>所持金: <span id="money-display" class="text-gold">0</span> 銭</div>
+        <div>手形: <span id="ticket-display">0</span> 枚</div>
+    </div>
+
+    <div class="box" style="text-align:center; min-height: 200px;">
+        <div id="leader-area">
+            <p style="color:#666; padding-top:80px;">大将が不在です<br>編成を行ってください</p>
+        </div>
+    </div>
+
+    <div id="expedition-status" class="box" style="text-align:center; display:none; border-color: #d4af37;">
+        <p class="text-gold">★ 現在遠征中 ★</p>
+        <p>帰還まで: <span id="time-left">--:--</span></p>
+        <a href="battle.html" class="btn-link">戦況確認</a>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <a href="battle.html" class="btn-link" style="background:#a33; border-color:#d4af37; color:#fff;">出陣 (Battle)</a>
+        <a href="gacha.html" class="btn-link">武将くじ (Gacha)</a> <a href="deck.html" class="btn-link">編成 (Deck)</a>
+        <a href="book.html" class="btn-link" style="background:#345;">名鑑 (Book)</a>
+        
+        <button onclick="resetGame()" style="background:#333; color:#aaa; font-size:0.8rem; grid-column: 1 / -1; margin-top:10px;">データ初期化</button>
+    </div>
+</div>
+
+<nav class="bottom-nav">
+    <a href="index.html" class="active">ホーム</a>
+    <a href="deck.html">編成</a>
+    <a href="battle.html">出陣</a>
+    <a href="gacha.html">ガチャ</a>
+</nav>
+
+<script src="character_data.js"></script>
+<script src="game_core.js"></script>
+<script>
+    window.onload = function() {
+        if (!window.characterData) { alert("データ読込エラー: character_data.jsがありません"); return; }
+        const save = loadSaveData();
+        
+        document.getElementById('money-display').textContent = save.money.toLocaleString();
+        document.getElementById('ticket-display').textContent = save.items.ticket;
+
+        // リーダー表示
+        const leaderId = save.deck[0];
+        const leaderArea = document.getElementById('leader-area');
+        
+        if (leaderId) {
+            const char = getCharacterById(leaderId);
+            if (char) {
+                // レアリティごとの枠色
+                const rColor = getRarityColor(char.rarity);
+                leaderArea.innerHTML = `
+                    <div style="font-size:0.8rem; color:#aaa; margin-bottom:5px;">現在の筆頭武将</div>
+                    <img src="jpg/${char.image}" alt="${char.name}" style="height:150px; border:2px solid ${rColor}; box-shadow: 0 0 10px ${rColor};" onerror="this.style.display='none'">
+                    <div style="font-weight:bold; margin-top:5px; font-size:1.2rem;">${char.name}</div>
+                    <div style="font-size:0.8rem; color:#888;">[${char.type||'足軽'}] / ${char.clan||'その他'}</div>
+                `;
+            }
+        }
+
+        // 遠征中チェック
+        if (save.expedition) {
+            document.getElementById('expedition-status').style.display = 'block';
+            if (save.expedition.returnTime > Date.now()) {
+                updateTimer(save.expedition.returnTime);
+            } else {
+                document.getElementById('expedition-status').innerHTML = `
+                    <p class="text-gold">遠征から帰還しました！</p>
+                    <a href="battle.html" class="btn-link">結果を見る</a>
+                `;
+            }
+        }
+    };
+
+    function updateTimer(endTime) {
+        const el = document.getElementById('time-left');
+        setInterval(() => {
+            const diff = endTime - Date.now();
+            if (diff <= 0) {
+                location.reload(); 
+                return;
+            }
+            const m = Math.floor(diff / 60000);
+            const s = Math.floor((diff % 60000) / 1000);
+            el.textContent = `${m}:${s.toString().padStart(2, '0')}`;
+        }, 1000);
+    }
+
+    function resetGame() {
+        if(confirm("本当にデータを初期化しますか？\n（入手した武将もすべて消えます）")) {
+            localStorage.removeItem(SAVE_KEY);
+            location.reload();
+        }
+    }
+
+    function getRarityColor(rarity) {
+        switch(rarity) {
+            case 'UR': return '#ff00ff';
+            case 'SSR': return '#ffd700';
+            case 'SR': return '#c0c0c0';
+            case 'R': return '#cd7f32';
+            default: return '#fff';
+        }
+    }
+</script>
+</body>
+</html>
