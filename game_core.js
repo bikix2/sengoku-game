@@ -1,6 +1,6 @@
-// game_core.js - Ver 32.0 (Initialization Function)
+// game_core.js - Ver 33.0 (Food Balance Adjustment)
 
-const SAVE_KEY = 'sengoku_idle_save_v32_init';
+const SAVE_KEY = 'sengoku_idle_save_v33_foodbal';
 const SECONDS_PER_DAY = 10; 
 
 // --- ■1. 兵種相関図 ---
@@ -108,7 +108,6 @@ function loadSaveData() {
     if (!data.items) data.items = { ticket: 0, kokoro: 0 };
     if (typeof data.items.kokoro === 'undefined') data.items.kokoro = 0;
 
-    // 配布チェック
     if (window.characterData && window.characterData.length > 0) {
         let starter = window.characterData.find(c => c.name.includes("織田信長") && c.rarity === "R");
         if (!starter) starter = window.characterData.find(c => c.name.includes("織田信長"));
@@ -127,10 +126,8 @@ function saveData(data) {
     localStorage.setItem(SAVE_KEY, JSON.stringify(data));
 }
 
-// ★初期化関数を追加
 function resetSaveData() {
     localStorage.removeItem(SAVE_KEY);
-    // リロードは呼び出し元で行う
 }
 
 function getCharacterById(id) {
@@ -244,7 +241,6 @@ function simulateBattle(deck, enemy, quest) {
         skill: parseSkill(enemy)
     };
     battleLog.push(`敵将【${enemyUnit.name}】(${enemyUnit.type})と遭遇！`);
-    
     myParty.forEach(c => {
         if (c && !c.isDead && c.skill.type === 'instant_kill' && Math.random() < c.skill.rate) {
             enemyUnit.hp = 0; battleLog.push(`<span class="ev-skill">【${c.name}】の一撃必殺！</span>`);
@@ -272,7 +268,6 @@ function simulateBattle(deck, enemy, quest) {
         });
         enemyUnit.hp -= totalDmg;
         battleLog.push(`味方攻撃: ${totalDmg}ダメ (敵残:${Math.max(0, enemyUnit.hp)})`);
-        
         if (enemyUnit.hp <= 0) {
             battleLog.push(`<span class="ev-good">敵撃破！</span>`);
             let currentTotal = 0, maxTotal = 0, dead = 0;
@@ -327,7 +322,10 @@ function simulateExpeditionLoop(quest, deck, weather, bossChar) {
     const events = [];
     const capturedIds = [];
     const totalDays = quest.food; 
-    let currentFood = deck.reduce((s, c) => s + (c ? c.cost * 10 : 0), 0);
+    let totalCost = deck.reduce((s, c) => s + (c ? c.cost : 0), 0);
+    // ★兵糧バランス調整: 総コスト*1.2 + 20
+    let currentFood = Math.floor(totalCost * 1.2) + 20;
+    
     let hp = deck.reduce((s, c) => s + (c ? c.hp : 0), 0);
     const maxHp = hp;
     let totalDead = 0;
@@ -368,14 +366,17 @@ function simulateExpeditionLoop(quest, deck, weather, bossChar) {
         }
         else if (Math.random() < 0.25) {
             eventOccurred = true;
+            // ★戦闘発生で兵糧追加消費 (-2)
+            currentFood -= 2;
+            
             const enemy = { name: "敵部隊", rarity: "N", type: quest.type, war: 30 + (quest.diff*5), hp: 200 + (quest.diff*50) };
             const battle = simulateBattle(deck, enemy, quest);
             if (battle.result === 'win') {
-                addLog(d, `${d}日目(糧${currentFood}): 敵部隊を撃破！`);
+                addLog(d, `${d}日目(糧${currentFood}): 敵部隊を撃破！(兵糧-2)`);
                 if (Math.random() * 100 < 5) capturedIds.push(window.characterData[0].id);
             } else {
                 hp -= Math.floor(maxHp * 0.2);
-                addLog(d, `${d}日目(糧${currentFood}): <span class="ev-bad">敗走... 被害を受けた。</span>`);
+                addLog(d, `${d}日目(糧${currentFood}): <span class="ev-bad">敗走... 被害を受けた。(兵糧-2)</span>`);
             }
             totalDead += battle.deadCount;
         }
@@ -387,6 +388,10 @@ function simulateExpeditionLoop(quest, deck, weather, bossChar) {
         if (hp <= 0) {
             addLog(d, `${d}日目(糧${currentFood}): <span class="ev-bad">部隊全滅... 敗北</span>`);
             return { events: events, result: 'defeat', capturedIds: capturedIds, weather: weather, stats: { hpRate: 0, dead: totalDead }, daysTraveled: d };
+        }
+        if (currentFood <= 0) {
+            addLog(d, `${d}日目: <span class="ev-bad">兵糧尽きる... 撤退</span>`);
+            return { events: events, result: 'retired', capturedIds: capturedIds, weather: weather, stats: { hpRate: 0, dead: totalDead }, daysTraveled: d };
         }
     }
 
