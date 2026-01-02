@@ -1,5 +1,4 @@
-
-// game_core.js - Ver 43.1 (Fix Starter Distribution)
+// game_core.js - Ver 43.2 (Strong Starter Fix)
 
 const SAVE_KEY = 'sengoku_idle_save_v41_full'; 
 const SECONDS_PER_DAY = 10; 
@@ -270,8 +269,9 @@ function loadSaveData() {
     const json = localStorage.getItem(SAVE_KEY);
     let data;
     if (!json) { 
-        // デフォルトデータを返す (saveDataはしない)
         data = JSON.parse(JSON.stringify(DEFAULT_SAVE)); 
+        // ★修正: 初期化時に即座に保存する
+        saveData(data);
     } else { 
         data = JSON.parse(json); 
     }
@@ -311,7 +311,6 @@ function importSaveData(code) {
 function checkAndDistributeStarter() {
     if (!window.characterData || window.characterData.length === 0) return { success: false };
     
-    // 現在のデータをロード
     const currentSave = loadSaveData();
     let updated = false;
     let msg = "";
@@ -328,13 +327,17 @@ function checkAndDistributeStarter() {
         msg += `・武将「${starterChar.name}」\n`;
     }
 
-    // 2. 資源配布 (救済措置: 所持金0かつ手形0なら初期状態とみなす)
-    // 既存ユーザーでもデータリセット後ならこれに該当するはず
-    if (currentSave.money === 0 && (!currentSave.items.ticket || currentSave.items.ticket === 0)) {
+    // 2. 資源配布 (救済措置: 所持金500未満、または手形0なら初期状態へ復帰させる)
+    // 既存ユーザーで資源が枯渇しているケースの救済も兼ねる
+    if ((currentSave.money || 0) < 500) {
         currentSave.money = 5000;
+        updated = true;
+        msg += "・軍資金 5000 (補給)\n";
+    }
+    if (!currentSave.items.ticket || currentSave.items.ticket <= 0) {
         currentSave.items.ticket = 5;
         updated = true;
-        msg += "・軍資金 5000\n・手形 5枚\n";
+        msg += "・手形 5枚 (補給)\n";
     }
 
     if (updated) {
