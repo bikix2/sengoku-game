@@ -14,86 +14,88 @@
         
         /* モーダル用 */
         .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; align-items:center; justify-content:center; }
-        .modal-content { background:#222; border:2px solid #d4af37; padding:20px; width:90%; max-width:400px; border-radius:8px; text-align:center; color:#fff; }
-        textarea { width:100%; height:100px; background:#111; color:#fff; border:1px solid #555; margin-bottom:10px; font-size:0.8rem; }
-        .btn-trans { padding:10px; width:100%; margin-bottom:5px; cursor:pointer; font-weight:bold; border-radius:4px; }
-        .btn-copy { background:#446; color:#fff; border:1px solid #668; }
-        .btn-load { background:#d4af37; color:#000; border:none; }
+        .modal-content { background:#222; border:2px solid #d4af37; padding:20px; width:90%; max-width:400px; border-radius:8px; text-align:center; color:#ccc; }
+        textarea { width: 90%; height: 100px; background:#111; color:#fff; border:1px solid #555; margin-bottom:10px; padding:5px; }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>戦国放置RPG</h1>
-</header>
+<header><h1>戦国放置RPG</h1></header>
 
 <div class="container">
-    
     <div class="news-box">
-        <div style="color:#d4af37; font-weight:bold; margin-bottom:5px;">◆ 更新情報</div>
-        <ul style="font-size:0.85rem; padding-left:20px; color:#ccc;">
-            <li>Ver32.0: データ初期化機能追加</li>
-            <li>Ver31.0: 敵特技・引き継ぎ実装</li>
-            <li>Ver30.0: R織田信長 配布確定</li>
-        </ul>
+        <div style="color:#d4af37; font-weight:bold; margin-bottom:5px;">◆ お知らせ</div>
+        <div style="font-size:0.85rem; line-height:1.5;">
+            ・万屋（ショップ）がオープンしました！<br>
+            ・進軍速度の変更機能を追加しました。<br>
+            ・一部武将のスキルバランスを調整しました。
+        </div>
     </div>
 
     <div class="menu-grid">
-        <a href="battle.html" class="menu-btn">
+        <a href="battle.html" class="menu-btn" style="border-color:#d4af37; background:#332200;">
             <span class="menu-icon">⚔️</span>
             出陣
         </a>
         <a href="deck.html" class="menu-btn">
             <span class="menu-icon">🏯</span>
-            編成・武将
+            編成
         </a>
         <a href="gacha.html" class="menu-btn">
-            <span class="menu-icon">🎴</span>
-            ガチャ
+            <span class="menu-icon">🎫</span>
+            登用
         </a>
-        <div onclick="openTransferModal()" class="menu-btn" style="cursor:pointer;">
-            <span class="menu-icon">📲</span>
-            データ管理
-        </div>
+        <a href="shop.html" class="menu-btn">
+            <span class="menu-icon">💰</span>
+            万屋
+        </a>
+        <a href="book.html" class="menu-btn">
+            <span class="menu-icon">📜</span>
+            名鑑
+        </a>
     </div>
 
-    <div style="margin-top:20px; text-align:center; font-size:0.8rem; color:#666;">
-        &copy; 2025 Sengoku Idle RPG
+    <div style="margin-top:30px; text-align:center;">
+        <button onclick="document.getElementById('transfer-modal').style.display='flex'" style="background:#444; border:1px solid #666; font-size:0.8rem; padding:8px 15px;">データ引き継ぎ</button>
+        <button onclick="performReset()" style="background:#522; border:1px solid #844; color:#fcc; font-size:0.8rem; padding:8px 15px; margin-left:10px;">データ初期化</button>
     </div>
 </div>
 
 <div id="transfer-modal" class="modal">
     <div class="modal-content">
-        <h3 style="color:#d4af37; margin-top:0;">データ管理</h3>
+        <h3>データ引き継ぎ</h3>
+        <p style="font-size:0.8rem;">機種変更などの際に使用してください。<br>（万屋の実装によりデータ構造が変わっていますが、旧データも読み込み可能です）</p>
         
-        <div style="text-align:left; font-size:0.9rem; margin-bottom:5px;">▼ 引き継ぎコード発行 (コピー)</div>
-        <textarea id="export-area" readonly onclick="this.select()"></textarea>
-        <button class="btn-trans btn-copy" onclick="copyCode()">コードをコピー</button>
-        
-        <hr style="border-color:#444; margin:15px 0;">
-        
-        <div style="text-align:left; font-size:0.9rem; margin-bottom:5px;">▼ データを復元 (上書き)</div>
-        <textarea id="import-area" placeholder="ここにコードを貼り付け"></textarea>
-        <button class="btn-trans btn-load" onclick="loadCode()">データを復元する</button>
+        <div style="text-align:left; font-size:0.8rem; color:#d4af37;">あなたのID (コピー用)</div>
+        <textarea id="export-area" readonly></textarea>
+        <button onclick="copyCode()" style="margin-bottom:15px;">コピーする</button>
 
-        <hr style="border-color:#444; margin:15px 0;">
+        <div style="text-align:left; font-size:0.8rem; color:#d4af37; border-top:1px solid #444; padding-top:10px;">データを復元 (貼り付け)</div>
+        <textarea id="import-area" placeholder="ここにコードを貼り付け"></textarea>
+        <button onclick="loadCode()" style="background:#d4af37; color:#000;">復元する</button>
         
-        <div style="text-align:left; font-size:0.9rem; margin-bottom:5px; color:#f55;">▼ データを初期化 (最初から遊ぶ)</div>
-        <button class="btn-trans" style="background:#522; border:1px solid #844; color:#fcc;" onclick="performReset()">データを削除して初期化</button>
-        
-        <button class="btn-trans" style="background:#333; border:1px solid #555; color:#ccc; margin-top:10px;" onclick="closeTransferModal()">閉じる</button>
+        <button onclick="closeTransferModal()" style="margin-top:15px; background:#444;">閉じる</button>
     </div>
 </div>
 
-<script src="character_data.js"></script>
+<nav class="bottom-nav">
+    <a href="index.html" class="active">ホーム</a>
+    <a href="deck.html">編成</a>
+    <a href="battle.html">出陣</a>
+    <a href="gacha.html">ガチャ</a>
+</nav>
+
 <script src="game_core.js"></script>
+<script src="character_data.js"></script>
 <script>
-    function openTransferModal() {
-        document.getElementById('transfer-modal').style.display = 'flex';
-        const code = exportSaveData();
-        document.getElementById('export-area').value = code;
+    // データ初期化チェック
+    if(typeof loadSaveData === 'function') {
+        const data = loadSaveData();
+        if(document.getElementById('export-area')) {
+            document.getElementById('export-area').value = exportSaveData();
+        }
     }
-    
+
     function closeTransferModal() {
         document.getElementById('transfer-modal').style.display = 'none';
     }
@@ -116,7 +118,6 @@
         }
     }
 
-    // ★初期化処理
     function performReset() {
         if(confirm("本当にデータを初期化しますか？\nこの操作は取り消せません。\n(所持金や武将など全てのデータが消えます)")) {
             if(confirm("本当に削除してよろしいですか？")) {
@@ -127,18 +128,12 @@
         }
     }
     
-    // 初期配布チェック
     window.onload = function() {
         if(typeof checkAndDistributeStarter === 'function') {
             const res = checkAndDistributeStarter();
-            if (res.success) {
-                alert(`【初期特典】「${res.rarity}${res.name}」を獲得しました！`);
-                // リロードして反映
-                location.reload(); 
-            }
+            if (res.success) { alert(`【初期特典】「${res.rarity}${res.name}」を獲得しました！`); }
         }
-    }
+    };
 </script>
-
 </body>
 </html>

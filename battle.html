@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -7,6 +6,7 @@
     <title>出陣 - 戦国放置RPG</title>
     <link rel="stylesheet" href="style.css">
     <style>
+        /* --- 基本レイアウト --- */
         .log-area { background: #111; padding: 15px; height: 380px; overflow-y: scroll; font-family: monospace; font-size: 0.85rem; color: #ccc; border: 1px solid #444; line-height: 1.6; }
         .log-line { margin-bottom: 6px; border-bottom: 1px dashed #222; padding-bottom: 2px; }
         .ev-battle { color: #fa8; font-weight: bold; border-left: 3px solid #fa8; padding-left: 5px; background: rgba(60, 30, 0, 0.5); display:block; margin:5px 0;}
@@ -24,6 +24,7 @@
         .s-cond-ok { color: #0f0; font-weight: bold; }
         .s-mark { color: #ffd700; font-weight: bold; margin-right: 5px; text-shadow: 0 0 3px #d4af37; }
 
+        /* --- UIパーツ --- */
         .bulk-controls { display: flex; gap: 5px; margin-bottom: 10px; padding: 10px; background: #222; border-bottom: 1px solid #444; }
         .btn-bulk { padding: 8px; font-size: 0.8rem; cursor: pointer; border-radius: 4px; border: 1px solid #666; background: #333; color: #fff; flex:1; }
         .btn-bulk-sell { background: #522; border-color: #844; color: #fcc; flex: 2; font-weight: bold; }
@@ -56,25 +57,63 @@
         .r-SR { color: #c0c0c0; font-weight:bold; } .r-R { color: #d94; font-weight:bold; }
         
         .treasure-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap:5px; padding:10px; }
-        .treasure-item { background:#111; border:1px solid #333; padding:5px; text-align:center; font-size:0.75rem; border-radius:4px; cursor:pointer; }
+        .treasure-item { background:#111; border:1px solid #333; padding:5px; text-align:center; font-size:0.75rem; border-radius:4px; }
         .tr-unlocked { border-color:#d4af37; color:#fff; background: #332200; }
         .tr-rank { color:#ffd700; font-weight:bold; }
-        
-        /* Shop Styles */
-        .shop-grid { display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
-        .shop-item { background:#2a2a2a; border:1px solid #555; padding:10px; cursor:pointer; transition:0.2s; }
-        .shop-item:active { transform:scale(0.95); background:#444; }
-        .shop-icon { font-size:2rem; margin-bottom:5px; }
-        .shop-name { font-weight:bold; color:#fff; }
-        .shop-price { color:#ffd700; font-size:0.9rem; }
-        
-        .sell-item { display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #333; align-items:center; }
-        .sell-btn { padding:4px 8px; background:#533; color:#fcc; border:1px solid #744; font-size:0.8rem; cursor:pointer; }
+
+        /* Speed Selection Styles */
+        .speed-box { background: #1a1a1a; padding:10px; border-bottom: 1px solid #444; }
+        .speed-options { display: flex; gap: 5px; margin-top: 5px; }
+        .speed-option-label { 
+            flex: 1; text-align: center; border: 1px solid #444; background: #222; 
+            padding: 8px 5px; border-radius: 4px; cursor: pointer; position: relative;
+        }
+        .speed-option-label input { position: absolute; opacity: 0; }
+        .speed-option-label:has(input:checked) {
+            border-color: #d4af37; background: #332200; color: #d4af37;
+        }
+        .speed-title { font-weight: bold; font-size: 0.9rem; }
+        .speed-sub { font-size: 0.7rem; color: #aaa; }
+        #speed-desc-area { font-size: 0.8rem; color: #ccc; margin-top: 8px; padding: 5px; background: #111; border-radius: 3px; min-height: 2.5em; display:flex; align-items:center; }
+        .warn-text { color: #f66; font-weight: bold; }
+
+        /* Animations */
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+        .shake-anim { animation: shake 0.5s; animation-iteration-count: 1; }
+
+        @keyframes flash {
+            0% { background-color: transparent; }
+            50% { background-color: rgba(255, 255, 255, 0.5); }
+            100% { background-color: transparent; }
+        }
+        .flash-anim { animation: flash 0.5s; }
+
+        .cut-in-active { animation: fadeInOut 2.5s ease-in-out forwards; }
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: scale(0.8); }
+            20% { opacity: 1; transform: scale(1.1); }
+            80% { opacity: 1; transform: scale(1.0); }
+            100% { opacity: 0; transform: scale(1.2); }
+        }
     </style>
 </head>
 <body>
 
 <header><h1>戦況報告</h1></header>
+
+<div id="error-display" style="display:none; color:#f55; background:#300; padding:10px; margin:5px; border:1px solid #f00; font-weight:bold;"></div>
 
 <div class="resource-bar">
     <div><span class="res-icon">💰</span><span id="money-disp">0</span></div>
@@ -95,24 +134,39 @@
 
     <div id="tab-quest">
         <div id="scene-select">
+            
             <div class="tactic-select-box">
                 <span style="font-size:0.9rem; font-weight:bold;">戦術:</span>
                 <select id="tactic-select"></select>
             </div>
-            
-            <div class="tactic-select-box" style="border-top:0;">
-                <span style="font-size:0.9rem; font-weight:bold;">行軍:</span>
-                <select id="speed-select" style="background:#111; color:#fff; border:1px solid #555; padding:5px; flex:1; margin-left:10px;">
-                    <option value="normal">通常進軍 (標準)</option>
-                    <option value="kakeashi">かけあし進軍 (時間半減/兵糧1.5倍)</option>
-                    <option value="dengeki">電撃強行軍 (即完了/兵糧3倍/敵強化)</option>
-                </select>
+
+            <div class="speed-box">
+                <div style="font-size:0.9rem; font-weight:bold; color:#d4af37;">進軍速度</div>
+                <div class="speed-options">
+                    <label class="speed-option-label">
+                        <input type="radio" name="march-speed" value="normal" checked onchange="updateSpeedDesc()">
+                        <div class="speed-title">通常</div>
+                        <div class="speed-sub">標準</div>
+                    </label>
+                    <label class="speed-option-label">
+                        <input type="radio" name="march-speed" value="fast" onchange="updateSpeedDesc()">
+                        <div class="speed-title">かけあし</div>
+                        <div class="speed-sub">早・糧増</div>
+                    </label>
+                    <label class="speed-option-label">
+                        <input type="radio" name="march-speed" value="blitz" onchange="updateSpeedDesc()">
+                        <div class="speed-title" style="color:#f88;">電撃強行</div>
+                        <div class="speed-sub">即・難</div>
+                    </label>
+                </div>
+                <div id="speed-desc-area">
+                    標準的な速度です。兵糧消費も標準です。
+                </div>
             </div>
 
             <div style="display:flex; justify-content:space-between; padding:5px; background:#222; margin-bottom:5px;">
                 <button onclick="openAchModal()" style="flex:1; margin-right:5px; padding:5px; font-size:0.8rem; background:#444; color:#fff; border:1px solid #666;">🏆 実績</button>
-                <button onclick="openShopModal()" style="flex:1; margin:0 5px; padding:5px; font-size:0.8rem; background:#353; color:#fff; border:1px solid #464;">🛒 万屋</button>
-                <button onclick="openTreasureModal()" style="flex:1; margin-left:5px; padding:5px; font-size:0.8rem; background:#446; color:#fff; border:1px solid #668;">🍵 家宝</button>
+                <button onclick="openTreasureModal()" style="flex:1; margin-left:5px; padding:5px; font-size:0.8rem; background:#446; color:#fff; border:1px solid #668;">🍵 家宝一覧</button>
             </div>
             
             <p style="font-size:0.8rem; color:#aaa; text-align:center;">
@@ -125,6 +179,7 @@
         <div id="scene-progress" style="display:none;">
             <div id="battle-box" class="box" style="text-align:center; border-color:#d4af37;">
                 <h3 id="quest-title" style="margin:0; color:#d4af37;">進軍中</h3>
+                <div id="speed-indicator" style="font-size:0.8rem; margin-top:2px;"></div>
                 <div id="weather-info" style="font-size:0.8rem; margin:5px 0;"></div>
                 <div id="timer" style="font-size:1.5rem; font-weight:bold; color:#f55;">00:00</div>
                 <div id="log-container" class="log-area"></div>
@@ -151,7 +206,6 @@
     </div>
 </div>
 
-<!-- Modals -->
 <div id="prisoner-modal" class="modal">
     <div class="modal-content">
         <h3 id="pm-name" style="color:#d4af37; font-size:1.3rem; margin:5px 0;"></h3>
@@ -191,32 +245,6 @@
     </div>
 </div>
 
-<div id="shop-modal" class="modal">
-    <div class="modal-content">
-        <h3 style="color:#d4af37; border-bottom:1px solid #444; padding-bottom:5px;">万屋</h3>
-        <div style="text-align:center; margin-bottom:15px;">
-            所持銀貨: <span id="shop-money" style="color:#ffd700; font-weight:bold;">0</span>
-        </div>
-        <div class="shop-grid">
-            <div class="shop-item" onclick="shopBuy('ticket')">
-                <div class="shop-icon">🎫</div>
-                <div class="shop-name">手形</div>
-                <div class="shop-price">500銭</div>
-            </div>
-            <div class="shop-item" onclick="shopBuy('kokoro')">
-                <div class="shop-icon">🗝️</div>
-                <div class="shop-name">ココロの鍵</div>
-                <div class="shop-price">2000銭</div>
-            </div>
-        </div>
-        <div style="margin-top:15px; border-top:1px dashed #444; paddingTop:10px;">
-            <h4 style="color:#ccc; margin:5px 0;">家宝売却</h4>
-            <div id="sell-list" style="max-height:150px; overflow-y:auto; text-align:left;"></div>
-        </div>
-        <button class="btn-act btn-close" onclick="document.getElementById('shop-modal').style.display='none'">閉じる</button>
-    </div>
-</div>
-
 <nav class="bottom-nav">
     <a href="index.html">ホーム</a>
     <a href="deck.html">編成</a>
@@ -227,12 +255,46 @@
 <script src="character_data.js"></script>
 <script src="game_core.js"></script>
 <script>
-    let currentSave = loadSaveData();
+    let currentSave = null;
     let timerId = null;
     let selectedPrisonerIndex = -1;
     let lastLogIndex = 0; 
 
+    // エラーハンドリング（安全対策）
     window.onload = function() {
+        const errorDiv = document.getElementById('error-display');
+        let errorMsg = "";
+
+        // 1. game_core.js が読み込まれているかチェック
+        if (typeof QUEST_DATA === 'undefined') {
+            errorMsg += '【エラー】プログラム(game_core.js)が正しく読み込まれていません。<br>' +
+                        'QUEST_DATAが見つかりません。<br>';
+        }
+
+        if (errorMsg) {
+            errorDiv.innerHTML = errorMsg;
+            errorDiv.style.display = 'block';
+            document.getElementById('quest-list').innerHTML = 
+                '<div style="color:#f55; background:#300; padding:20px; border:1px solid #f00;">' +
+                'データの読み込みに失敗しました。画面上部のエラーを確認してください。' +
+                '</div>';
+            return;
+        }
+
+        // 2. セーブデータロード
+        try {
+            if (typeof loadSaveData !== 'function') {
+                throw new Error("loadSaveData関数が見つかりません。game_core.jsを確認してください。");
+            }
+            currentSave = loadSaveData();
+        } catch(e) {
+            alert("セーブデータの読み込みに失敗しました。\n" + e);
+            errorDiv.innerHTML += "Save Load Error: " + e.message + "<br>";
+            errorDiv.style.display = 'block';
+            return;
+        }
+
+        // 3. 初期配布チェック
         if(typeof checkAndDistributeStarter === 'function') {
             const res = checkAndDistributeStarter();
             if (res.success) {
@@ -240,19 +302,24 @@
                 currentSave = loadSaveData(); 
             }
         }
+
         updateResourceDisplay();
         renderTacticSelect(); 
+        updateSpeedDesc(); // 初期表示更新
+        
         if(currentSave.expedition) { switchTab('quest'); resumeExpedition(); }
         else { renderQuestList(); renderPrisoners(); }
     };
 
     function updateResourceDisplay() {
+        if(!currentSave) return;
         document.getElementById('money-disp').textContent = (currentSave.money || 0).toLocaleString();
         document.getElementById('ticket-disp').textContent = (currentSave.items.ticket || 0).toLocaleString();
         document.getElementById('kokoro-disp').textContent = (currentSave.items.kokoro || 0).toLocaleString();
     }
 
     function renderTacticSelect() {
+        if(!currentSave) return;
         const sel = document.getElementById('tactic-select');
         sel.innerHTML = '<option value="">(戦術なし)</option>';
         if (currentSave.tactics) {
@@ -268,6 +335,36 @@
         }
     }
 
+    // ★修正: game_core.jsの定義値を使って説明文を更新する
+    function updateSpeedDesc() {
+        const els = document.getElementsByName('march-speed');
+        let val = 'normal';
+        for(let i=0; i<els.length; i++) { if(els[i].checked) val = els[i].value; }
+        
+        const descArea = document.getElementById('speed-desc-area');
+        
+        // MARCH_SPEEDSが読み込めていればそれを使う、なければ手動
+        if (typeof MARCH_SPEEDS !== 'undefined' && MARCH_SPEEDS[val]) {
+            const s = MARCH_SPEEDS[val];
+            if (val === 'blitz') {
+                descArea.innerHTML = `<span class='warn-text'>【危険】即座に結果が出ますが、兵糧消費${s.foodMod}倍、敵ステータス${s.diffMod}倍に強化されます。</span><br>実績「天下覇王」対象。`;
+            } else if (val === 'fast') {
+                descArea.innerHTML = `時間は<span style='color:#fd0'>半分</span>で済みますが、兵糧消費が<span style='color:#f88'>${s.foodMod}倍</span>になります。<br>実績「天下無敵」対象。`;
+            } else {
+                descArea.innerHTML = "標準的な速度です。兵糧消費も標準です。";
+            }
+        } else {
+            // フォールバック（game_core.js読み込み失敗時など）
+            if (val === 'normal') {
+                descArea.innerHTML = "標準的な速度です。兵糧消費も標準です。";
+            } else if (val === 'fast') {
+                descArea.innerHTML = "時間は<span style='color:#fd0'>半分</span>で済みますが、兵糧消費が<span style='color:#f88'>1.5倍</span>になります。<br>実績「天下無敵」対象。";
+            } else if (val === 'blitz') {
+                descArea.innerHTML = "<span class='warn-text'>【危険】即座に結果が出ますが、兵糧消費3倍、敵ステータス2.5倍に強化されます。</span><br>実績「天下覇王」対象。";
+            }
+        }
+    }
+
     function switchTab(tab) {
         document.getElementById('tab-quest').style.display = (tab==='quest') ? 'block' : 'none';
         document.getElementById('tab-prisoner').style.display = (tab==='prisoner') ? 'block' : 'none';
@@ -276,54 +373,72 @@
 
     function renderQuestList() {
         const list = document.getElementById('quest-list'); list.innerHTML = '';
+        if(!currentSave) return;
+
         let lastRegion = "";
         const ownedKeys = currentSave.owned_ids.map(id => { const c = getCharacterById(id); return c ? (c.rarity + c.name) : ""; });
-        QUEST_DATA.forEach(q => {
-            const w = determineWeather(q.id);
-            let badges = `<span class="badge badge-weather">${w}</span>`;
-            if (q.interference) q.interference.forEach(inf => badges += ` <span class="badge badge-danger">⚠${inf}</span>`);
-            let sMark = currentSave.s_ranks.includes(q.id) ? `<span class="s-mark">★</span>` : "";
-            let sCondHTML = "";
-            if (q.s_cond) {
-                const hasCondChar = ownedKeys.includes(q.s_cond);
-                const colorClass = hasCondChar ? "s-cond-ok" : "";
-                sCondHTML = `<div class="s-cond">S条件: <span class="${colorClass}">${q.s_cond}</span></div>`;
+        
+        try {
+            if (!QUEST_DATA || QUEST_DATA.length === 0) {
+                throw new Error("QUEST_DATA is empty");
             }
-            if (q.region !== lastRegion) {
-                let isRegionComplete = currentSave.completed_regions.includes(q.region);
-                let completeBadge = isRegionComplete ? " <span style='color:#fd0;margin-left:5px;'>★制覇済</span>" : "";
-                const h = document.createElement('div'); h.className = 'region-header'; 
-                h.innerHTML = `■ ${q.region}${completeBadge}`;
-                list.appendChild(h); lastRegion = q.region;
-            }
-            const div = document.createElement('div'); div.className = 'box';
-            div.style.cssText = 'cursor:pointer; margin-bottom:8px; border:1px solid #444; padding:10px; display:flex; justify-content:space-between; align-items:center;';
-            div.innerHTML = `
-                <div>
-                    <div style="font-weight:bold; color:#d4af37;">${sMark}${q.name} <span style="font-size:0.8rem; color:#aaa;">(${q.terrain}) / ${q.food}日</span></div>
-                    <div style="font-size:0.75rem; color:#ccc; margin-bottom:3px;">BOSS:<span class="r-${q.boss_r}">${q.boss_r}</span> / 敵:${q.type}</div>
-                    <div class="quest-badges">${badges}</div>
-                    ${sCondHTML}
-                </div>
-                <div style="font-weight:bold; font-size:1.2rem; color:#666;">▶</div>
-            `;
-            div.onclick = () => startExpedition(q);
-            list.appendChild(div);
-        });
+
+            QUEST_DATA.forEach(q => {
+                const w = determineWeather(q.id);
+                let badges = `<span class="badge badge-weather">${w}</span>`;
+                if (q.interference) q.interference.forEach(inf => badges += ` <span class="badge badge-danger">⚠${inf}</span>`);
+                let sMark = currentSave.s_ranks.includes(q.id) ? `<span class="s-mark">★</span>` : "";
+                let sCondHTML = "";
+                if (q.s_cond) {
+                    const hasCondChar = ownedKeys.includes(q.s_cond);
+                    const colorClass = hasCondChar ? "s-cond-ok" : "";
+                    sCondHTML = `<div class="s-cond">S条件: <span class="${colorClass}">${q.s_cond}</span></div>`;
+                }
+                if (q.region !== lastRegion) {
+                    let isRegionComplete = currentSave.completed_regions.includes(q.region);
+                    let completeBadge = isRegionComplete ? " <span style='color:#fd0;margin-left:5px;'>★制覇済</span>" : "";
+                    const h = document.createElement('div'); h.className = 'region-header'; 
+                    h.innerHTML = `■ ${q.region}${completeBadge}`;
+                    list.appendChild(h); lastRegion = q.region;
+                }
+                const div = document.createElement('div'); div.className = 'box';
+                div.style.cssText = 'cursor:pointer; margin-bottom:8px; border:1px solid #444; padding:10px; display:flex; justify-content:space-between; align-items:center;';
+                div.innerHTML = `
+                    <div>
+                        <div style="font-weight:bold; color:#d4af37;">${sMark}${q.name} <span style="font-size:0.8rem; color:#aaa;">(${q.terrain}) / ${q.food}日</span></div>
+                        <div style="font-size:0.75rem; color:#ccc; margin-bottom:3px;">BOSS:<span class="r-${q.boss_r}">${q.boss_r}</span> / 敵:${q.type}</div>
+                        <div class="quest-badges">${badges}</div>
+                        ${sCondHTML}
+                    </div>
+                    <div style="font-weight:bold; font-size:1.2rem; color:#666;">▶</div>
+                `;
+                div.onclick = () => startExpedition(q);
+                list.appendChild(div);
+            });
+        } catch(e) {
+            console.error(e);
+            list.innerHTML = `<div style="color:red">リスト生成エラー: ${e.message}</div>`;
+            document.getElementById('error-display').innerHTML += `Render Error: ${e.message}<br>`;
+            document.getElementById('error-display').style.display = 'block';
+        }
+        
         document.getElementById('scene-select').style.display = 'block';
         document.getElementById('scene-progress').style.display = 'none';
     }
 
     function startExpedition(quest) {
         const tactic = document.getElementById('tactic-select').value;
-        const speed = document.getElementById('speed-select').value;
-        
-        // Confirm for Dengeki
-        if (speed === 'dengeki') {
-            if (!confirm("電撃強行軍は兵糧消費が激しく、敵が強化されます。\n実行しますか？")) return;
+        const speedEls = document.getElementsByName('march-speed');
+        let speedMode = 'normal';
+        for(let i=0; i<speedEls.length; i++) { if(speedEls[i].checked) speedMode = speedEls[i].value; }
+
+        if (speedMode === 'blitz') {
+            if (!confirm(`【電撃強行軍】\n兵糧を3倍消費し、敵が強化されます。\nこのモードでは撤退もできません。\n\n本当によろしいですか？`)) {
+                return;
+            }
         }
-        
-        const res = startExpeditionCore(quest.id, tactic, speed);
+
+        const res = startExpeditionCore(quest.id, tactic, speedMode);
         if (res.error) { alert(res.error); return; }
         currentSave = loadSaveData();
         resumeExpedition();
@@ -333,10 +448,19 @@
         document.getElementById('scene-select').style.display='none'; 
         document.getElementById('scene-progress').style.display='block';
         document.getElementById('btn-finish').style.display = 'none';
-        document.getElementById('btn-retreat').style.display = 'block'; 
         
+        const exp = currentSave.expedition;
+        const isBlitz = (exp && exp.speedMode === 'blitz');
+        document.getElementById('btn-retreat').style.display = isBlitz ? 'none' : 'block'; 
+
         const q=QUEST_DATA.find(x=>x.id===currentSave.expedition.questId);
         document.getElementById('quest-title').textContent=q.name; 
+        
+        let speedName = "通常進軍";
+        if(exp.speedMode === 'fast') speedName = "かけあし";
+        if(exp.speedMode === 'blitz') speedName = "電撃強行軍";
+        document.getElementById('speed-indicator').innerHTML = `<span style="color:#aaa;">モード:</span> <span style="color:#fa8; font-weight:bold;">${speedName}</span>`;
+
         document.getElementById('weather-info').textContent=`天候:${currentSave.expedition.weather}`;
         lastLogIndex = 0; 
         document.getElementById('log-container').innerHTML = ''; 
@@ -356,13 +480,25 @@
     function updateLogs() {
         const exp = currentSave.expedition; if (!exp) return;
         const now = Date.now();
+        const q = QUEST_DATA.find(x => x.id === exp.questId);
+        
+        const sMode = exp.speedMode || 'normal';
+        const sConf = (typeof MARCH_SPEEDS !== 'undefined') ? MARCH_SPEEDS[sMode] : { timeMod: 1.0 };
+        let timeMod = sConf.timeMod;
+        if (exp.tactic === "翔ぶが如く") timeMod *= 0.25;
+
         const totalDuration = exp.endTime - exp.startTime;
         const elapsedTime = now - exp.startTime;
         const timeLeft = exp.endTime - now;
-        const q = QUEST_DATA.find(x => x.id === exp.questId);
         
-        const maxDays = (exp.result === 'retired' || exp.result === 'defeat') ? exp.logs.daysTraveled : q.food;
-        const currentDay = (exp.result === 'retired') ? maxDays : Math.min(maxDays, (elapsedTime / totalDuration) * maxDays);
+        const maxDays = (exp.result === 'retired' || exp.result === 'defeat' || exp.result === 'draw') ? exp.logs.daysTraveled : q.food;
+        
+        let currentDay;
+        if (totalDuration <= 100) {
+            currentDay = maxDays; 
+        } else {
+            currentDay = (exp.result === 'retired') ? maxDays : Math.min(maxDays, (elapsedTime / totalDuration) * maxDays);
+        }
 
         const logDiv = document.getElementById('log-container');
         const box = document.getElementById('battle-box');
@@ -396,7 +532,10 @@
         lastLogIndex = displayedCount; 
 
         if (timeLeft <= 0 || exp.result === 'retired') {
-            document.getElementById('timer').textContent = (exp.result==='retired') ? "撤退" : "到着";
+            let status = "到着";
+            if (exp.result === 'retired') status = "撤退";
+            if (exp.result === 'draw') status = "引分";
+            document.getElementById('timer').textContent = status;
             document.getElementById('btn-finish').style.display = 'block';
             document.getElementById('btn-retreat').style.display = 'none'; 
             clearInterval(timerId);
@@ -492,7 +631,7 @@
                     if (allS && !currentSave.completed_regions.includes(q.region)) {
                         currentSave.completed_regions.push(q.region);
                         msg += `\n★★★ ${q.region}を完全制覇しました！ ★★★\n`;
-                        if (REGION_REWARDS[q.region]) {
+                        if (typeof REGION_REWARDS !== 'undefined' && REGION_REWARDS[q.region]) {
                             const rewardDef = REGION_REWARDS[q.region];
                             const rewardChar = window.characterData.find(c => c.name === rewardDef.name && c.rarity === rewardDef.rarity);
                             if (rewardChar) {
@@ -516,8 +655,7 @@
                 if (exp.stats.dead > 0) msg += `\n[Hint] 撤退者を出さずに勝利せよ\n`;
             }
             const tacticObj = exp.tactic ? TACTICS_DATA.find(t=>t.name===exp.tactic) : null;
-            const bossChar = getCharacterById(exp.bossId);
-            const rate = calculateCaptureProb(currentSave.deck.map(id=>getCharacterById(id)), bossChar, tacticObj);
+            const rate = calculateCaptureProb(currentSave.deck.map(id=>getCharacterById(id)), q.boss_r, tacticObj);
             if (Math.random() * 100 < rate) { 
                 currentSave.prisoners.push({ id: exp.bossId, time: Date.now() }); 
                 currentSave.records.capturedCount = (currentSave.records.capturedCount || 0) + 1;
@@ -527,6 +665,8 @@
             currentSave.records.winStreak = 0;
             if (exp.result === 'retired') {
                 msg = "【撤退完了】\n軍を退きました。"; 
+            } else if (exp.result === 'draw') {
+                msg = "【時間切れ】\n決着がつかず引き分けとなりました。\n(戦利品なし)";
             } else {
                 msg = "【戦闘結果: 敗北...】\n評価: Dランク\n戦利品はありません。";
             }
@@ -542,10 +682,11 @@
         saveData(currentSave); 
         
         alert(msg); 
-        updateResourceDisplay(); renderQuestList(); renderTacticSelect(); renderPrisoners();
+        updateResourceDisplay(); renderQuestList(); renderTacticSelect(); renderPrisoners(); updateSpeedDesc();
     }
 
     function renderPrisoners(){
+        if(!currentSave) return;
         const l=document.getElementById('prisoner-list'); l.innerHTML='';
         if(currentSave.prisoners.length===0){l.innerHTML='<div style="padding:20px;text-align:center;">なし</div>';return;}
         currentSave.prisoners.forEach((p,i)=>{
@@ -557,12 +698,13 @@
     }
     function setAllChecks(b){document.querySelectorAll('.prisoner-check').forEach(c=>c.checked=b);}
     function bulkRelease(){
+        if(!currentSave) return;
         const chk=document.querySelectorAll('.prisoner-check:checked'); if(chk.length===0)return;
         if(confirm(`${chk.length}名を解放しますか？`)){
             let idxs=[]; chk.forEach(c=>idxs.push(parseInt(c.value)));
             idxs.sort((a,b)=>b-a); idxs.forEach(i=>{
                 const c=getCharacterById(currentSave.prisoners[i].id);
-                const r=RELEASE_RATES[c.rarity];
+                const r= (typeof RELEASE_RATES !== 'undefined') ? RELEASE_RATES[c.rarity] : { v: 10, t: 'm' };
                 if(r.t==='t')currentSave.items.ticket=(currentSave.items.ticket||0)+r.v; else currentSave.money+=r.v;
                 currentSave.prisoners.splice(i,1);
                 currentSave.records.totalReleased = (currentSave.records.totalReleased || 0) + 1;
@@ -591,7 +733,7 @@
             if(rate > 0) ctr.innerHTML += `<button class="btn-act btn-coin" onclick="actionPrisoner('persuade', ${rate})">説得する (成功率${rate}%)<br><span style="font-size:0.7rem">無料</span></button>`;
             else ctr.innerHTML += `<div style="margin-top:5px; font-size:0.8rem; color:#888;">※高レアリティのため説得不可</div>`;
         }
-        const r=RELEASE_RATES[c.rarity];
+        const r=(typeof RELEASE_RATES !== 'undefined') ? RELEASE_RATES[c.rarity] : { v: 10, t: 'm' };
         const rText = r.t==='t' ? `手形${r.v}枚` : `銀貨${r.v}`;
         ctr.innerHTML+=`<button class="btn-act" onclick="actionPrisoner('release')" style="background:#333;border:1px solid #555;">解放する (報酬: ${rText})</button>`;
         document.getElementById('prisoner-modal').style.display='flex';
@@ -612,7 +754,7 @@
             else { alert("説得失敗... 武将は去っていきました。"); currentSave.prisoners.splice(selectedPrisonerIndex,1); }
             saveData(currentSave); updateResourceDisplay(); closeModal(); renderPrisoners();
         } else if(act==='release'){
-            const r=RELEASE_RATES[c.rarity];
+            const r=(typeof RELEASE_RATES !== 'undefined') ? RELEASE_RATES[c.rarity] : { v: 10, t: 'm' };
             if(r.t==='t') currentSave.items.ticket=(currentSave.items.ticket||0)+r.v; else currentSave.money+=r.v;
             currentSave.prisoners.splice(selectedPrisonerIndex,1); 
             currentSave.records.totalReleased = (currentSave.records.totalReleased || 0) + 1;
@@ -662,63 +804,6 @@
             list.appendChild(div);
         });
         document.getElementById('treasure-modal').style.display='flex';
-    }
-    
-    // Shop Logic
-    function openShopModal() {
-        document.getElementById('shop-money').textContent = (currentSave.money || 0).toLocaleString();
-        renderSellList();
-        document.getElementById('shop-modal').style.display = 'flex';
-    }
-    
-    function shopBuy(itemId) {
-        const res = buyItem(itemId);
-        if (res.success) {
-            currentSave = res.current; // sync
-            updateResourceDisplay();
-            document.getElementById('shop-money').textContent = (currentSave.money || 0).toLocaleString();
-            alert(res.msg);
-        } else {
-            alert(res.msg);
-        }
-    }
-    
-    function renderSellList() {
-        const list = document.getElementById('sell-list');
-        list.innerHTML = '';
-        const collected = currentSave.collected_treasures || [];
-        if (collected.length === 0) {
-            list.innerHTML = '<div style="padding:10px; color:#888;">売却できる家宝がありません</div>';
-            return;
-        }
-        
-        collected.forEach(tid => {
-            const t = TREASURE_DATA.find(x => x.id === tid);
-            if (!t) return;
-            const price = t.rank * 100;
-            const div = document.createElement('div');
-            div.className = 'sell-item';
-            div.innerHTML = `
-                <div>
-                    <div style="font-weight:bold; color:#d4af37;">${t.name}</div>
-                    <div style="font-size:0.7rem; color:#aaa;">ランク${t.rank}</div>
-                </div>
-                <button class="sell-btn" onclick="doSell(${tid})">売却 (${price}銭)</button>
-            `;
-            list.appendChild(div);
-        });
-    }
-    
-    function doSell(tid) {
-        if (!confirm("本当に売却しますか？\n(失った家宝は再入手が必要です)")) return;
-        const res = sellTreasure(tid);
-        if (res.success) {
-            currentSave = res.current;
-            updateResourceDisplay();
-            document.getElementById('shop-money').textContent = (currentSave.money || 0).toLocaleString();
-            renderSellList();
-            alert(res.msg);
-        }
     }
 
     function debugSkip(){if(currentSave.expedition){currentSave.expedition.startTime=0;currentSave.expedition.endTime=1;saveData(currentSave);updateLogs();}}

@@ -172,7 +172,7 @@
             alert("武将データ(character_data.js)が見つかりません。");
             return;
         }
-        if (typeof loadSaveData !== 'function') { alert("プログラム読込エラー"); return; }
+        if (typeof loadSaveData !== 'function') { alert("プログラム読込エラー: game_core.jsが正しく読み込まれていません。"); return; }
         currentSave = loadSaveData();
         updateDisplay();
     };
@@ -197,6 +197,10 @@
             if ((currentSave.items.ticket || 0) < cost) { alert("手形が足りません！"); return; }
             currentSave.items.ticket -= cost;
         }
+
+        // 記録更新 (実績用)
+        if (!currentSave.records) currentSave.records = {};
+        currentSave.records.gachaCount = (currentSave.records.gachaCount || 0) + count;
 
         lastGachaConfig = { type: type, count: count };
 
@@ -226,6 +230,7 @@
             let candidates = window.characterData.filter(c => c.rarity === rarity);
             let resultChar;
             if (candidates.length === 0) {
+                // 候補がいない場合のフォールバック
                 const fallback = window.characterData.filter(c => c.rarity === 'C' || c.rarity === 'N'); 
                 resultChar = fallback[Math.floor(Math.random() * fallback.length)];
             } else {
@@ -234,6 +239,8 @@
 
             let isNew = false;
             let refund = 0;
+            
+            // ID重複チェック
             if (currentSave.owned_ids.includes(resultChar.id)) {
                 if (resultChar.rarity === 'UR') refund = 5000;
                 else if (resultChar.rarity === 'SSR') refund = 1000;
@@ -247,6 +254,10 @@
             lastGachaResults.push({ char: resultChar, isNew: isNew, refund: refund });
         }
 
+        // 実績チェックと保存
+        if (typeof checkAchievements === 'function') {
+            checkAchievements(currentSave);
+        }
         saveData(currentSave);
         updateDisplay();
         showResultModal();
@@ -261,10 +272,10 @@
         const modal = document.getElementById('result-modal');
         const content = document.getElementById('result-content');
         const btnArea = document.getElementById('result-buttons');
-        const balanceArea = document.getElementById('result-balance'); // ★追加: 残高表示エリア
+        const balanceArea = document.getElementById('result-balance');
         const results = lastGachaResults;
         
-        // ★残高更新
+        // 残高更新
         balanceArea.innerHTML = `
             <span style="margin-right:15px;">残金: <span style="color:#ffd700; font-weight:bold;">${currentSave.money.toLocaleString()}</span> 銭</span>
             <span>手形: <span style="color:#ffd700; font-weight:bold;">${(currentSave.items.ticket||0).toLocaleString()}</span> 枚</span>

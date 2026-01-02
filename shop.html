@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>万屋 - 戦国放置RPG</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .shop-container { padding: 10px; }
+        
+        .tab-menu { display: flex; border-bottom: 1px solid #444; margin-bottom: 15px; }
+        .tab-btn {
+            flex: 1; padding: 10px; background: #222; color: #888; 
+            border: 1px solid #444; border-bottom: none; cursor: pointer;
+            text-align: center; font-weight: bold;
+        }
+        .tab-btn.active { background: #332200; color: #d4af37; border-color: #d4af37; }
+
+        .shop-item {
+            display: flex; align-items: center; justify-content: space-between;
+            background: #222; border: 1px solid #444; padding: 10px; margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        .item-info { flex: 1; }
+        .item-name { font-weight: bold; color: #fff; font-size: 1rem; }
+        .item-desc { font-size: 0.8rem; color: #aaa; }
+        .item-price { color: #ffd700; font-weight: bold; }
+        
+        .btn-buy, .btn-sell {
+            padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;
+        }
+        .btn-buy { background: #d4af37; color: #000; box-shadow: 0 2px 0 #8a6d3b; }
+        .btn-buy:disabled { background: #555; color: #888; box-shadow: none; cursor: not-allowed; }
+        
+        .btn-sell { background: #522; color: #fcc; border: 1px solid #844; }
+
+        .treasure-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px;
+            max-height: 400px; overflow-y: auto;
+        }
+        .sell-card {
+            background: #111; border: 1px solid #444; padding: 5px; text-align: center;
+            cursor: pointer; position: relative; border-radius: 4px;
+        }
+        .sell-card:hover { border-color: #d4af37; }
+        .sell-val { color: #ffd700; font-size: 0.8rem; }
+        .sell-rank { font-weight: bold; color: #aaa; font-size: 0.7rem; }
+    </style>
+</head>
+<body>
+
+<header><h1>万屋 (Shop)</h1></header>
+
+<div class="resource-bar">
+    <div><span class="res-icon">💰</span><span id="money-disp">0</span></div>
+    <div><span class="res-icon">🎫</span><span id="ticket-disp">0</span></div>
+    <div><span class="res-icon">🗝️</span><span id="kokoro-disp">0</span></div>
+</div>
+
+<div class="container shop-container">
+    <div class="tab-menu">
+        <div id="tab-buy" class="tab-btn active" onclick="setTab('buy')">買い物</div>
+        <div id="tab-sell" class="tab-btn" onclick="setTab('sell')">家宝売却</div>
+    </div>
+
+    <div id="area-buy">
+        <div class="box" style="margin-bottom:10px; font-size:0.85rem; color:#ccc;">
+            銀貨を使ってアイテムを購入できます。<br>
+            手形はガチャや超戦術に、鍵は武将の登用に必要です。
+        </div>
+
+        <div class="shop-item">
+            <div class="item-info">
+                <div class="item-name">🎫 手形</div>
+                <div class="item-desc">ガチャや超戦術に使用</div>
+            </div>
+            <div style="text-align:right; margin-right:10px;">
+                <div class="item-price" id="price-ticket">500 銭</div>
+            </div>
+            <button class="btn-buy" onclick="buyItem('ticket')">購入</button>
+        </div>
+
+        <div class="shop-item">
+            <div class="item-info">
+                <div class="item-name">🗝️ ココロの鍵</div>
+                <div class="item-desc">高レア武将の登用に必須</div>
+            </div>
+            <div style="text-align:right; margin-right:10px;">
+                <div class="item-price" id="price-kokoro">10,000 銭</div>
+            </div>
+            <button class="btn-buy" onclick="buyItem('kokoro')">購入</button>
+        </div>
+    </div>
+
+    <div id="area-sell" style="display:none;">
+        <div class="box" style="margin-bottom:10px; font-size:0.85rem; color:#ccc;">
+            収集した家宝を売却して銀貨にします。<br>
+            <span style="color:#f66;">※売却するとコレクションから消えます（再入手可能）。</span>
+        </div>
+        <div id="treasure-list" class="treasure-grid"></div>
+        <div id="no-treasure-msg" style="text-align:center; padding:20px; color:#888; display:none;">
+            売却できる家宝がありません
+        </div>
+    </div>
+</div>
+
+<nav class="bottom-nav">
+    <a href="index.html">ホーム</a>
+    <a href="deck.html">編成</a>
+    <a href="battle.html">出陣</a>
+    <a href="gacha.html">ガチャ</a>
+</nav>
+
+<script src="game_core.js"></script>
+<script>
+    let currentSave = loadSaveData();
+
+    window.onload = function() {
+        updateDisplay();
+        renderSellList();
+        
+        // 価格表示更新
+        if(typeof SHOP_PRICES !== 'undefined') {
+            document.getElementById('price-ticket').textContent = SHOP_PRICES.ticket.toLocaleString() + " 銭";
+            document.getElementById('price-kokoro').textContent = SHOP_PRICES.kokoro.toLocaleString() + " 銭";
+        }
+    };
+
+    function updateDisplay() {
+        document.getElementById('money-disp').textContent = (currentSave.money || 0).toLocaleString();
+        document.getElementById('ticket-disp').textContent = (currentSave.items.ticket || 0).toLocaleString();
+        document.getElementById('kokoro-disp').textContent = (currentSave.items.kokoro || 0).toLocaleString();
+    }
+
+    function setTab(mode) {
+        document.getElementById('tab-buy').className = mode==='buy' ? 'tab-btn active' : 'tab-btn';
+        document.getElementById('tab-sell').className = mode==='sell' ? 'tab-btn active' : 'tab-btn';
+        document.getElementById('area-buy').style.display = mode==='buy' ? 'block' : 'none';
+        document.getElementById('area-sell').style.display = mode==='sell' ? 'block' : 'none';
+    }
+
+    function buyItem(type) {
+        if (typeof SHOP_PRICES === 'undefined') { alert("エラー: game_core.jsに価格設定(SHOP_PRICES)がありません。"); return; }
+        
+        const price = SHOP_PRICES[type];
+        if (currentSave.money < price) {
+            alert("銀貨が足りません！");
+            return;
+        }
+
+        if (confirm(`銀貨 ${price} で購入しますか？`)) {
+            currentSave.money -= price;
+            if (type === 'ticket') currentSave.items.ticket = (currentSave.items.ticket || 0) + 1;
+            if (type === 'kokoro') currentSave.items.kokoro = (currentSave.items.kokoro || 0) + 1;
+            
+            saveData(currentSave);
+            updateDisplay();
+            alert("購入しました！");
+        }
+    }
+
+    function renderSellList() {
+        const list = document.getElementById('treasure-list');
+        list.innerHTML = '';
+        const collected = currentSave.collected_treasures || [];
+        
+        if (collected.length === 0) {
+            document.getElementById('no-treasure-msg').style.display = 'block';
+            return;
+        }
+        document.getElementById('no-treasure-msg').style.display = 'none';
+
+        // ランクが高い順にソートして表示
+        const myTreasures = collected.map(id => TREASURE_DATA.find(t => t.id === id)).filter(t => t);
+        myTreasures.sort((a, b) => b.rank - a.rank);
+
+        myTreasures.forEach(t => {
+            // 売却額 = ランク × 定数(未定義なら100)
+            const baseMult = (typeof TREASURE_SELL_MULTIPLIER !== 'undefined') ? TREASURE_SELL_MULTIPLIER : 100;
+            const sellPrice = t.rank * baseMult;
+
+            const div = document.createElement('div');
+            div.className = 'sell-card';
+            div.onclick = () => sellTreasure(t.id, t.name, sellPrice);
+            div.innerHTML = `
+                <div class="sell-rank">★${t.rank}</div>
+                <div style="font-size:0.8rem; font-weight:bold; margin:2px 0;">${t.name}</div>
+                <div style="font-size:0.7rem; color:#aaa;">${t.type}</div>
+                <div class="sell-val">${sellPrice} 銭</div>
+            `;
+            list.appendChild(div);
+        });
+    }
+
+    function sellTreasure(id, name, price) {
+        if (confirm(`家宝【${name}】を売却しますか？\n売却額: ${price} 銭\n(コレクションから削除されます)`)) {
+            const idx = currentSave.collected_treasures.indexOf(id);
+            if (idx !== -1) {
+                currentSave.collected_treasures.splice(idx, 1); // 削除
+                currentSave.money += price;
+                saveData(currentSave);
+                updateDisplay();
+                renderSellList();
+                alert(`売却しました。\n+${price} 銭`);
+            }
+        }
+    }
+</script>
+</body>
+</html>
