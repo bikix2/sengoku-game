@@ -1,6 +1,6 @@
-// game_core.js - Ver 42.0 (Complete Fix)
+// game_core.js - Ver 43.0 (Shop & Speed Update)
 
-const SAVE_KEY = 'sengoku_idle_save_v41_full'; 
+const SAVE_KEY = 'sengoku_idle_save_v43_full'; 
 const SECONDS_PER_DAY = 10; 
 
 const REGION_MAP = {
@@ -319,7 +319,7 @@ function findCharacterByNameAndRarity(fullName) {
     return window.characterData.find(c => c.name.includes(name) && c.rarity === rarity);
 }
 
-// --- checkAchievements ---
+// --- checkAchievements (Fix & Extension) ---
 function checkAchievements(save) {
     const newAchieved = [];
     const newTactics = [];
@@ -336,6 +336,7 @@ function checkAchievements(save) {
     ACHIEVEMENT_DATA.forEach(ach => {
         if (save.achievements.includes(ach.id)) return; 
         let cleared = false;
+        
         switch (ach.name) {
             case "国取り開始": cleared = save.s_ranks.length >= 1; break;
             case "初国獲り": cleared = save.completed_regions.length >= 1; break;
@@ -372,11 +373,11 @@ function checkAchievements(save) {
 
         if (lastStats && lastStats.result === 'win') {
             switch (ach.name) {
-                case "達人": cleared = lastStats.deckRarities.some(r => ["R","SR","SSR","UR","LOB"].includes(r)); break;
+                case "達人": cleared = (lastStats.deckCount === 1 && lastStats.deckRarities.some(r => ["R","SR","SSR","UR","LOB"].includes(r))); break;
                 case "戦上手": cleared = lastStats.deckRarities.every(r => ["C","N"].includes(r)) && lastStats.deckCount === 3; break;
                 case "単騎駆け": cleared = lastStats.deckCount === 1; break;
                 case "敵中突破": cleared = lastStats.startHp <= 500; break;
-                case "戦の申し子": cleared = lastStats.maxHp === lastStats.endHp; break;
+                case "戦の申し子": cleared = lastStats.endHp >= lastStats.maxHp; break;
                 case "大軍勢": cleared = lastStats.maxHp >= 10000; break;
                 case "死中活路": cleared = lastStats.endFood <= 0; break;
                 case "怒涛の進軍": cleared = lastStats.questDiff >= 6; break;
@@ -418,9 +419,13 @@ function cancelExpedition() {
     const now = Date.now();
     const exp = save.expedition;
     const q = QUEST_DATA.find(x => x.id === exp.questId);
-    const totalDuration = (q.food * SECONDS_PER_DAY * 1000);
+    
+    // speedModeによる調整は完了時刻にのみ影響するため、経過率計算は本来の日数ベースで行う
+    // ただし、電撃強行軍の場合は即完了なのでここには来ないはずだが、念のため考慮
+    const totalDuration = exp.endTime - exp.startTime;
     const elapsed = now - exp.startTime;
     const currentDay = Math.min(q.food, (elapsed / totalDuration) * q.food);
+    
     exp.result = 'retired';
     exp.endTime = now;
     exp.logs.events = exp.logs.events.filter(ev => ev.day <= currentDay);
@@ -432,8 +437,8 @@ function cancelExpedition() {
     saveData(save);
 }
 
-// --- startExpeditionCore ---
-function startExpeditionCore(questId, tacticName) {
+// --- startExpeditionCore (Updated) ---
+function startExpeditionCore(questId, tacticName, speedMode = 'normal') {
     const save = loadSaveData();
     const deck = save.deck.map(id => getCharacterById(id));
     const quest = QUEST_DATA.find(q => q.id === questId);
@@ -454,16 +459,33 @@ function startExpeditionCore(questId, tacticName) {
         }
     }
 
+    // --- Speed Mode Modifiers ---
+    let timeMultiplier = 1.0;
+    let foodMultiplier = 1.0;
+    let enemyBuff = 1.0;
+
+    if (speedMode === 'kakeashi') {
+        timeMultiplier = 0.5; // 時間半分
+        foodMultiplier = 1.5; // 兵糧1.5倍
+    } else if (speedMode === 'dengeki') {
+        timeMultiplier = 0.0; // 一瞬
+        foodMultiplier = 3.0; // 兵糧3倍
+        enemyBuff = 1.5;      // 敵ステータス1.5倍
+    }
+
+    if (tactic && tactic.name === "翔ぶが如く") timeMultiplier *= 0.25;
+
     const bossChar = (window.characterData.filter(c => c.rarity === quest.boss_r)[0]) || window.characterData[0];
     const weather = determineWeather(quest.id);
-    const logs = simulateExpeditionLoop(quest, deck, weather, bossChar, tactic);
+    
+    const logs = simulateExpeditionLoop(quest, deck, weather, bossChar, tactic, foodMultiplier, enemyBuff);
+    
     const actualDays = logs.daysTraveled;
-    let timeMod = 1.0;
-    if (tactic && tactic.name === "翔ぶが如く") timeMod = 0.25;
+    const duration = actualDays * SECONDS_PER_DAY * 1000 * timeMultiplier;
     
-    const duration = actualDays * SECONDS_PER_DAY * 1000 * timeMod;
     const now = Date.now();
-    
+    const endTime = (speedMode === 'dengeki') ? now : (now + duration);
+
     if (logs.gainedItems) {
         if (logs.gainedItems.kokoro > 0) save.items.kokoro = (save.items.kokoro || 0) + logs.gainedItems.kokoro;
     }
@@ -479,13 +501,14 @@ function startExpeditionCore(questId, tacticName) {
         deckRarities: validDeck.map(c=>c.rarity),
         questDiff: quest.diff,
         deadCount: logs.stats.dead,
-        preemptive: logs.preemptiveOccurred
+        preemptive: logs.preemptiveOccurred,
+        speedMode: speedMode
     };
 
     save.expedition = { 
         questId: quest.id, 
         startTime: now, 
-        endTime: now + duration, 
+        endTime: endTime, 
         weather: weather, 
         logs: logs, 
         result: logs.result, 
@@ -553,8 +576,8 @@ function isFemale(char) {
     return fNames.some(n => char.name.includes(n));
 }
 
-// --- simulateBattle ---
-function simulateBattle(deck, enemy, quest, tactic) {
+// --- simulateBattle (Updated with enemyBuff) ---
+function simulateBattle(deck, enemy, quest, tactic, enemyBuff = 1.0) {
     const battleLog = [];
     let lowRarityBuff = (tactic && tactic.name === "遠く交わり近く攻む") ? 1.5 : 1.0;
     
@@ -577,14 +600,20 @@ function simulateBattle(deck, enemy, quest, tactic) {
         battleLog.push(`<span class="ev-skill" data-char="戦術" data-skill="${tactic.name}">超戦術【${tactic.name}】！敵の特技を封じた！</span>`);
     }
 
+    // 敵ステータスに enemyBuff を適用
     let enemyUnit = {
         name: enemy.name, rarity: enemy.rarity, type: enemy.type || "足軽",
-        war: Math.floor(enemy.war * (1.0 + quest.diff * 0.2)), 
-        hp: Math.floor(enemy.hp * (1.0 + quest.diff * 0.5)),
+        war: Math.floor(enemy.war * (1.0 + quest.diff * 0.2) * enemyBuff), 
+        hp: Math.floor(enemy.hp * (1.0 + quest.diff * 0.5) * enemyBuff),
         skill: enemySkill,
-        maxHp: Math.floor(enemy.hp * (1.0 + quest.diff * 0.5)),
+        maxHp: Math.floor(enemy.hp * (1.0 + quest.diff * 0.5) * enemyBuff),
         status: []
     };
+    
+    if (enemyBuff > 1.0) {
+        battleLog.push(`<span class="ev-bad">敵軍強化！(強行軍の影響) 戦力${Math.floor(enemyBuff*100)}%</span>`);
+    }
+
     battleLog.push(`敵将【${enemyUnit.name}】(${enemyUnit.type})と遭遇！`);
     
     if (tactic && tactic.name === "美人の計") {
@@ -787,8 +816,8 @@ function simulateBattle(deck, enemy, quest, tactic) {
     return { result: 'draw', log: battleLog, remainingHpRate: 0, deadCount: 0 };
 }
 
-// --- simulateExpeditionLoop ---
-function simulateExpeditionLoop(quest, deck, weather, bossChar, tactic) {
+// --- simulateExpeditionLoop (Updated with foodMultiplier & enemyBuff) ---
+function simulateExpeditionLoop(quest, deck, weather, bossChar, tactic, foodMultiplier = 1.0, enemyBuff = 1.0) {
     const events = [];
     const capturedIds = [];
     const treasures = [];
@@ -815,12 +844,16 @@ function simulateExpeditionLoop(quest, deck, weather, bossChar, tactic) {
 
     addLog(0, `<span class="log-time">出発</span> 兵糧:${currentFood} (行程:${totalDays}日)`);
     if (tactic) addLog(0, `<span style="color:#d4af37;">【戦術採用】${tactic.name}</span>`);
+    if (foodMultiplier > 1.0) addLog(0, `<span class="ev-bad">強行軍！兵糧消費${foodMultiplier}倍</span>`);
 
     for (let d = 1; d <= totalDays; d++) {
         let cost = (weather === '雪') ? 2 : 1;
         if (tactic && tactic.name === "桑を指して槐を罵る") cost = Math.max(0, cost - 1);
         const healer = deck.find(c => c && parseSkill(c).type === 'heal_food');
         if (healer && Math.random() < parseSkill(healer).rate) cost = 0;
+        
+        // Apply Food Multiplier
+        cost = Math.ceil(cost * foodMultiplier);
         currentFood -= cost;
         
         if (tactic && tactic.name === "屋根に上げて梯子を外す" && !ladderUsed && (hp / maxHp <= 0.5)) {
@@ -900,11 +933,14 @@ function simulateExpeditionLoop(quest, deck, weather, bossChar, tactic) {
             if (tactic && tactic.name === "道を借りて各を伐つ" && Math.random() < 0.5) avoid = true;
             if (!avoid) {
                 eventOccurred = true;
-                currentFood -= 2;
+                currentFood -= Math.ceil(2 * foodMultiplier); // Battle cost also scaled
                 const enemy = { name: "敵部隊", rarity: "N", type: quest.type, war: 40 + (quest.diff*8), hp: 300 + (quest.diff*80) };
-                const battle = simulateBattle(deck, enemy, quest, tactic);
+                
+                // Pass enemyBuff to battle
+                const battle = simulateBattle(deck, enemy, quest, tactic, enemyBuff);
+                
                 if (battle.result === 'win') {
-                    addLog(d, `${d}日目(糧${currentFood}): 敵部隊を撃破！(兵糧-2)`);
+                    addLog(d, `${d}日目(糧${currentFood}): 敵部隊を撃破！`);
                     if (Math.random() * 100 < 5) capturedIds.push(window.characterData[0].id);
                     if (tactic && tactic.name === "笑裏に刀を蔵す") { currentFood += 1; }
                 } else if (battle.result === 'retired') {
@@ -914,7 +950,7 @@ function simulateExpeditionLoop(quest, deck, weather, bossChar, tactic) {
                     let dmg = Math.floor(maxHp * 0.2);
                     if (tactic && tactic.name === "痴を偽るも転せず" && currentFood <= 50) { dmg = Math.floor(dmg * 0.5); addLog(d, `<span class="ev-skill" style="font-size:0.8rem">戦術【痴を偽るも転せず】により被害軽減</span>`); }
                     hp -= dmg;
-                    addLog(d, `${d}日目(糧${currentFood}): <span class="ev-bad log-dmg">敗走... 被害を受けた。(兵糧-2)</span>`);
+                    addLog(d, `${d}日目(糧${currentFood}): <span class="ev-bad log-dmg">敗走... 被害を受けた。</span>`);
                 }
                 totalDead += battle.deadCount;
             } else {
@@ -930,7 +966,9 @@ function simulateExpeditionLoop(quest, deck, weather, bossChar, tactic) {
     }
 
     addLog(totalDays, `<span class="ev-battle">目的地到着！敵本陣【${bossChar.name}】と決戦！</span>`);
-    const bossBattle = simulateBattle(deck, bossChar, quest, tactic);
+    // Boss Battle with Buff
+    const bossBattle = simulateBattle(deck, bossChar, quest, tactic, enemyBuff);
+    
     bossBattle.log.forEach((l, idx) => { if (idx > 0) addLog(totalDays + 0.1, l); if(l.includes("先制")) preemptiveOccurred = true; });
     totalDead += bossBattle.deadCount;
 
@@ -969,4 +1007,70 @@ function calculateCaptureProb(deck, enemyChar, tactic) {
     if (enemyRarity === 'SSR' || enemyRarity === 'UR') baseRate = Math.min(50, maxRate * 5); 
     if (tactic && tactic.name === "捕らんと欲すれば暫く待て") baseRate += 10;
     return Math.min(95, baseRate);
+}
+
+// --- SHOP & ITEM LOGIC ---
+
+/**
+ * アイテムを購入する
+ * @param {string} itemId - 'ticket' | 'kokoro'
+ * @returns {object} { success: boolean, msg: string, current: saveObject }
+ */
+function buyItem(itemId) {
+    const save = loadSaveData();
+    let cost = 0;
+    let name = "";
+
+    if (itemId === 'ticket') {
+        cost = 500;
+        name = "手形";
+    } else if (itemId === 'kokoro') {
+        cost = 2000;
+        name = "ココロの鍵";
+    } else {
+        return { success: false, msg: "無効なアイテムです" };
+    }
+
+    if ((save.money || 0) < cost) {
+        return { success: false, msg: "銀貨が足りません！" };
+    }
+
+    save.money -= cost;
+    
+    if (itemId === 'ticket') {
+        save.items.ticket = (save.items.ticket || 0) + 1;
+    } else if (itemId === 'kokoro') {
+        save.items.kokoro = (save.items.kokoro || 0) + 1;
+    }
+
+    saveData(save);
+    return { success: true, msg: `「${name}」を購入しました！`, current: save };
+}
+
+/**
+ * 家宝を売却する
+ * @param {number} treasureId 
+ * @returns {object} { success: boolean, msg: string, current: saveObject }
+ */
+function sellTreasure(treasureId) {
+    const save = loadSaveData();
+    const index = save.collected_treasures.indexOf(treasureId);
+    
+    if (index === -1) {
+        return { success: false, msg: "その家宝は所持していません" };
+    }
+
+    const treasure = TREASURE_DATA.find(t => t.id === treasureId);
+    if (!treasure) {
+        return { success: false, msg: "データが存在しません" };
+    }
+
+    const price = treasure.rank * 100;
+    
+    // 売却処理: リストから削除し、金を加算
+    save.collected_treasures.splice(index, 1);
+    save.money = (save.money || 0) + price;
+
+    saveData(save);
+    return { success: true, msg: `「${treasure.name}」を${price}銭で売却しました。`, current: save };
 }
