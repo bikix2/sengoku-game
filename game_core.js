@@ -1,4 +1,4 @@
-// game_core.js - Ver 43.2 (Strong Starter Fix)
+// game_core.js - Ver 42.0 (Complete Fix)
 
 const SAVE_KEY = 'sengoku_idle_save_v41_full'; 
 const SECONDS_PER_DAY = 10; 
@@ -99,9 +99,7 @@ const ACHIEVEMENT_DATA = [
     {id:46, name: "戦上手", cond: "C以下の武将3名で制覇", reward_text: "用兵の妙"},
     {id:47, name: "単騎駆け", cond: "武将1名で制覇", reward_text: "一騎当千"},
     {id:48, name: "敵中突破", cond: "総兵力500以下で制覇", reward_text: "奇跡の生還"},
-    {id:49, name: "戦の申し子", cond: "無傷(HP100%)で制覇", reward_text: "完全勝利"},
-    {id:50, name: "天下無敵", cond: "すべての戦場を「かけあし進軍」で制覇", reward_text: "神速の行軍"},
-    {id:51, name: "天下覇王", cond: "すべての戦場を「電撃強行軍」で制覇", reward_text: "電光石火"}
+    {id:49, name: "戦の申し子", cond: "無傷(HP100%)で制覇", reward_text: "完全勝利"}
 ];
 
 // --- TACTICS DATA ---
@@ -128,7 +126,7 @@ const TACTICS_DATA = [
     {name: "釜の底より薪を抜く", desc: "敵兵糧を減らす", source: "天と地と"},
     {name: "水を混ぜて魚を探る", desc: "撤退時の兵糧減少なし", source: "初黒星"},
     {name: "金蝉、殻を脱ぐ", desc: "兵半減で撤退", source: "死神の如し"},
-    {name: "門を関ざして賊を捕らう", desc: "敵より少勢なら攻撃UP", source: "怒涛の進軍"},
+    {name: "門を関ざして賊を捕らう", desc: "敵より大勢なら攻撃UP", source: "怒涛の進軍"},
     {name: "遠く交わり近く攻む", desc: "C・N武将の攻撃UP", source: "人材宝庫"},
     {name: "道を借りて各を伐つ", desc: "戦闘回避率アップ", source: "策士"},
     {name: "梁を盗み柱に換える", desc: "相性を無視する", source: "知将"},
@@ -228,54 +226,38 @@ const QUEST_DATA = [
     { id: 1802, region:"越後", name: "春日山城", diff: 13, money: 3000, food: 180, boss_r: "SSR", type: "騎馬", terrain: "城郭", interference: ["奇襲", "悪天候", "計略", "足止め罠", "傷病"], s_cond: "SSR上杉謙信" }
 ];
 
-// --- SHOP LOGIC ---
-const SHOP_PRICES = {
-    "ticket": 500, 
-    "kokoro": 2000 
+const DEFAULT_SAVE = {
+    money: 5000,
+    items: { ticket: 5, kokoro: 0 }, 
+    owned_ids: [],
+    deck: [null, null, null],
+    prisoners: [], 
+    expedition: null,
+    locked_ids: [],
+    s_ranks: [], 
+    completed_regions: [],
+    achievements: [], 
+    tactics: ["逃げるを上となす", "出陣ことはじめ"], 
+    collected_treasures: [], 
+    records: { 
+        totalDistance: 0,
+        totalBattles: 0,
+        totalWins: 0,
+        totalDead: 0,
+        retreatCount: 0,
+        winStreak: 0,
+        gachaCount: 0,
+        capturedCount: 0,
+        totalReleased: 0,
+        lastExpeditionStats: null
+    }
 };
-
-function buyItem(itemId) {
-    const save = loadSaveData();
-    const price = SHOP_PRICES[itemId];
-    if (!price) return { success: false, msg: "商品が見つかりません" };
-    
-    if (save.money < price) return { success: false, msg: "銀貨が足りません" };
-    
-    save.money -= price;
-    if (itemId === "ticket") save.items.ticket = (save.items.ticket || 0) + 1;
-    if (itemId === "kokoro") save.items.kokoro = (save.items.kokoro || 0) + 1;
-    
-    saveData(save);
-    return { success: true, msg: "購入しました！", current: save };
-}
-
-function sellTreasure(treasureId) {
-    const save = loadSaveData();
-    const idx = save.collected_treasures.indexOf(treasureId);
-    if (idx === -1) return { success: false, msg: "所持していません" };
-    
-    const tData = TREASURE_DATA.find(t => t.id === treasureId);
-    const price = tData ? tData.rank * 100 : 100;
-    
-    save.collected_treasures.splice(idx, 1);
-    save.money += price;
-    saveData(save);
-    return { success: true, msg: `売却しました (+${price}銭)`, current: save };
-}
-
-// --- CORE FUNCTIONS ---
 
 function loadSaveData() {
     const json = localStorage.getItem(SAVE_KEY);
     let data;
-    if (!json) { 
-        data = JSON.parse(JSON.stringify(DEFAULT_SAVE)); 
-        // ★修正: 初期化時に即座に保存する
-        saveData(data);
-    } else { 
-        data = JSON.parse(json); 
-    }
-    // Migration
+    if (!json) { saveData(DEFAULT_SAVE); data = JSON.parse(JSON.stringify(DEFAULT_SAVE)); } 
+    else { data = JSON.parse(json); }
     if (!data.prisoners) data.prisoners = [];
     if (!data.deck) data.deck = [null, null, null];
     if (!data.s_ranks) data.s_ranks = [];
@@ -286,6 +268,15 @@ function loadSaveData() {
     if (!data.collected_treasures) data.collected_treasures = [];
     if (!data.records) data.records = { totalDistance: 0, totalBattles: 0, totalWins: 0, totalDead: 0, retreatCount: 0, winStreak: 0, gachaCount: 0, capturedCount: 0, totalReleased: 0 };
     
+    if (window.characterData && window.characterData.length > 0) {
+        let starter = window.characterData.find(c => c.name.includes("織田信長") && c.rarity === "R");
+        if (!starter) starter = window.characterData.find(c => c.name.includes("織田信長"));
+        if (!starter) starter = window.characterData[0];
+        if (starter && !data.owned_ids.includes(starter.id)) {
+            data.owned_ids.push(starter.id);
+            localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+        }
+    }
     return { ...DEFAULT_SAVE, ...data };
 }
 function saveData(data) { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); }
@@ -306,47 +297,21 @@ function importSaveData(code) {
         return false;
     } catch(e) { console.error("Import Error:", e); return false; }
 }
-
-// 初期配布を強化
 function checkAndDistributeStarter() {
     if (!window.characterData || window.characterData.length === 0) return { success: false };
-    
     const currentSave = loadSaveData();
-    let updated = false;
-    let msg = "";
-
-    // 1. 武将配布 (R織田信長)
     let starterChar = window.characterData.find(c => c.name.includes("織田信長") && c.rarity === "R");
-    if (!starterChar) starterChar = window.characterData[0]; // Fallback
-
-    if (starterChar && !currentSave.owned_ids.includes(starterChar.id)) {
-        currentSave.owned_ids.push(starterChar.id);
-        // デッキの1番目にセット
-        if (currentSave.deck[0] === null) currentSave.deck[0] = starterChar.id;
-        updated = true;
-        msg += `・武将「${starterChar.name}」\n`;
-    }
-
-    // 2. 資源配布 (救済措置: 所持金500未満、または手形0なら初期状態へ復帰させる)
-    // 既存ユーザーで資源が枯渇しているケースの救済も兼ねる
-    if ((currentSave.money || 0) < 500) {
-        currentSave.money = 5000;
-        updated = true;
-        msg += "・軍資金 5000 (補給)\n";
-    }
-    if (!currentSave.items.ticket || currentSave.items.ticket <= 0) {
-        currentSave.items.ticket = 5;
-        updated = true;
-        msg += "・手形 5枚 (補給)\n";
-    }
-
-    if (updated) {
-        saveData(currentSave);
-        return { success: true, message: msg };
+    if (!starterChar) starterChar = window.characterData.find(c => c.name.includes("織田信長"));
+    if (!starterChar) starterChar = window.characterData[0];
+    if (starterChar) {
+        if (!currentSave.owned_ids.includes(starterChar.id)) {
+            currentSave.owned_ids.push(starterChar.id);
+            saveData(currentSave);
+            return { success: true, name: starterChar.name, rarity: starterChar.rarity };
+        }
     }
     return { success: false };
 }
-
 function findCharacterByNameAndRarity(fullName) {
     if(!window.characterData) return null;
     const rarity = fullName.match(/^[A-Z]+/)[0];
@@ -354,6 +319,7 @@ function findCharacterByNameAndRarity(fullName) {
     return window.characterData.find(c => c.name.includes(name) && c.rarity === rarity);
 }
 
+// --- checkAchievements ---
 function checkAchievements(save) {
     const newAchieved = [];
     const newTactics = [];
@@ -362,16 +328,13 @@ function checkAchievements(save) {
 
     const checkRegionComplete = (regionList) => {
         const targetQIds = [];
-        QUEST_DATA.forEach(q => {
-            if (regionList.includes(q.region)) targetQIds.push(q.id);
-        });
+        QUEST_DATA.forEach(q => { if (regionList.includes(q.region)) targetQIds.push(q.id); });
         if (targetQIds.length === 0) return false;
         return targetQIds.every(qid => save.s_ranks.includes(qid));
     };
 
     ACHIEVEMENT_DATA.forEach(ach => {
         if (save.achievements.includes(ach.id)) return; 
-
         let cleared = false;
         switch (ach.name) {
             case "国取り開始": cleared = save.s_ranks.length >= 1; break;
@@ -412,25 +375,21 @@ function checkAchievements(save) {
                 case "達人": cleared = lastStats.deckRarities.some(r => ["R","SR","SSR","UR","LOB"].includes(r)); break;
                 case "戦上手": cleared = lastStats.deckRarities.every(r => ["C","N"].includes(r)) && lastStats.deckCount === 3; break;
                 case "単騎駆け": cleared = lastStats.deckCount === 1; break;
-                case "敵中突破": cleared = lastStats.startHp <= 500; break; 
+                case "敵中突破": cleared = lastStats.startHp <= 500; break;
                 case "戦の申し子": cleared = lastStats.maxHp === lastStats.endHp; break;
                 case "大軍勢": cleared = lastStats.maxHp >= 10000; break;
                 case "死中活路": cleared = lastStats.endFood <= 0; break;
                 case "怒涛の進軍": cleared = lastStats.questDiff >= 6; break;
                 case "獅子奮迅": cleared = lastStats.questDiff >= 9; break;
-                case "仇は討った": cleared = lastStats.deadCount >= 1; break; 
+                case "仇は討った": cleared = lastStats.deadCount >= 1; break;
                 case "先手必勝": cleared = lastStats.preemptive; break;
-                case "天下無敵": cleared = (lastStats.speedMode === "kakeashi"); break;
-                case "天下覇王": cleared = (lastStats.speedMode === "dengeki"); break;
             }
-            
             if (ach.cond.includes("(敵)に勝利") && save.records.lastDefeatedBoss) {
                 if (ach.cond.includes(save.records.lastDefeatedBoss)) cleared = true;
             }
         }
-        
         if (lastStats && lastStats.result !== 'win') {
-             if (ach.name === "勇み足" && lastStats.endFood <= 0 && lastStats.result === 'retired') cleared = true; 
+             if (ach.name === "勇み足" && lastStats.endFood <= 0 && lastStats.result === 'retired') cleared = true;
         }
 
         if (cleared) {
@@ -445,43 +404,36 @@ function checkAchievements(save) {
 
     if (newAchieved.length > 0) {
         let msg = "【実績解除】\n" + newAchieved.join("\n");
-        if (newTactics.length > 0) {
-            msg += "\n\n【新戦術獲得】\n" + newTactics.join("\n");
-        }
+        if (newTactics.length > 0) msg += "\n\n【新戦術獲得】\n" + newTactics.join("\n");
         alert(msg);
         delete save.records.lastDefeatedBoss;
         saveData(save);
     }
 }
 
+// --- cancelExpedition ---
 function cancelExpedition() {
     const save = loadSaveData();
     if (!save.expedition) return;
-    
     const now = Date.now();
     const exp = save.expedition;
     const q = QUEST_DATA.find(x => x.id === exp.questId);
-    
     const totalDuration = (q.food * SECONDS_PER_DAY * 1000);
     const elapsed = now - exp.startTime;
     const currentDay = Math.min(q.food, (elapsed / totalDuration) * q.food);
-    
     exp.result = 'retired';
-    exp.endTime = now; // 即時終了
-    
+    exp.endTime = now;
     exp.logs.events = exp.logs.events.filter(ev => ev.day <= currentDay);
-
     exp.logs.daysTraveled = currentDay;
     exp.logs.events.push({ day: currentDay, text: `<span class="ev-bad">全軍撤退！進軍を中止し帰還しました。</span>` });
-
     exp.captured = []; 
     exp.treasures = [];
-    
     save.records.retreatCount = (save.records.retreatCount || 0) + 1;
     saveData(save);
 }
 
-function startExpeditionCore(questId, tacticName, speedMode = "normal") {
+// --- startExpeditionCore ---
+function startExpeditionCore(questId, tacticName) {
     const save = loadSaveData();
     const deck = save.deck.map(id => getCharacterById(id));
     const quest = QUEST_DATA.find(q => q.id === questId);
@@ -504,19 +456,12 @@ function startExpeditionCore(questId, tacticName, speedMode = "normal") {
 
     const bossChar = (window.characterData.filter(c => c.rarity === quest.boss_r)[0]) || window.characterData[0];
     const weather = determineWeather(quest.id);
-    
-    let timeMult = 1.0;
-    let foodMult = 1.0;
-    let diffMult = 1.0;
-    
-    if (speedMode === "kakeashi") { timeMult = 0.5; foodMult = 1.5; }
-    if (speedMode === "dengeki") { timeMult = 0.1; foodMult = 3.0; diffMult = 1.5; }
-    
-    if (tactic && tactic.name === "翔ぶが如く") timeMult *= 0.25;
-
-    const logs = simulateExpeditionLoop(quest, deck, weather, bossChar, tactic, foodMult, diffMult);
+    const logs = simulateExpeditionLoop(quest, deck, weather, bossChar, tactic);
     const actualDays = logs.daysTraveled;
-    const duration = actualDays * SECONDS_PER_DAY * 1000 * timeMult;
+    let timeMod = 1.0;
+    if (tactic && tactic.name === "翔ぶが如く") timeMod = 0.25;
+    
+    const duration = actualDays * SECONDS_PER_DAY * 1000 * timeMod;
     const now = Date.now();
     
     if (logs.gainedItems) {
@@ -534,8 +479,7 @@ function startExpeditionCore(questId, tacticName, speedMode = "normal") {
         deckRarities: validDeck.map(c=>c.rarity),
         questDiff: quest.diff,
         deadCount: logs.stats.dead,
-        preemptive: logs.preemptiveOccurred,
-        speedMode: speedMode
+        preemptive: logs.preemptiveOccurred
     };
 
     save.expedition = { 
@@ -549,8 +493,7 @@ function startExpeditionCore(questId, tacticName, speedMode = "normal") {
         captured: logs.capturedIds, 
         stats: logs.stats,
         tactic: tactic ? tactic.name : null,
-        treasures: logs.treasures,
-        speedMode: speedMode
+        treasures: logs.treasures
     };
     saveData(save);
     return { success: true };
@@ -610,9 +553,9 @@ function isFemale(char) {
     return fNames.some(n => char.name.includes(n));
 }
 
-function simulateBattle(deck, enemy, quest, tactic, diffMult=1.0) {
+// --- simulateBattle ---
+function simulateBattle(deck, enemy, quest, tactic) {
     const battleLog = [];
-    
     let lowRarityBuff = (tactic && tactic.name === "遠く交わり近く攻む") ? 1.5 : 1.0;
     
     let synergyAtkMod = 1.0;
@@ -636,10 +579,10 @@ function simulateBattle(deck, enemy, quest, tactic, diffMult=1.0) {
 
     let enemyUnit = {
         name: enemy.name, rarity: enemy.rarity, type: enemy.type || "足軽",
-        war: Math.floor(enemy.war * (1.0 + quest.diff * 0.2) * diffMult), 
-        hp: Math.floor(enemy.hp * (1.0 + quest.diff * 0.5) * diffMult),
+        war: Math.floor(enemy.war * (1.0 + quest.diff * 0.2)), 
+        hp: Math.floor(enemy.hp * (1.0 + quest.diff * 0.5)),
         skill: enemySkill,
-        maxHp: Math.floor(enemy.hp * (1.0 + quest.diff * 0.5) * diffMult),
+        maxHp: Math.floor(enemy.hp * (1.0 + quest.diff * 0.5)),
         status: []
     };
     battleLog.push(`敵将【${enemyUnit.name}】(${enemyUnit.type})と遭遇！`);
@@ -650,7 +593,6 @@ function simulateBattle(deck, enemy, quest, tactic, diffMult=1.0) {
             enemyUnit.war = Math.floor(enemyUnit.war * 0.3); 
         }
     }
-
     if (tactic && tactic.name === "魏を囲んで趙を救う" && enemyUnit.hp <= 1000) {
         battleLog.push(`<span class="ev-skill" data-char="戦術" data-skill="${tactic.name}">戦術【${tactic.name}】発動！味方攻撃力UP！</span>`);
         myParty.forEach(c => { if(c) c.war = Math.floor(c.war * 2.0); }); 
@@ -677,9 +619,7 @@ function simulateBattle(deck, enemy, quest, tactic, diffMult=1.0) {
     myParty.forEach(c => {
         if(!c) return;
         const fate = FATE_DATA.find(f => c.name.includes(f.me) && enemyUnit.name.includes(f.boss));
-        if(fate) {
-            battleLog.push(`<span class="ev-fate" data-main="${fate.title}" data-sub="${fate.text}">【${c.name}】「${fate.text}」</span>`);
-        }
+        if(fate) battleLog.push(`<span class="ev-fate" data-main="${fate.title}" data-sub="${fate.text}">【${c.name}】「${fate.text}」</span>`);
     });
 
     myParty.forEach(c => {
@@ -692,7 +632,6 @@ function simulateBattle(deck, enemy, quest, tactic, diffMult=1.0) {
         enemyUnit.hp = 0;
         battleLog.push(`<span class="ev-skill" data-char="戦術" data-skill="${tactic.name}">戦術【${tactic.name}】発動！敵将を射抜いた！</span>`);
     }
-    
     if (enemyUnit.hp > 0 && enemyUnit.skill.type === 'instant_kill' && Math.random() < enemyUnit.skill.rate) {
         let targets = myParty.filter(c => c && !c.isDead);
         if (targets.length > 0) {
@@ -708,24 +647,19 @@ function simulateBattle(deck, enemy, quest, tactic, diffMult=1.0) {
         myParty.forEach(c => { if(c) { currentTotal += Math.max(0, c.currentHp); maxTotal += c.hp; if(c.isDead) dead++; } });
         return { result: 'win', log: battleLog, remainingHpRate: (currentTotal/maxTotal), deadCount: dead };
     }
-
     if (myParty.every(c => !c || c.isDead)) {
         battleLog.push("部隊壊滅...");
         return { result: 'defeat', log: battleLog, remainingHpRate: 0, deadCount: deck.filter(x=>x).length };
     }
 
-    let isPreemptive = false;
-    let myTotalHpVal = myParty.reduce((a,c)=>a+(c?c.currentHp:0),0);
-    if (tactic && tactic.name === "手に順いて羊を引く" && enemyUnit.hp > myTotalHpVal) isPreemptive = true;
-    if (tactic && tactic.name === "樹上に花を咲かす" && myParty.some(c => c && c.rarity === 'N')) isPreemptive = true;
-    if (tactic && tactic.name === "草を打って蛇を驚かす") isPreemptive = false; 
-
+    // --- TURN LOOP ---
     for (let turn = 1; turn <= 10; turn++) {
         if (tactic && tactic.name === "逃げるを上とする" && (myParty.reduce((a,c)=>a+(c?c.currentHp:0),0) / myParty.reduce((a,c)=>a+(c?c.hp:0),0)) <= 0.7) {
              battleLog.push(`<span class="ev-skill" data-char="戦術" data-skill="${tactic.name}">戦術【${tactic.name}】！不利を悟り撤退！</span>`);
              return { result: 'retired', log: battleLog, remainingHpRate: 0, deadCount: myParty.filter(c=>c&&c.isDead).length };
         }
 
+        // PLAYER ATTACK
         myParty.forEach(c => {
             if (!c || c.isDead) return;
             if (c.status.includes('confusion') && Math.random() < 0.3) {
@@ -779,6 +713,7 @@ function simulateBattle(deck, enemy, quest, tactic, diffMult=1.0) {
             return { result: 'win', log: battleLog, remainingHpRate: (currentTotal/maxTotal), deadCount: dead };
         }
         
+        // ENEMY ATTACK
         if (enemyUnit.status.includes('poison')) {
             let pDmg = Math.floor(enemyUnit.maxHp * 0.05);
             enemyUnit.hp -= pDmg;
@@ -852,13 +787,14 @@ function simulateBattle(deck, enemy, quest, tactic, diffMult=1.0) {
     return { result: 'draw', log: battleLog, remainingHpRate: 0, deadCount: 0 };
 }
 
-function simulateExpeditionLoop(quest, deck, weather, bossChar, tactic, foodMult=1.0, diffMult=1.0) {
+// --- simulateExpeditionLoop ---
+function simulateExpeditionLoop(quest, deck, weather, bossChar, tactic) {
     const events = [];
     const capturedIds = [];
     const treasures = [];
     const gainedItems = { kokoro: 0 }; 
     const totalDays = quest.food; 
-    let currentFood = Math.floor(deck.reduce((s, c) => s + (c ? c.cost : 0), 0) * 1.0 * foodMult) + 15;
+    let currentFood = Math.floor(deck.reduce((s, c) => s + (c ? c.cost : 0), 0) * 1.0) + 15;
     
     let hp = deck.reduce((s, c) => s + (c ? c.hp : 0), 0);
     const maxHp = hp;
@@ -901,6 +837,7 @@ function simulateExpeditionLoop(quest, deck, weather, bossChar, tactic, foodMult
             return { events: events, result: 'retired', capturedIds: capturedIds, weather: weather, stats: { hpRate: 0, dead: 0 }, daysTraveled: d, treasures: treasures, gainedItems: gainedItems, finalFood: currentFood };
         }
 
+        // Treasure
         if (Math.random() < treasureBaseRate) {
             const t = TREASURE_DATA[Math.floor(Math.random() * TREASURE_DATA.length)];
             let handled = false;
@@ -932,11 +869,13 @@ function simulateExpeditionLoop(quest, deck, weather, bossChar, tactic, foodMult
             }
         }
 
+        // Event
         let eventOccurred = false;
         if (quest.interference && quest.interference.length > 0 && Math.random() < (0.3 / luck)) { 
             eventOccurred = true;
             const inf = quest.interference[Math.floor(Math.random() * quest.interference.length)];
             
+            // 超戦術: 蒼天航路
             if (tactic && tactic.name === "蒼天航路") {
                 addLog(d, `${d}日目: <span class="ev-skill" data-char="戦術" data-skill="${tactic.name}">戦術【${tactic.name}】が${inf}を無効化！</span>`);
             } else {
@@ -962,8 +901,8 @@ function simulateExpeditionLoop(quest, deck, weather, bossChar, tactic, foodMult
             if (!avoid) {
                 eventOccurred = true;
                 currentFood -= 2;
-                const enemy = { name: "敵部隊", rarity: "N", type: quest.type, war: 40 + (quest.diff*8) * diffMult, hp: 300 + (quest.diff*80) * diffMult };
-                const battle = simulateBattle(deck, enemy, quest, tactic, diffMult);
+                const enemy = { name: "敵部隊", rarity: "N", type: quest.type, war: 40 + (quest.diff*8), hp: 300 + (quest.diff*80) };
+                const battle = simulateBattle(deck, enemy, quest, tactic);
                 if (battle.result === 'win') {
                     addLog(d, `${d}日目(糧${currentFood}): 敵部隊を撃破！(兵糧-2)`);
                     if (Math.random() * 100 < 5) capturedIds.push(window.characterData[0].id);
@@ -991,7 +930,7 @@ function simulateExpeditionLoop(quest, deck, weather, bossChar, tactic, foodMult
     }
 
     addLog(totalDays, `<span class="ev-battle">目的地到着！敵本陣【${bossChar.name}】と決戦！</span>`);
-    const bossBattle = simulateBattle(deck, bossChar, quest, tactic, diffMult);
+    const bossBattle = simulateBattle(deck, bossChar, quest, tactic);
     bossBattle.log.forEach((l, idx) => { if (idx > 0) addLog(totalDays + 0.1, l); if(l.includes("先制")) preemptiveOccurred = true; });
     totalDead += bossBattle.deadCount;
 
