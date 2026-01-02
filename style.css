@@ -1,14 +1,13 @@
-/* style.css */
+/* style.css - Ver 34.0 */
 body {
     background-color: #202020;
     color: #e0e0e0;
     font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
     margin: 0;
     padding: 0;
-    padding-bottom: 80px; /* フッター用余白 */
+    padding-bottom: 80px;
 }
 
-/* ヘッダー */
 header {
     background: linear-gradient(to bottom, #4a3b2a, #2b2218);
     padding: 15px;
@@ -18,62 +17,93 @@ header {
 }
 h1 { margin: 0; font-size: 1.4rem; color: #d4af37; text-shadow: 1px 1px 0 #000; }
 
-/* コンテナ */
-.container {
-    padding: 15px;
-    max-width: 600px;
-    margin: 0 auto;
-}
+.container { padding: 15px; max-width: 600px; margin: 0 auto; position: relative; }
 
-/* ボタン共通 */
 button, .btn-link {
-    background: #d4af37;
-    color: #2b2218;
-    border: 1px solid #8a7020;
-    padding: 10px 20px;
-    font-weight: bold;
-    cursor: pointer;
-    border-radius: 4px;
-    text-decoration: none;
-    display: inline-block;
-    text-align: center;
-    font-size: 1rem;
-    margin: 5px;
+    background: #d4af37; color: #2b2218; border: 1px solid #8a7020;
+    padding: 10px 20px; font-weight: bold; cursor: pointer; border-radius: 4px;
+    text-decoration: none; display: inline-block; text-align: center; font-size: 1rem; margin: 5px;
 }
 button:hover, .btn-link:hover { background: #e5c14d; }
 button:disabled { background: #555; border-color: #333; color: #888; cursor: not-allowed; }
 
-/* ボックススタイル */
 .box { background: #333; border: 1px solid #555; padding: 15px; border-radius: 5px; margin-bottom: 15px; }
-
-/* 画像プレースホルダー（画像がない時用） */
 img { background: #000; display: inline-block; object-fit: cover; }
 
-/* ナビゲーション（フッター固定） */
 nav.bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: #333;
-    display: flex;
-    justify-content: space-around;
-    padding: 10px 0;
-    border-top: 2px solid #d4af37;
-    z-index: 100;
+    position: fixed; bottom: 0; left: 0; width: 100%;
+    background: #1a1a1a; border-top: 1px solid #333;
+    display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000;
 }
-nav.bottom-nav a {
-    color: #aaa;
-    text-decoration: none;
-    font-size: 0.8rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-nav.bottom-nav a.active { color: #d4af37; font-weight: bold; }
+nav.bottom-nav a { color: #888; text-decoration: none; font-size: 0.9rem; font-weight: bold; }
+nav.bottom-nav a.active { color: #d4af37; }
 
-/* ユーティリティ */
-.text-gold { color: #d4af37; font-weight: bold; }
-.rarity-SSR { color: #ffd700; border: 1px solid #ffd700; }
-.rarity-R { color: #silver; border: 1px solid #silver; }
-.rarity-N { color: #cd7f32; border: 1px solid #cd7f32; }
+/* --- ★以下、新演出用アニメーション --- */
+
+/* ログのフェードイン */
+.log-line { animation: fadeIn 0.3s ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+/* 画面揺れ (ダメージ) */
+.shake-anim { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+/* 画面フラッシュ (撃破/大ダメージ) */
+.flash-anim { animation: flash 0.2s ease-out; }
+@keyframes flash {
+    0% { background-color: rgba(255,255,255,0.8); }
+    100% { background-color: transparent; }
+}
+
+/* カットインオーバーレイ */
+#cut-in-overlay {
+    position: fixed; top: 30%; left: 0; width: 100%; height: 120px;
+    background: rgba(0,0,0,0.85); border-top: 2px solid #d4af37; border-bottom: 2px solid #d4af37;
+    z-index: 9999; display: none; align-items: center; justify-content: center;
+    flex-direction: column; overflow: hidden; pointer-events: none;
+}
+#cut-in-text {
+    color: #fff; font-size: 2rem; font-weight: bold; text-shadow: 0 0 10px #d4af37;
+    transform: translateX(100%); opacity: 0;
+}
+#cut-in-sub {
+    color: #d4af37; font-size: 1rem; margin-top: 5px;
+    transform: translateX(-100%); opacity: 0;
+}
+
+/* カットインのアニメーション動作クラス */
+.cut-in-active #cut-in-text { animation: slideInRight 2.5s forwards; }
+.cut-in-active #cut-in-sub { animation: slideInLeft 2.5s forwards; }
+
+@keyframes slideInRight {
+    0% { transform: translateX(100%); opacity: 0; }
+    10% { transform: translateX(0); opacity: 1; }
+    80% { transform: translateX(-10px); opacity: 1; }
+    100% { transform: translateX(-100%); opacity: 0; }
+}
+@keyframes slideInLeft {
+    0% { transform: translateX(-100%); opacity: 0; }
+    15% { transform: translateX(0); opacity: 1; }
+    85% { transform: translateX(10px); opacity: 1; }
+    100% { transform: translateX(100%); opacity: 0; }
+}
+
+/* 因縁ログ演出用 */
+.ev-fate {
+    display: block;
+    color: #fff;
+    background: linear-gradient(90deg, #500, #900, #500);
+    border: 1px solid #d4af37;
+    padding: 5px;
+    text-align: center;
+    font-weight: bold;
+    margin: 5px 0;
+    border-radius: 4px;
+    box-shadow: 0 0 5px #f00;
+    animation: fadeIn 0.5s ease-out;
+}

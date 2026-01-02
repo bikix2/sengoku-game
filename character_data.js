@@ -15,7 +15,8 @@ window.characterData = [
       "desc": "戦闘中、味方全員の攻撃力が大幅に上昇し続ける",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 2,
@@ -33,7 +34,8 @@ window.characterData = [
       "desc": "休息時、兵糧を消費して全軍の兵が回復する(9%,-1)",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 3,
@@ -51,7 +53,8 @@ window.characterData = [
       "desc": "進軍中、「奇襲」と「布陣失敗」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 4,
@@ -69,7 +72,8 @@ window.characterData = [
       "desc": "戦闘中、味方全員の攻撃力が上昇し続ける",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 5,
@@ -87,7 +91,8 @@ window.characterData = [
       "desc": "休息時、兵糧を消費して全軍の兵が回復する(5%,-2)",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 6,
@@ -105,7 +110,8 @@ window.characterData = [
       "desc": "進軍中、「奇襲」と「布陣失敗」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 7,
@@ -123,7 +129,8 @@ window.characterData = [
       "desc": "進軍中、五割の確率で兵糧が減らない",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 8,
@@ -141,7 +148,8 @@ window.characterData = [
       "desc": "進軍中、高確率で戦闘を回避する",
       "type": "avoid_trap",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 9,
@@ -159,7 +167,8 @@ window.characterData = [
       "desc": "進軍中、一定の確率で運が上昇する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 10,
@@ -177,7 +186,8 @@ window.characterData = [
       "desc": "進軍中、「足止め罠」と「奇襲」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 11,
@@ -195,7 +205,8 @@ window.characterData = [
       "desc": "進軍中、「計略」と「傷病」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 12,
@@ -213,7 +224,8 @@ window.characterData = [
       "desc": "戦闘開始時、味方全員の攻撃力が超大幅に上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 13,
@@ -231,7 +243,8 @@ window.characterData = [
       "desc": "進軍中、毎日高確率で兵糧が2ずつ回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 14,
@@ -249,7 +262,8 @@ window.characterData = [
       "desc": "戦闘開始時、味方二人の攻撃力を上昇させる",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 15,
@@ -267,7 +281,8 @@ window.characterData = [
       "desc": "兵種【騎馬】からの攻撃を跳ね返す（特技攻撃を除く）",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 16,
@@ -285,7 +300,8 @@ window.characterData = [
       "desc": "戦闘時毎巡、敵全体の兵力三割を涙とともに粉砕する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 17,
@@ -303,7 +319,8 @@ window.characterData = [
       "desc": "進軍時、高確率で良いことが起こる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 18,
@@ -321,7 +338,8 @@ window.characterData = [
       "desc": "レアリティ【SSR】の攻撃を反射する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 19,
@@ -339,7 +357,8 @@ window.characterData = [
       "desc": "休息時、全軍の兵が大回復する",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 20,
@@ -357,7 +376,8 @@ window.characterData = [
       "desc": "休息時、進軍中に入手した財宝を使って兵と兵糧を回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 21,
@@ -375,7 +395,8 @@ window.characterData = [
       "desc": "【一撃必殺攻撃無効】進軍時、すべての妨害を一定の確率で防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 22,
@@ -393,7 +414,8 @@ window.characterData = [
       "desc": "戦闘開始時、高確率で敵将一人の攻撃力を1/3にする",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 23,
@@ -411,7 +433,8 @@ window.characterData = [
       "desc": "戦闘が一巡するごとに、敵武将の特技を一人ずつ完全に封じる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 24,
@@ -429,7 +452,8 @@ window.characterData = [
       "desc": "休息時、全軍の兵が回復するが、兵糧を5失う",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 25,
@@ -447,7 +471,8 @@ window.characterData = [
       "desc": "進軍中、高確率で兵糧が２ずつ回復",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 26,
@@ -465,7 +490,8 @@ window.characterData = [
       "desc": "攻撃時、ごく稀に交戦中の敵将を一撃で葬り去る。",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 27,
@@ -483,7 +509,8 @@ window.characterData = [
       "desc": "進軍中、高確率で[イベント：呑牛術]が発生",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 28,
@@ -501,7 +528,8 @@ window.characterData = [
       "desc": "【防御力高】戦闘開始時と戦闘中毎巡、味方全員の攻防力を2倍にし続ける",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 29,
@@ -519,7 +547,8 @@ window.characterData = [
       "desc": "進軍中、「奇襲」と「悪天候」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 30,
@@ -537,7 +566,8 @@ window.characterData = [
       "desc": "進軍中、全軍の運が大幅に上昇する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 31,
@@ -555,7 +585,8 @@ window.characterData = [
       "desc": "戦闘開始時、武将二人の兵が少し回復する",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 32,
@@ -573,7 +604,8 @@ window.characterData = [
       "desc": "進軍中、「奇襲」と「悪天候」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 33,
@@ -591,7 +623,8 @@ window.characterData = [
       "desc": "進軍中、ときどき「布陣失敗」を防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 34,
@@ -609,7 +642,8 @@ window.characterData = [
       "desc": "休息時、兵が少し回復する",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 35,
@@ -627,7 +661,8 @@ window.characterData = [
       "desc": "進軍中、全軍の運が少し上昇する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 36,
@@ -645,7 +680,8 @@ window.characterData = [
       "desc": "休息時、兵が少し回復する",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 37,
@@ -663,7 +699,8 @@ window.characterData = [
       "desc": "戦闘中、敵の攻撃をほぼ無効化することがある",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 38,
@@ -682,7 +719,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "R"
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 39,
@@ -700,7 +738,8 @@ window.characterData = [
       "desc": "休息時、進軍中に獲得した財宝を使って全軍の兵数が回復する",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 40,
@@ -718,7 +757,8 @@ window.characterData = [
       "desc": "休息時、高確率で全軍の兵と兵糧が回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 41,
@@ -737,7 +777,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "SR"
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 42,
@@ -755,7 +796,8 @@ window.characterData = [
       "desc": "戦闘開始時、ときどき敵全員に現在兵数と同数の打撃を与える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 43,
@@ -773,7 +815,8 @@ window.characterData = [
       "desc": "進軍時、高確率で戦闘を回避する",
       "type": "avoid_trap",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 44,
@@ -791,7 +834,8 @@ window.characterData = [
       "desc": "進軍中、「傷病」と「悪天候」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 45,
@@ -810,7 +854,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "R"
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 46,
@@ -828,7 +873,8 @@ window.characterData = [
       "desc": "【一撃必殺無効】戦闘開始時、敵将全員の特技発動を3巡封じる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 47,
@@ -846,7 +892,8 @@ window.characterData = [
       "desc": "戦闘中、一定の確率で攻撃力の5倍の打撃を与える(旧:戦闘開始後、3巡目に攻撃力の5倍の打撃を与える)",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 48,
@@ -864,7 +911,8 @@ window.characterData = [
       "desc": "進軍中、「足止め罠」と「悪天候」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 49,
@@ -882,7 +930,8 @@ window.characterData = [
       "desc": "戦闘中、低確率で攻撃力の3倍に等しい打撃を与える(旧:戦闘開始後、3巡目に攻撃力の3倍に等しい打撃を与える)",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 50,
@@ -900,7 +949,8 @@ window.characterData = [
       "desc": "進軍中、「足止め罠」と「悪天候」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 51,
@@ -918,7 +968,8 @@ window.characterData = [
       "desc": "戦闘中、攻撃力が上昇し続ける",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 52,
@@ -936,7 +987,8 @@ window.characterData = [
       "desc": "休息時、自身の兵が回復する",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 53,
@@ -955,7 +1007,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "R"
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 54,
@@ -973,7 +1026,8 @@ window.characterData = [
       "desc": "戦闘開始時、自軍全員の攻撃力が上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 55,
@@ -991,7 +1045,8 @@ window.characterData = [
       "desc": "戦闘開始時、敵将の攻撃力を下げる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 56,
@@ -1009,7 +1064,8 @@ window.characterData = [
       "desc": "進軍中、「悪天候」を高確率で防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 57,
@@ -1027,7 +1083,8 @@ window.characterData = [
       "desc": "戦闘開始時、低確率で敵将全員の攻撃力を1/2にする",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 58,
@@ -1045,7 +1102,8 @@ window.characterData = [
       "desc": "戦闘開始後、高確率で攻撃力の5倍の打撃を与える",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 59,
@@ -1063,7 +1121,8 @@ window.characterData = [
       "desc": "休息時、高確率で全軍の兵と兵糧が回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 60,
@@ -1081,7 +1140,8 @@ window.characterData = [
       "desc": "戦闘中、毎巡攻撃力が大幅に上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 61,
@@ -1099,7 +1159,8 @@ window.characterData = [
       "desc": "戦闘時毎巡、高確率で敵武将1名の特技を封じる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 62,
@@ -1117,7 +1178,8 @@ window.characterData = [
       "desc": "戦闘中、高確率で味方2名の攻撃力が大幅に上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 63,
@@ -1135,7 +1197,8 @@ window.characterData = [
       "desc": "休息時、進軍中に入手した財宝を使って兵糧を回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 64,
@@ -1153,7 +1216,8 @@ window.characterData = [
       "desc": "戦闘開始時、兵の減少数に応じ味方2名の攻撃力が上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 65,
@@ -1171,7 +1235,8 @@ window.characterData = [
       "desc": "兵種【足軽】からの攻撃を跳ね返す（特殊攻撃を除く）",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 66,
@@ -1189,7 +1254,8 @@ window.characterData = [
       "desc": "戦闘中毎巡、敵武将一人の特技を封じる\n(旧:戦闘時、敵将一人の行動を1巡封じる)",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 67,
@@ -1207,7 +1273,8 @@ window.characterData = [
       "desc": "【一撃必殺攻撃無効】進軍時、すべての妨害を一定の確率で防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 68,
@@ -1225,7 +1292,8 @@ window.characterData = [
       "desc": "進軍中、毎日兵糧が1ずつ回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 69,
@@ -1243,7 +1311,8 @@ window.characterData = [
       "desc": "兵種【足軽】からの攻撃を跳ね返す（特殊攻撃を除く）",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 70,
@@ -1261,7 +1330,8 @@ window.characterData = [
       "desc": "休息時、全軍の兵が大回復する",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 71,
@@ -1279,7 +1349,8 @@ window.characterData = [
       "desc": "戦闘開始時、敵兵の四割を一気通貫で粉砕する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 72,
@@ -1297,7 +1368,8 @@ window.characterData = [
       "desc": "戦闘時毎巡、敵の攻撃力を減ずる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 73,
@@ -1315,7 +1387,8 @@ window.characterData = [
       "desc": "戦闘開始時、自軍武将全員の防御力が上昇する",
       "type": "defense_up",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 74,
@@ -1333,7 +1406,8 @@ window.characterData = [
       "desc": "進軍中、「悪天候」と「罠」を100％防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 75,
@@ -1351,7 +1425,8 @@ window.characterData = [
       "desc": "戦闘開始時、極大の一撃を敵全員に行う",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 76,
@@ -1369,7 +1444,8 @@ window.characterData = [
       "desc": "戦闘中、超高確率で味方の兵数を回復する",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 77,
@@ -1388,7 +1464,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "R"
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 78,
@@ -1406,7 +1483,8 @@ window.characterData = [
       "desc": "進軍中、「計略」と「奇襲」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 79,
@@ -1424,7 +1502,8 @@ window.characterData = [
       "desc": "戦闘開始時、残りの兵糧合計に応じて攻撃力が上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 80,
@@ -1442,7 +1521,8 @@ window.characterData = [
       "desc": "進軍日数更新時、日数が3の倍数のとき、兵糧が減少しない",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 81,
@@ -1461,7 +1541,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "R"
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 82,
@@ -1479,7 +1560,8 @@ window.characterData = [
       "desc": "攻撃時、ごく稀に交戦中の敵将を一撃で葬り去る",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 83,
@@ -1497,7 +1579,8 @@ window.characterData = [
       "desc": "進軍中、「傷病」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 84,
@@ -1515,7 +1598,8 @@ window.characterData = [
       "desc": "戦闘時、味方全体の受ける損害をわずかに軽減する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 85,
@@ -1533,7 +1617,8 @@ window.characterData = [
       "desc": "戦闘時、自分が受ける損害を軽減する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 86,
@@ -1551,7 +1636,8 @@ window.characterData = [
       "desc": "進軍中、財宝を発見する確率が上昇する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 87,
@@ -1569,7 +1655,8 @@ window.characterData = [
       "desc": "戦闘時、毎巡突撃による攻撃を行う（先制攻撃を除く）",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 88,
@@ -1587,7 +1674,8 @@ window.characterData = [
       "desc": "軍団内2名への損害を軽減する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 89,
@@ -1605,7 +1693,8 @@ window.characterData = [
       "desc": "毎巡高確率で大砲攻撃（先制攻撃を除く）",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 90,
@@ -1623,7 +1712,8 @@ window.characterData = [
       "desc": "戦闘時、2巡目に敵一人を葬り去る",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 91,
@@ -1641,7 +1731,8 @@ window.characterData = [
       "desc": "戦闘が一巡するごとに、敵武将の特技を完全に封じる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 92,
@@ -1659,7 +1750,8 @@ window.characterData = [
       "desc": "戦闘開始時、自軍武将全員の攻撃力と防御力が上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 93,
@@ -1677,7 +1769,8 @@ window.characterData = [
       "desc": "戦闘中毎巡、敵武将全員の特技を封じる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 94,
@@ -1695,7 +1788,8 @@ window.characterData = [
       "desc": "休息時、全軍の兵が少し回復する",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 95,
@@ -1713,7 +1807,8 @@ window.characterData = [
       "desc": "進軍中、100％の確率で[妨害：傷病と布陣失敗]を防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 96,
@@ -1731,7 +1826,8 @@ window.characterData = [
       "desc": "戦闘に勝利するほど攻撃力が大幅に上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 97,
@@ -1749,7 +1845,8 @@ window.characterData = [
       "desc": "戦闘開始時、高確率で兵数が2の倍数の敵全員に攻撃を仕掛ける",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 98,
@@ -1767,7 +1864,8 @@ window.characterData = [
       "desc": "戦闘開始時、自軍武将全員の攻撃力と防御力が上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 99,
@@ -1785,7 +1883,8 @@ window.characterData = [
       "desc": "進軍中、高確率で[イベント：財宝]が発生",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 100,
@@ -1803,7 +1902,8 @@ window.characterData = [
       "desc": "戦闘開始時、敵兵全体の半数を華麗に粉砕する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 101,
@@ -1821,7 +1921,8 @@ window.characterData = [
       "desc": "進軍中、「傷病」と「布陣失敗」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 102,
@@ -1839,7 +1940,8 @@ window.characterData = [
       "desc": "戦闘中、3巡目に敵将に大きな被害を与える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 103,
@@ -1857,7 +1959,8 @@ window.characterData = [
       "desc": "進軍中、「傷病」と「布陣失敗」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 104,
@@ -1875,7 +1978,8 @@ window.characterData = [
       "desc": "戦闘中、一定の確率で兵と兵糧が回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 105,
@@ -1893,7 +1997,8 @@ window.characterData = [
       "desc": "戦闘開始時、敵兵の四割を一気呵成に粉砕する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 106,
@@ -1911,7 +2016,8 @@ window.characterData = [
       "desc": "休息時、高確率で全軍の兵と兵糧が回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 107,
@@ -1929,7 +2035,8 @@ window.characterData = [
       "desc": "戦闘中、高確率で攻撃力が上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 108,
@@ -1947,7 +2054,8 @@ window.characterData = [
       "desc": "休息時、ときどき全軍の兵と兵糧が回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 109,
@@ -1965,7 +2073,8 @@ window.characterData = [
       "desc": "戦闘開始時、1/100の確立で交戦中の敵将を一撃で葬り去る",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 110,
@@ -1983,7 +2092,8 @@ window.characterData = [
       "desc": "戦闘開始後、5巡目に攻撃力の3倍の打撃を与える",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 111,
@@ -2001,7 +2111,8 @@ window.characterData = [
       "desc": "ときどき戦闘を回避する",
       "type": "avoid_trap",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 112,
@@ -2019,7 +2130,8 @@ window.characterData = [
       "desc": "先制攻撃の成功率が上昇する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 113,
@@ -2038,7 +2150,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "R"
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 114,
@@ -2056,7 +2169,8 @@ window.characterData = [
       "desc": "進軍中、一定確率で兵糧が減らない",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 115,
@@ -2074,7 +2188,8 @@ window.characterData = [
       "desc": "進軍中、「悪天候」と「傷病」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 116,
@@ -2092,7 +2207,8 @@ window.characterData = [
       "desc": "レアリティ【R】の攻撃を反射する（特技攻撃を除く）",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 117,
@@ -2110,7 +2226,8 @@ window.characterData = [
       "desc": "戦闘開始時、一定の確率で交戦中の敵将を一撃で葬り去る",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 118,
@@ -2128,7 +2245,8 @@ window.characterData = [
       "desc": "休息時、撤退武将を低兵力で復帰させる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 119,
@@ -2146,7 +2264,8 @@ window.characterData = [
       "desc": "休息時、全軍の兵と兵糧が回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 120,
@@ -2164,7 +2283,8 @@ window.characterData = [
       "desc": "休息時、超高確率で全軍の兵と兵糧が回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 121,
@@ -2182,7 +2302,8 @@ window.characterData = [
       "desc": "戦闘開始時、敵将一人の特技発動を3巡封じる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 122,
@@ -2200,7 +2321,8 @@ window.characterData = [
       "desc": "戦闘中、一定の確率で自軍全員の攻撃力が上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 123,
@@ -2218,7 +2340,8 @@ window.characterData = [
       "desc": "戦闘時、味方全体の受ける損害をわずかに軽減する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 124,
@@ -2236,7 +2359,8 @@ window.characterData = [
       "desc": "進軍時、すべての妨害を100％防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 125,
@@ -2254,7 +2378,8 @@ window.characterData = [
       "desc": "戦闘開始時、敵将よりも兵が少ない場合、攻撃力が上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 126,
@@ -2272,7 +2397,8 @@ window.characterData = [
       "desc": "攻撃時、稀に交戦中の敵将を一撃で葬り去る",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 127,
@@ -2290,7 +2416,8 @@ window.characterData = [
       "desc": "戦闘時毎巡、兵の減少数に応じて攻撃力が大幅に上昇し続ける",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 128,
@@ -2308,7 +2435,8 @@ window.characterData = [
       "desc": "戦闘開始時と戦闘中毎巡、敵将1名に兵数の4割の打撃を与える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 129,
@@ -2326,7 +2454,8 @@ window.characterData = [
       "desc": "戦闘中、毎巡攻撃力が超大幅に上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 130,
@@ -2344,7 +2473,8 @@ window.characterData = [
       "desc": "進軍中、「布陣失敗」と「奇襲」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 131,
@@ -2362,7 +2492,8 @@ window.characterData = [
       "desc": "戦闘時、真・車撃ちによる攻撃を加える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 132,
@@ -2380,7 +2511,8 @@ window.characterData = [
       "desc": "休息時、少量の兵士を犠牲にして兵糧が回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 133,
@@ -2398,7 +2530,8 @@ window.characterData = [
       "desc": "進軍中、「布陣失敗」と「奇襲」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 134,
@@ -2416,7 +2549,8 @@ window.characterData = [
       "desc": "戦闘中、高確率で敵の攻撃をほぼ無効化する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 135,
@@ -2434,7 +2568,8 @@ window.characterData = [
       "desc": "戦闘中、一定の確率で攻撃力が上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 136,
@@ -2452,7 +2587,8 @@ window.characterData = [
       "desc": "戦闘中、一定の確率で敵将の攻撃力を半分にする",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 137,
@@ -2470,7 +2606,8 @@ window.characterData = [
       "desc": "休息時、兵士を犠牲にし、兵糧が回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 138,
@@ -2488,7 +2625,8 @@ window.characterData = [
       "desc": "戦闘時、毎巡通常攻撃のほか、車撃ちによる攻撃を加える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 139,
@@ -2506,7 +2644,8 @@ window.characterData = [
       "desc": "兵種【鉄砲】からの攻撃を跳ね返す（特技攻撃を除く）",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 140,
@@ -2524,7 +2663,8 @@ window.characterData = [
       "desc": "休息時、少数の兵士を犠牲にして兵糧が回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 141,
@@ -2542,7 +2682,8 @@ window.characterData = [
       "desc": "休息時、高確率で全軍の兵と兵糧が回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 142,
@@ -2560,7 +2701,8 @@ window.characterData = [
       "desc": "攻撃時、稀に交戦中の敵将を一撃で葬り去る",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 143,
@@ -2578,7 +2720,8 @@ window.characterData = [
       "desc": "休息時、全軍の兵と兵糧が回復する(3%,2)",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 144,
@@ -2596,7 +2739,8 @@ window.characterData = [
       "desc": "戦場制覇時、進軍日数に応じて銀を獲得する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 145,
@@ -2614,7 +2758,8 @@ window.characterData = [
       "desc": "戦闘開始時、敵将の攻撃力を1/2にする",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 146,
@@ -2632,7 +2777,8 @@ window.characterData = [
       "desc": "戦闘開始時、超高確率で戦闘を回避する",
       "type": "avoid_trap",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 147,
@@ -2650,7 +2796,8 @@ window.characterData = [
       "desc": "進軍中、100％の確率で[妨害：奇襲と罠]を防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 148,
@@ -2668,7 +2815,8 @@ window.characterData = [
       "desc": "戦闘開始時、出陣日数に応じて敵将の攻撃力を下げる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 149,
@@ -2686,7 +2834,8 @@ window.characterData = [
       "desc": "戦闘開始時、敵兵全体の半数を無慈悲に粉砕する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 150,
@@ -2704,7 +2853,8 @@ window.characterData = [
       "desc": "進軍中、毎日必ず兵糧が2ずつ回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 151,
@@ -2722,7 +2872,8 @@ window.characterData = [
       "desc": "戦闘中、兵が10分の1になると戦闘から脱出を試みる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 152,
@@ -2740,7 +2891,8 @@ window.characterData = [
       "desc": "戦闘開始時、敵兵の三割を問答無用で粉砕する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 153,
@@ -2758,7 +2910,8 @@ window.characterData = [
       "desc": "進軍中、毎日高確率で兵糧が2ずつ回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 154,
@@ -2776,7 +2929,8 @@ window.characterData = [
       "desc": "戦闘開始時、敵将よりも兵が少ない場合、攻撃力が上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 155,
@@ -2794,7 +2948,8 @@ window.characterData = [
       "desc": "戦闘開始時、全軍の兵が回復する(2%)",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 156,
@@ -2812,7 +2967,8 @@ window.characterData = [
       "desc": "進軍中、「足止め罠」と「傷病」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 157,
@@ -2830,7 +2986,8 @@ window.characterData = [
       "desc": "攻撃時、稀に交戦中の敵将を一撃で葬り去る",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 158,
@@ -2848,7 +3005,8 @@ window.characterData = [
       "desc": "戦闘中、しばしば敵全体に現在兵数と同数の打撃を与える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 159,
@@ -2866,7 +3024,8 @@ window.characterData = [
       "desc": "戦闘開始時、出陣日数に応じて敵将の攻撃力を下げる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 160,
@@ -2884,7 +3043,8 @@ window.characterData = [
       "desc": "戦闘開始時、敵兵の四割を一気通貫で粉砕する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 161,
@@ -2902,7 +3062,8 @@ window.characterData = [
       "desc": "戦闘時、味方全体の受ける損害を軽減する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 162,
@@ -2920,7 +3081,8 @@ window.characterData = [
       "desc": "戦闘に勝利するほど攻撃力が大幅に上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 163,
@@ -2939,7 +3101,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "R"
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 164,
@@ -2957,7 +3120,8 @@ window.characterData = [
       "desc": "戦闘開始時、敵将一人の特技発動を3巡封じる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 165,
@@ -2975,7 +3139,8 @@ window.characterData = [
       "desc": "戦闘開始時、自軍武将全員の攻撃力と防御力が上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 166,
@@ -2993,7 +3158,8 @@ window.characterData = [
       "desc": "【一撃必殺攻撃無効】進軍時、すべての妨害を高確率で防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 167,
@@ -3011,7 +3177,8 @@ window.characterData = [
       "desc": "戦闘時、毎巡通常攻撃のほか、分身による攻撃を加える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 168,
@@ -3029,7 +3196,8 @@ window.characterData = [
       "desc": "休息時、自軍の兵が超回復する",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 169,
@@ -3048,7 +3216,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "R"
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 170,
@@ -3066,7 +3235,8 @@ window.characterData = [
       "desc": "休息時、全軍の兵と兵糧が回復する(2%,1)",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 171,
@@ -3084,7 +3254,8 @@ window.characterData = [
       "desc": "戦場制覇時、進軍日数に応じて銀を獲得する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 172,
@@ -3102,7 +3273,8 @@ window.characterData = [
       "desc": "進軍中、毎日必ず兵糧２ずつ回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 173,
@@ -3121,7 +3293,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "R"
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 174,
@@ -3139,7 +3312,8 @@ window.characterData = [
       "desc": "戦闘開始時、敵兵の一人を一気通貫で六割粉砕する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 175,
@@ -3157,7 +3331,8 @@ window.characterData = [
       "desc": "休息時、兵糧を消費して全軍の兵が回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 176,
@@ -3175,7 +3350,8 @@ window.characterData = [
       "desc": "戦闘開始時、敵将1人の特技発動を4巡封じる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 177,
@@ -3193,7 +3369,8 @@ window.characterData = [
       "desc": "戦闘一巡毎、高確率で敵将全体に忍術による追加攻撃を行う",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 178,
@@ -3211,7 +3388,8 @@ window.characterData = [
       "desc": "進軍中、高確率で[イベント：輸送隊]が発生し兵糧2を回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 179,
@@ -3229,7 +3407,8 @@ window.characterData = [
       "desc": "戦闘中毎巡、味方全員の兵数を100回復する",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 180,
@@ -3248,7 +3427,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "SSR"
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 181,
@@ -3266,7 +3446,8 @@ window.characterData = [
       "desc": "休息時、全軍の兵が大回復する",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 182,
@@ -3284,7 +3465,8 @@ window.characterData = [
       "desc": "【一撃必殺無効】戦闘開始時高確率で敵全員に現在兵数と同数の打撃を与える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 183,
@@ -3302,7 +3484,8 @@ window.characterData = [
       "desc": "瀕死時、敵味方全体に最大兵数と同数の打撃を与える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 184,
@@ -3320,7 +3503,8 @@ window.characterData = [
       "desc": "戦闘時、高確率で敵全体の攻撃をほぼ無効化する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 185,
@@ -3338,7 +3522,8 @@ window.characterData = [
       "desc": "進軍中、「悪天候」と「計略」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 186,
@@ -3357,7 +3542,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "R"
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 187,
@@ -3375,7 +3561,8 @@ window.characterData = [
       "desc": "攻撃時、一定の確率で敵将に大打撃を与える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 188,
@@ -3393,7 +3580,8 @@ window.characterData = [
       "desc": "戦闘中、しばしば敵全員に現在兵数と同数の打撃を与える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 189,
@@ -3411,7 +3599,8 @@ window.characterData = [
       "desc": "攻撃時、一定の確率で敵将に大打撃を与える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 190,
@@ -3429,7 +3618,8 @@ window.characterData = [
       "desc": "戦闘中、ときどき現在兵数と同数の打撃を与える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 191,
@@ -3447,7 +3637,8 @@ window.characterData = [
       "desc": "進軍中、「奇襲」と「足止め罠」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 192,
@@ -3465,7 +3656,8 @@ window.characterData = [
       "desc": "レアリティ【SR】の攻撃を跳ね返す（特殊攻撃を除く）",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 193,
@@ -3483,7 +3675,8 @@ window.characterData = [
       "desc": "戦闘時毎巡、兵の減少数に応じて攻撃力が大幅に上昇し続ける",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 194,
@@ -3501,7 +3694,8 @@ window.characterData = [
       "desc": "戦闘中、高確率で敵単体に現在兵数と同数の打撃を与える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 195,
@@ -3519,7 +3713,8 @@ window.characterData = [
       "desc": "兵種【忍者】からの攻撃を跳ね返す（特技攻撃を除く）",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 196,
@@ -3537,7 +3732,8 @@ window.characterData = [
       "desc": "戦闘時毎巡、敵武将全員の特技を封じる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 197,
@@ -3555,7 +3751,8 @@ window.characterData = [
       "desc": "戦闘中、高確率で敵全員に現在兵数と同数の打撃を与える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 198,
@@ -3573,7 +3770,8 @@ window.characterData = [
       "desc": "休息時、全軍の兵が少し回復するが、兵糧を2失う",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 199,
@@ -3591,7 +3789,8 @@ window.characterData = [
       "desc": "休息時、兵糧を消費して全軍の兵が回復する(10%,-3)",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 200,
@@ -3609,7 +3808,8 @@ window.characterData = [
       "desc": "戦闘中、まれに交戦中の敵将を一撃で葬り去る",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 201,
@@ -3627,7 +3827,8 @@ window.characterData = [
       "desc": "戦闘中、高確率で敵全員に現在兵数と同数の打撃を与える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 202,
@@ -3645,7 +3846,8 @@ window.characterData = [
       "desc": "戦闘中、高確率で鉄壁の防御で敵の攻撃を防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 203,
@@ -3663,7 +3865,8 @@ window.characterData = [
       "desc": "兵種【騎馬】からの攻撃を跳ね返す（特技攻撃を除く）",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 204,
@@ -3681,7 +3884,8 @@ window.characterData = [
       "desc": "進軍時、高確率で戦闘を回避する",
       "type": "avoid_trap",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 205,
@@ -3699,7 +3903,8 @@ window.characterData = [
       "desc": "進軍時、高確率で良いことが起こる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 206,
@@ -3717,7 +3922,8 @@ window.characterData = [
       "desc": "戦闘開始時、残り兵糧が少ないほど高確率で敵将を一撃で倒す",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 207,
@@ -3736,7 +3942,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "R"
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 208,
@@ -3754,7 +3961,8 @@ window.characterData = [
       "desc": "戦闘中、ごくまれに交戦中の敵将を一撃で葬り去る",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 209,
@@ -3772,7 +3980,8 @@ window.characterData = [
       "desc": "戦闘中、ときどき敵全体に現在兵数と同数の打撃を与える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 210,
@@ -3790,7 +3999,8 @@ window.characterData = [
       "desc": "戦闘開始時、ときどき敵全員に現在兵数と同数の打撃を与える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 211,
@@ -3808,7 +4018,8 @@ window.characterData = [
       "desc": "戦闘時、毎巡火縄銃による大打撃を与える（先制攻撃を除く）",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 212,
@@ -3826,7 +4037,8 @@ window.characterData = [
       "desc": "攻撃時、高確率で交戦中の敵将を一撃で葬り去る",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 213,
@@ -3844,7 +4056,8 @@ window.characterData = [
       "desc": "戦闘開始時、自軍武将全員の攻撃力が大幅に上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 214,
@@ -3862,7 +4075,8 @@ window.characterData = [
       "desc": "戦闘開始時、敵将の攻撃力を1/5にする",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 215,
@@ -3880,7 +4094,8 @@ window.characterData = [
       "desc": "戦闘中、敵の攻撃を高確率で無効化する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 216,
@@ -3898,7 +4113,8 @@ window.characterData = [
       "desc": "戦闘開始時、自軍武将全員の攻撃力が上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 217,
@@ -3916,7 +4132,8 @@ window.characterData = [
       "desc": "戦闘開始時、敵将の攻撃力を1/2にする",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 218,
@@ -3934,7 +4151,8 @@ window.characterData = [
       "desc": "戦闘中、敵の攻撃をほぼ無効化することがある",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 219,
@@ -3952,7 +4170,8 @@ window.characterData = [
       "desc": "戦闘中、一定の確率で敵将の攻撃力を下げる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 220,
@@ -3970,7 +4189,8 @@ window.characterData = [
       "desc": "休息時、全軍の兵が回復する",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 221,
@@ -3988,7 +4208,8 @@ window.characterData = [
       "desc": "進軍中、「奇襲」と「計略」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 222,
@@ -4006,7 +4227,8 @@ window.characterData = [
       "desc": "休息時、全軍の兵が少し回復する",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 223,
@@ -4024,7 +4246,8 @@ window.characterData = [
       "desc": "進軍中、全軍の運が大幅に上昇する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 224,
@@ -4042,7 +4265,8 @@ window.characterData = [
       "desc": "戦闘開始時、自軍武将全員の攻撃力が大幅に増加する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 225,
@@ -4060,7 +4284,8 @@ window.characterData = [
       "desc": "休息時、全軍の兵が少し回復するが、兵糧を失う",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 226,
@@ -4078,7 +4303,8 @@ window.characterData = [
       "desc": "進軍時、高確率で戦闘を回避する",
       "type": "avoid_trap",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 227,
@@ -4096,7 +4322,8 @@ window.characterData = [
       "desc": "休息時、全軍の兵と兵糧が回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 228,
@@ -4114,7 +4341,8 @@ window.characterData = [
       "desc": "【一撃必殺攻撃無効】休息時に状態異常を回復",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 229,
@@ -4132,7 +4360,8 @@ window.characterData = [
       "desc": "進軍時、すべての妨害を一定の確率で防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 230,
@@ -4150,7 +4379,8 @@ window.characterData = [
       "desc": "戦闘中、敵の攻撃を高確率で無効化する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 231,
@@ -4168,7 +4398,8 @@ window.characterData = [
       "desc": "戦闘中、一定の確率で敵将の攻撃力を下げる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 232,
@@ -4187,7 +4418,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "R"
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 233,
@@ -4205,7 +4437,8 @@ window.characterData = [
       "desc": "休息時、全軍の兵が少し回復するが、兵糧を2失う",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 234,
@@ -4223,7 +4456,8 @@ window.characterData = [
       "desc": "戦闘時、毎巡通常攻撃のほか、分身による攻撃を加える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 235,
@@ -4241,7 +4475,8 @@ window.characterData = [
       "desc": "兵種【弓兵】からの攻撃を跳ね返す（特技攻撃を除く）",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 236,
@@ -4259,7 +4494,8 @@ window.characterData = [
       "desc": "戦闘時、味方全体の受ける損害を軽減する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 237,
@@ -4277,7 +4513,8 @@ window.characterData = [
       "desc": "戦闘開始時、敵兵の三割を一気通貫で粉砕する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 238,
@@ -4295,7 +4532,8 @@ window.characterData = [
       "desc": "【一撃必殺攻撃無効】進軍時、敵と頻繁に戦闘が発生する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 239,
@@ -4313,7 +4551,8 @@ window.characterData = [
       "desc": "戦闘開始時と戦闘中毎巡、敵将全員の攻撃力を低下させ続ける",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 240,
@@ -4331,7 +4570,8 @@ window.characterData = [
       "desc": "戦闘開始時と戦闘中、敵将１名の兵数を２割爆風で吹き飛ばす",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 241,
@@ -4349,7 +4589,8 @@ window.characterData = [
       "desc": "進軍中、100％の確率で[妨害：傷病と計略]を防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 242,
@@ -4367,7 +4608,8 @@ window.characterData = [
       "desc": "戦闘中、敵将よりも兵が少ない場合、味方全員の攻撃力が上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 243,
@@ -4385,7 +4627,8 @@ window.characterData = [
       "desc": "戦闘開始時、敵3名の攻撃力を40％・防御力を50％下げる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 244,
@@ -4403,7 +4646,8 @@ window.characterData = [
       "desc": "進軍時、すべての妨害を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 245,
@@ -4421,7 +4665,8 @@ window.characterData = [
       "desc": "戦闘開始時、敵将の攻撃力を1/5にする",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 246,
@@ -4439,7 +4684,8 @@ window.characterData = [
       "desc": "戦闘開始時、自軍兵士全員の攻撃力を上昇させる",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 247,
@@ -4457,7 +4703,8 @@ window.characterData = [
       "desc": "戦闘開始時、敵将の攻撃力を1/2にする",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 248,
@@ -4475,7 +4722,8 @@ window.characterData = [
       "desc": "進軍時、すべての妨害を一定の確率で防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 249,
@@ -4494,7 +4742,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "R"
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 250,
@@ -4512,7 +4761,8 @@ window.characterData = [
       "desc": "戦闘中、一定の確率で敵将の攻撃力を下げる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 251,
@@ -4530,7 +4780,8 @@ window.characterData = [
       "desc": "進軍中、毎日一定の確率で兵糧が2ずつ回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 252,
@@ -4548,7 +4799,8 @@ window.characterData = [
       "desc": "戦闘中、一定の確率で兵が回復する",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 253,
@@ -4566,7 +4818,8 @@ window.characterData = [
       "desc": "兵種【弓兵】からの攻撃を跳ね返す（特技攻撃を除く）",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 254,
@@ -4584,7 +4837,8 @@ window.characterData = [
       "desc": "戦闘開始時、敵将一人の特技発動を3巡封じる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 255,
@@ -4602,7 +4856,8 @@ window.characterData = [
       "desc": "進軍時、すべての妨害を高確率で防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 256,
@@ -4620,7 +4875,8 @@ window.characterData = [
       "desc": "休息時、進軍中に入手した財宝を使って兵と兵糧を回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 257,
@@ -4638,7 +4894,8 @@ window.characterData = [
       "desc": "瀕死時、敵味方全体に最大兵数と同数の打撃を与える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 258,
@@ -4656,7 +4913,8 @@ window.characterData = [
       "desc": "戦闘中、高確率で現在兵数と同数の打撃を与える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 259,
@@ -4674,7 +4932,8 @@ window.characterData = [
       "desc": "戦闘開始時、武将二人の兵が少し回復する",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 260,
@@ -4692,7 +4951,8 @@ window.characterData = [
       "desc": "進軍時、兵糧が減らない",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 261,
@@ -4710,7 +4970,8 @@ window.characterData = [
       "desc": "進軍時、すべての妨害を高確率で防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 262,
@@ -4728,7 +4989,8 @@ window.characterData = [
       "desc": "戦闘開始時、残り兵が高いほど運が上昇する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 263,
@@ -4746,7 +5008,8 @@ window.characterData = [
       "desc": "【防御力低】戦闘中毎巡、高確率で味方全員の防御力を大幅に上昇させ続ける",
       "type": "defense_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 264,
@@ -4764,7 +5027,8 @@ window.characterData = [
       "desc": "進軍中、100％の確率で［妨害：奇襲と布陣失敗］を防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 265,
@@ -4782,7 +5046,8 @@ window.characterData = [
       "desc": "戦闘開始時、全軍の兵が回復する",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 266,
@@ -4800,7 +5065,8 @@ window.characterData = [
       "desc": "戦闘開始時と戦闘中毎巡、敵1人の攻撃力を大幅に低下させ続ける",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 267,
@@ -4818,7 +5084,8 @@ window.characterData = [
       "desc": "【一撃必殺攻撃無効】休息時に状態異常を回復",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 268,
@@ -4837,7 +5104,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "R"
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 269,
@@ -4855,7 +5123,8 @@ window.characterData = [
       "desc": "進軍中、「足止め罠」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 270,
@@ -4873,7 +5142,8 @@ window.characterData = [
       "desc": "進軍中、「奇襲」と「足止め罠」をときどき防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 271,
@@ -4891,7 +5161,8 @@ window.characterData = [
       "desc": "進軍中、毎日兵糧が1ずつ回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 272,
@@ -4909,7 +5180,8 @@ window.characterData = [
       "desc": "休息時、全軍の兵が回復する",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 273,
@@ -4928,7 +5200,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "R"
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 274,
@@ -4946,7 +5219,8 @@ window.characterData = [
       "desc": "進軍中、ときどき「足止め罠」と「計略」を防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 275,
@@ -4964,7 +5238,8 @@ window.characterData = [
       "desc": "進軍中、ときどき「布陣失敗」を防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 276,
@@ -4982,7 +5257,8 @@ window.characterData = [
       "desc": "先制攻撃の成功率が上昇する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 277,
@@ -5000,7 +5276,8 @@ window.characterData = [
       "desc": "戦闘開始時、残り兵が高いほど運が上昇する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 278,
@@ -5018,7 +5295,8 @@ window.characterData = [
       "desc": "休息時、全軍の兵が超回復する(15％)",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 279,
@@ -5036,7 +5314,8 @@ window.characterData = [
       "desc": "戦闘開始時、可能な限り戦闘を回避する",
       "type": "avoid_trap",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 280,
@@ -5054,7 +5333,8 @@ window.characterData = [
       "desc": "戦闘中、高確率で鉄壁の防御で敵の攻撃を防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 281,
@@ -5072,7 +5352,8 @@ window.characterData = [
       "desc": "戦闘中ときどき、鉄壁の防御で敵の攻撃を防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 282,
@@ -5090,7 +5371,8 @@ window.characterData = [
       "desc": "兵種【騎馬】からの攻撃を跳ね返す（特技攻撃を除く）",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 283,
@@ -5108,7 +5390,8 @@ window.characterData = [
       "desc": "戦闘時、味方全体の受ける損害を軽減する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 284,
@@ -5126,7 +5409,8 @@ window.characterData = [
       "desc": "戦闘開始時、自身より能力の低い武将の能力値を引き上げる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 285,
@@ -5144,7 +5428,8 @@ window.characterData = [
       "desc": "進軍中、「計略」と「罠」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 286,
@@ -5162,7 +5447,8 @@ window.characterData = [
       "desc": "進軍時、すべての妨害を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 287,
@@ -5180,7 +5466,8 @@ window.characterData = [
       "desc": "【一撃必殺攻撃無効】進軍時、敵と頻繁に戦闘が発生する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 288,
@@ -5198,7 +5485,8 @@ window.characterData = [
       "desc": "戦闘に勝利するほど攻撃力が大幅に上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 289,
@@ -5216,7 +5504,8 @@ window.characterData = [
       "desc": "レアリティ【SSR】の攻撃を反射する（特技攻撃を除く）",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 290,
@@ -5234,7 +5523,8 @@ window.characterData = [
       "desc": "戦闘開始時、味方2名の防御力を上昇させて損害を軽減する",
       "type": "defense_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 291,
@@ -5252,7 +5542,8 @@ window.characterData = [
       "desc": "戦闘開始時、残り兵糧が少ないほど高確率で敵将を一撃で倒す",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 292,
@@ -5270,7 +5561,8 @@ window.characterData = [
       "desc": "戦闘時、兵種による有利不利を無視して攻撃ができる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 293,
@@ -5288,7 +5580,8 @@ window.characterData = [
       "desc": "戦闘時、兵種による有利不利を無視して攻撃ができる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 294,
@@ -5306,7 +5599,8 @@ window.characterData = [
       "desc": "攻撃時、稀に交戦中の敵将を一撃で葬り去る",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 295,
@@ -5325,7 +5619,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "R"
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 296,
@@ -5343,7 +5638,8 @@ window.characterData = [
       "desc": "戦闘開始時、高確率で戦闘を回避する",
       "type": "avoid_trap",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 297,
@@ -5361,7 +5657,8 @@ window.characterData = [
       "desc": "先制攻撃の成功率が上昇する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 298,
@@ -5379,7 +5676,8 @@ window.characterData = [
       "desc": "戦闘中、高確率で敵の攻撃力を大幅に下げる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 299,
@@ -5397,7 +5695,8 @@ window.characterData = [
       "desc": "絶対に先制攻撃になる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 300,
@@ -5415,7 +5714,8 @@ window.characterData = [
       "desc": "休息時、進軍中に入手した財宝が「ココロの鍵」に変化する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 301,
@@ -5433,7 +5733,8 @@ window.characterData = [
       "desc": "先制攻撃の成功率が上昇する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 302,
@@ -5451,7 +5752,8 @@ window.characterData = [
       "desc": "進軍中、99%の確率で全軍の兵と兵糧に損害を受ける「足止め罠」にかかる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 303,
@@ -5469,7 +5771,8 @@ window.characterData = [
       "desc": "進軍開始時、C武将の攻撃力を5倍にする",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 304,
@@ -5487,7 +5790,8 @@ window.characterData = [
       "desc": "戦闘開始時、自身より能力の低い武将の能力値を引き上げる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 305,
@@ -5505,7 +5809,8 @@ window.characterData = [
       "desc": "戦闘中毎巡、攻撃力が増加する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 306,
@@ -5523,7 +5828,8 @@ window.characterData = [
       "desc": "戦闘中、高確率で敵全員に現在兵数と同数の打撃を与える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 307,
@@ -5541,7 +5847,8 @@ window.characterData = [
       "desc": "戦闘時毎巡、高確率で敵武将1名の特技を封じる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 308,
@@ -5560,7 +5867,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "R"
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 309,
@@ -5578,7 +5886,8 @@ window.characterData = [
       "desc": "戦闘開始時、高確率で戦闘を回避する",
       "type": "avoid_trap",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 310,
@@ -5596,7 +5905,8 @@ window.characterData = [
       "desc": "休息時、撤退武将を低兵数で復帰させる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 311,
@@ -5614,7 +5924,8 @@ window.characterData = [
       "desc": "戦闘中、高確率で交戦中の敵将を一撃で葬り去る",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 312,
@@ -5632,7 +5943,8 @@ window.characterData = [
       "desc": "戦闘中、毎巡攻撃力が超大幅に上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 313,
@@ -5650,7 +5962,8 @@ window.characterData = [
       "desc": "味方に【姫武将】がいると攻撃力が上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 314,
@@ -5668,7 +5981,8 @@ window.characterData = [
       "desc": "戦闘開始時、敵兵全体の半数を無慈悲に粉砕する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 315,
@@ -5686,7 +6000,8 @@ window.characterData = [
       "desc": "味方に【男武将】がいると攻撃力が上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 316,
@@ -5704,7 +6019,8 @@ window.characterData = [
       "desc": "先制攻撃の成功率が上昇する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 317,
@@ -5722,7 +6038,8 @@ window.characterData = [
       "desc": "戦闘時、兵種による有利不利を無視して攻撃ができる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 318,
@@ -5741,7 +6058,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "SSR"
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 319,
@@ -5759,7 +6077,8 @@ window.characterData = [
       "desc": "戦闘時、高確率で敵将2人の攻撃をほぼ無効化する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 320,
@@ -5777,7 +6096,8 @@ window.characterData = [
       "desc": "進軍中、財宝を発見する確率が上昇する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 321,
@@ -5796,7 +6116,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "R"
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 322,
@@ -5815,7 +6136,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "R"
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 323,
@@ -5833,7 +6155,8 @@ window.characterData = [
       "desc": "味方に【姫武将】がいると味方全員の攻撃力が上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 324,
@@ -5851,7 +6174,8 @@ window.characterData = [
       "desc": "戦闘開始時、敵将の攻撃力を1/10にする",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 325,
@@ -5869,7 +6193,8 @@ window.characterData = [
       "desc": "戦闘開始時、残り兵糧が多いほど高確率で、敵将を一撃で倒す",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 326,
@@ -5887,7 +6212,8 @@ window.characterData = [
       "desc": "戦闘時、毎巡三段撃ちによる攻撃を行う（先制攻撃を除く）",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 327,
@@ -5905,7 +6231,8 @@ window.characterData = [
       "desc": "進軍日数更新時、日数が3の倍数のとき、兵糧が減少しない",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 328,
@@ -5923,7 +6250,8 @@ window.characterData = [
       "desc": "戦闘中毎巡、高確率で攻撃力が1.5倍になる",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 329,
@@ -5941,7 +6269,8 @@ window.characterData = [
       "desc": "休息時、全軍の兵が回復する",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 330,
@@ -5960,7 +6289,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "R"
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 331,
@@ -5978,7 +6308,8 @@ window.characterData = [
       "desc": "戦闘開始時、敵将の攻撃力を少し下げる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 332,
@@ -5996,7 +6327,8 @@ window.characterData = [
       "desc": "先制攻撃の成功率が上昇する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 333,
@@ -6014,7 +6346,8 @@ window.characterData = [
       "desc": "戦闘開始時、ときどき攻撃力が上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 334,
@@ -6032,7 +6365,8 @@ window.characterData = [
       "desc": "進軍中、「計略」と「傷病」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 335,
@@ -6050,7 +6384,8 @@ window.characterData = [
       "desc": "戦闘開始時、敵将の攻撃力を1/10にする",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 336,
@@ -6068,7 +6403,8 @@ window.characterData = [
       "desc": "ときどき戦闘を回避する",
       "type": "avoid_trap",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 337,
@@ -6086,7 +6422,8 @@ window.characterData = [
       "desc": "戦闘中、ごくまれに交戦中の敵将を一撃で葬り去る",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 338,
@@ -6104,7 +6441,8 @@ window.characterData = [
       "desc": "進軍中、一定の確率で運が上昇する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 339,
@@ -6122,7 +6460,8 @@ window.characterData = [
       "desc": "進軍中、良いことが起こる確率が大幅に上昇する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 340,
@@ -6140,7 +6479,8 @@ window.characterData = [
       "desc": "進軍中、高確率で兵糧が2ずつ回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 341,
@@ -6158,7 +6498,8 @@ window.characterData = [
       "desc": "休息時、全軍の兵が大回復する",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 342,
@@ -6176,7 +6517,8 @@ window.characterData = [
       "desc": "戦闘開始時、高確率で攻撃力が6倍になる（1回のみ発動）",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 343,
@@ -6194,7 +6536,8 @@ window.characterData = [
       "desc": "進軍中、「布陣失敗」と「足止め罠」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 344,
@@ -6212,7 +6555,8 @@ window.characterData = [
       "desc": "戦闘中毎巡、味方に【千代】がいると攻撃力が上昇し続ける",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 345,
@@ -6230,7 +6574,8 @@ window.characterData = [
       "desc": "戦場制覇時、進軍日数に応じて銀を獲得する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 346,
@@ -6248,7 +6593,8 @@ window.characterData = [
       "desc": "戦闘時、味方全体の受ける損害を軽減する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 347,
@@ -6266,7 +6612,8 @@ window.characterData = [
       "desc": "兵種【水兵】からの攻撃を跳ね返す（特技攻撃を除く）",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 348,
@@ -6284,7 +6631,8 @@ window.characterData = [
       "desc": "進軍時、低確率ですべての妨害を防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 349,
@@ -6303,7 +6651,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "R"
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 350,
@@ -6321,7 +6670,8 @@ window.characterData = [
       "desc": "戦闘時、ときどき敵将一人の行動を1巡封じる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 351,
@@ -6339,7 +6689,8 @@ window.characterData = [
       "desc": "進軍中、「計略」と「傷病」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 352,
@@ -6357,7 +6708,8 @@ window.characterData = [
       "desc": "攻撃時、一定の確率で敵将に大打撃を与える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 353,
@@ -6375,7 +6727,8 @@ window.characterData = [
       "desc": "戦闘中、兵が10分の1になると戦闘から脱出を試みる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 354,
@@ -6393,7 +6746,8 @@ window.characterData = [
       "desc": "戦闘に勝利するほど攻撃力が上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 355,
@@ -6411,7 +6765,8 @@ window.characterData = [
       "desc": "戦闘中ときどき、鉄壁の防御で敵の攻撃を防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 356,
@@ -6429,7 +6784,8 @@ window.characterData = [
       "desc": "休息時、全軍の兵が回復する",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 357,
@@ -6447,7 +6803,8 @@ window.characterData = [
       "desc": "戦闘開始時、自軍武将全員の攻撃力が大幅に上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 358,
@@ -6465,7 +6822,8 @@ window.characterData = [
       "desc": "戦闘中高確率、味方3名の攻撃力が大幅に上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 359,
@@ -6483,7 +6841,8 @@ window.characterData = [
       "desc": "レアリティ【SR】の攻撃を跳ね返す（特技攻撃を除く）",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 360,
@@ -6501,7 +6860,8 @@ window.characterData = [
       "desc": "戦闘中、高確率で敵全員に現在兵数と同数の打撃を与える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 361,
@@ -6519,7 +6879,8 @@ window.characterData = [
       "desc": "休息時、兵糧を消費して全軍の兵が回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 362,
@@ -6537,7 +6898,8 @@ window.characterData = [
       "desc": "戦闘中、高確率で攻撃力が2倍になる",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 363,
@@ -6555,7 +6917,8 @@ window.characterData = [
       "desc": "進軍中、五割の確率で兵糧が減らない",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 364,
@@ -6573,7 +6936,8 @@ window.characterData = [
       "desc": "進軍中、「計略」と「罠」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 365,
@@ -6592,7 +6956,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "R"
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 366,
@@ -6610,7 +6975,8 @@ window.characterData = [
       "desc": "戦闘中毎巡、高確率で敵将全員の攻撃力を低下させ続ける",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 367,
@@ -6628,7 +6994,8 @@ window.characterData = [
       "desc": "進軍中、高確率で［イベント：癒しの祈願］が発生し兵数１５％を回復する",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 368,
@@ -6646,7 +7013,8 @@ window.characterData = [
       "desc": "【防御力中】戦闘開始時、残りの兵糧合計に応じて味方の防御力が上昇する",
       "type": "defense_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 369,
@@ -6664,7 +7032,8 @@ window.characterData = [
       "desc": "進軍中、100％の確率で［妨害：奇襲と悪天候］を防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 370,
@@ -6682,7 +7051,8 @@ window.characterData = [
       "desc": "進軍中、100％の確率で［妨害：悪天候と計略］を防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 371,
@@ -6700,7 +7070,8 @@ window.characterData = [
       "desc": "【一撃必殺無効】戦闘開始時、高確率で戦闘を回避する",
       "type": "avoid_trap",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 372,
@@ -6718,7 +7089,8 @@ window.characterData = [
       "desc": "戦闘中、低確率で攻撃力の2倍に等しい打撃を与える",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 373,
@@ -6736,7 +7108,8 @@ window.characterData = [
       "desc": "休息時、撤退武将1名を低兵数で復帰させる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 374,
@@ -6754,7 +7127,8 @@ window.characterData = [
       "desc": "進軍時、兵糧が毎日4ずつ回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 375,
@@ -6772,7 +7146,8 @@ window.characterData = [
       "desc": "戦闘中、高確率で敵全員に現在兵数と同数の打撃を与える(旧:戦闘開始後、4巡目に攻撃力の4倍の打撃を与える)",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 376,
@@ -6790,7 +7165,8 @@ window.characterData = [
       "desc": "戦闘中、高確率で敵の攻撃力を大幅に下げる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 377,
@@ -6808,7 +7184,8 @@ window.characterData = [
       "desc": "戦闘開始時、兵の減少数に応じて攻撃力が大幅に上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 378,
@@ -6826,7 +7203,8 @@ window.characterData = [
       "desc": "戦闘開始時、一定の確率で交戦中の敵将を一撃で葬り去る",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 379,
@@ -6844,7 +7222,8 @@ window.characterData = [
       "desc": "進軍中、財宝を発見する確率が上昇する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 380,
@@ -6862,7 +7241,8 @@ window.characterData = [
       "desc": "休息時、兵糧を消費して全軍の兵が回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 381,
@@ -6880,7 +7260,8 @@ window.characterData = [
       "desc": "戦闘中、高確率で攻撃力が2倍になる",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 382,
@@ -6898,7 +7279,8 @@ window.characterData = [
       "desc": "戦闘中、ときどき現在兵数と同数の打撃を与える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 383,
@@ -6917,7 +7299,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "R"
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 384,
@@ -6935,7 +7318,8 @@ window.characterData = [
       "desc": "【雑魚敵】からの攻撃を跳ね返す（特殊攻撃を除く）",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 385,
@@ -6953,7 +7337,8 @@ window.characterData = [
       "desc": "【一撃必殺攻撃無効】休息時に状態異常を回復",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 386,
@@ -6971,7 +7356,8 @@ window.characterData = [
       "desc": "戦闘中、高確率で現在兵数と同数の打撃を与える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 387,
@@ -6989,7 +7375,8 @@ window.characterData = [
       "desc": "戦闘時、高確率で敵単体の攻撃をほぼ無効化する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 388,
@@ -7007,7 +7394,8 @@ window.characterData = [
       "desc": "休息時、進軍中に入手した財宝を使って兵糧を回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 389,
@@ -7025,7 +7413,8 @@ window.characterData = [
       "desc": "戦闘に勝利するほど攻撃が上昇する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 390,
@@ -7043,7 +7432,8 @@ window.characterData = [
       "desc": "味方に撤退武将がいると戦闘開始時に攻撃力が2倍・3倍になる",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 391,
@@ -7061,7 +7451,8 @@ window.characterData = [
       "desc": "戦闘開始時に瀕死の場合、兵を最大まで回復",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 392,
@@ -7079,7 +7470,8 @@ window.characterData = [
       "desc": "【一撃必殺攻撃無効】休息時、撤退武将を兵数半分で復帰させる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 393,
@@ -7097,7 +7489,8 @@ window.characterData = [
       "desc": "休息時、高確率で兵糧が3ずつ回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 394,
@@ -7115,7 +7508,8 @@ window.characterData = [
       "desc": "進軍時、敵と頻繁に戦闘が発生する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 395,
@@ -7133,7 +7527,8 @@ window.characterData = [
       "desc": "戦闘開始時、高確率で戦闘を回避する",
       "type": "avoid_trap",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 396,
@@ -7151,7 +7546,8 @@ window.characterData = [
       "desc": "進軍中、兵糧が減らない",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 397,
@@ -7169,7 +7565,8 @@ window.characterData = [
       "desc": "休息時、全軍の兵が回復する",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 398,
@@ -7187,7 +7584,8 @@ window.characterData = [
       "desc": "進軍時、高確率で良いことが起こる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 399,
@@ -7205,7 +7603,8 @@ window.characterData = [
       "desc": "進軍時、「奇襲」と「傷病」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 400,
@@ -7223,7 +7622,8 @@ window.characterData = [
       "desc": "【一撃必殺攻撃無効】休息時、撤退武将を兵数半分で復帰させる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 401,
@@ -7241,7 +7641,8 @@ window.characterData = [
       "desc": "瀕死時、敵将に最大兵数と同数の打撃を与える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 402,
@@ -7259,7 +7660,8 @@ window.characterData = [
       "desc": "レアリティ【R】の攻撃を反射する（特殊攻撃を除く）",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 403,
@@ -7277,7 +7679,8 @@ window.characterData = [
       "desc": "進軍時、敵と頻繁に戦闘が発生する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 404,
@@ -7295,7 +7698,8 @@ window.characterData = [
       "desc": "戦闘一巡時、兵数が２の倍数の敵にもう一度攻撃する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 405,
@@ -7313,7 +7717,8 @@ window.characterData = [
       "desc": "戦闘時、兵の減少数に応じ全軍の攻撃力が大幅に上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 406,
@@ -7331,7 +7736,8 @@ window.characterData = [
       "desc": "戦闘中毎順、敵将全員の攻撃力を（大幅に）低下させ続ける",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 407,
@@ -7349,7 +7755,8 @@ window.characterData = [
       "desc": "戦闘時毎巡、兵の減少数に応じて攻撃力が大幅に上昇し続ける",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 408,
@@ -7367,7 +7774,8 @@ window.characterData = [
       "desc": "休息時、高確率で全軍の兵と兵糧が回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 409,
@@ -7385,7 +7793,8 @@ window.characterData = [
       "desc": "【一撃必殺攻撃無効】進軍中、すべての妨害を100％防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 410,
@@ -7403,7 +7812,8 @@ window.characterData = [
       "desc": "進軍中、「傷病」と「悪天候」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 411,
@@ -7421,7 +7831,8 @@ window.characterData = [
       "desc": "【一撃必殺無効】進軍時、高確率でいいことが起こる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 412,
@@ -7439,7 +7850,8 @@ window.characterData = [
       "desc": "戦闘時毎巡、敵全体の兵力三割を涙とともに粉砕する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 413,
@@ -7457,7 +7869,8 @@ window.characterData = [
       "desc": "進軍中、「布陣失敗」と「足止め罠」を100%防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 414,
@@ -7475,7 +7888,8 @@ window.characterData = [
       "desc": "瀕死時、敵味方全体に最大兵数と同数の打撃を与える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 415,
@@ -7493,7 +7907,8 @@ window.characterData = [
       "desc": "進軍中、100％の確率で[妨害：奇襲と計略]を防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 416,
@@ -7511,7 +7926,8 @@ window.characterData = [
       "desc": "戦闘開始時、ごく稀に敵将1人を一撃で葬り去る",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 417,
@@ -7529,7 +7945,8 @@ window.characterData = [
       "desc": "攻撃時、一定の確率で敵将に大打撃を与える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 418,
@@ -7547,7 +7964,8 @@ window.characterData = [
       "desc": "戦闘開始時、高確率で兵数が４の倍数の敵に見事な一撃を繰り出す",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 419,
@@ -7565,7 +7983,8 @@ window.characterData = [
       "desc": "戦闘１巡時のみ、高確率で敵全員に現在兵数と同時の打撃を与える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 420,
@@ -7583,7 +8002,8 @@ window.characterData = [
       "desc": "戦闘開始時、味方全員の攻撃力を上昇させる",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 421,
@@ -7601,7 +8021,8 @@ window.characterData = [
       "desc": "戦闘中、高確率で攻撃が２倍になる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 422,
@@ -7619,7 +8040,8 @@ window.characterData = [
       "desc": "戦闘開始時、残り兵数が高いほど高確率で味方一人の攻撃が上昇する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 423,
@@ -7637,7 +8059,8 @@ window.characterData = [
       "desc": "戦闘時、高確率で敵単体の攻撃をほぼ無効化する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 424,
@@ -7655,7 +8078,8 @@ window.characterData = [
       "desc": "戦闘開始時、低確率で敵将全員の防御力を下げる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 425,
@@ -7673,7 +8097,8 @@ window.characterData = [
       "desc": "【防御力極】戦闘中4巡目に、味方の防御力を超減少し攻撃力を超上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 426,
@@ -7691,7 +8116,8 @@ window.characterData = [
       "desc": "【防御力高】戦闘中4巡目に、敵全員の特技を3巡封じる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 427,
@@ -7709,7 +8135,8 @@ window.characterData = [
       "desc": "【防御力高】戦闘中４巡目に、味方全員の兵数を50％と兵糧を３回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 428,
@@ -7728,7 +8155,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "R"
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 429,
@@ -7746,7 +8174,8 @@ window.characterData = [
       "desc": "【防御力中】戦闘中４巡目に、敵全員に現在兵数と同数の打撃を与える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 430,
@@ -7764,7 +8193,8 @@ window.characterData = [
       "desc": "【一撃必殺攻撃無効】進軍中、高確率ですべての妨害を防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 431,
@@ -7782,7 +8212,8 @@ window.characterData = [
       "desc": "【雑魚敵】からの攻撃を跳ね返す（特殊攻撃を除く）",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 432,
@@ -7800,7 +8231,8 @@ window.characterData = [
       "desc": "進軍中、100％の確率で[妨害：罠と計略]を防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 433,
@@ -7818,7 +8250,8 @@ window.characterData = [
       "desc": "進軍中、高確率で[イベント：大盃を飲み干した]が発生し、財宝を獲得する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 434,
@@ -7836,7 +8269,8 @@ window.characterData = [
       "desc": "戦闘開始時、兵の減少数に応じ全軍の攻撃力が大幅に上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 435,
@@ -7854,7 +8288,8 @@ window.characterData = [
       "desc": "兵種【足軽】からの攻撃を跳ね返す(特技攻撃を除く)",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 436,
@@ -7872,7 +8307,8 @@ window.characterData = [
       "desc": "戦闘開始時、自軍全員の攻撃力が上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 437,
@@ -7891,7 +8327,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "R"
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 438,
@@ -7909,7 +8346,8 @@ window.characterData = [
       "desc": "戦闘開始時、残り兵数が高いほど味方全員の攻撃力と防御力が上昇",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 439,
@@ -7927,7 +8365,8 @@ window.characterData = [
       "desc": "戦闘中毎巡、敵将全員の攻撃力を低下させ続ける(旧:戦闘中毎巡、だんだん敵将全員の攻撃力を低下させる)",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 440,
@@ -7945,7 +8384,8 @@ window.characterData = [
       "desc": "進軍時、すべての妨害を高確率で防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 441,
@@ -7963,7 +8403,8 @@ window.characterData = [
       "desc": "戦闘中毎巡、高確率で敵将全員の攻撃力を低下させ続ける",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 442,
@@ -7981,7 +8422,8 @@ window.characterData = [
       "desc": "進軍時、すべての妨害を一定の確率で防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 443,
@@ -8000,7 +8442,8 @@ window.characterData = [
       "type": "capture_up",
       "value": 0,
       "cap_limit": "R"
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 444,
@@ -8018,7 +8461,8 @@ window.characterData = [
       "desc": "進軍中、高確率で兵糧の減少を防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 445,
@@ -8036,7 +8480,8 @@ window.characterData = [
       "desc": "戦闘中、一定の確率で自軍全員の攻撃力が上昇する",
       "type": "attack_up",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 446,
@@ -8054,7 +8499,8 @@ window.characterData = [
       "desc": "戦闘中、3巡目に敵一人の攻撃力を半分にする",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 447,
@@ -8072,7 +8518,8 @@ window.characterData = [
       "desc": "進軍中、高確率で「布陣失敗」を防ぐ",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 448,
@@ -8090,7 +8537,8 @@ window.characterData = [
       "desc": "兵種【水兵】からの攻撃を跳ね返す（特技攻撃を除く）",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 449,
@@ -8108,7 +8556,8 @@ window.characterData = [
       "desc": "戦闘中毎巡、だんだん敵将全員の攻撃力を大幅に低下させる",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 450,
@@ -8126,7 +8575,8 @@ window.characterData = [
       "desc": "休息時、ときどき全軍の兵と兵糧が回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 451,
@@ -8144,7 +8594,8 @@ window.characterData = [
       "desc": "進軍時、超高確率で戦闘を回避する",
       "type": "avoid_trap",
       "value": 0
-    }
+    },
+    "gender": "female"
   },
   {
     "id": 452,
@@ -8162,7 +8613,8 @@ window.characterData = [
       "desc": "休息時、兵糧を消費して全軍の兵が回復する",
       "type": "recover_food",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 453,
@@ -8180,7 +8632,8 @@ window.characterData = [
       "desc": "進軍中、全軍の運が大幅に上昇する",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 454,
@@ -8198,7 +8651,8 @@ window.characterData = [
       "desc": "レアリティ【SSR】の攻撃を反射する（特技攻撃を除く）",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 455,
@@ -8216,7 +8670,8 @@ window.characterData = [
       "desc": "戦闘中、高確率で敵将全員に現在兵数と同数の打撃を与える",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 456,
@@ -8234,7 +8689,8 @@ window.characterData = [
       "desc": "攻撃時、稀に交戦中の敵将を一撃で葬り去る",
       "type": "passive",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 457,
@@ -8252,7 +8708,8 @@ window.characterData = [
       "desc": "戦闘開始時に瀕死の場合、兵を最大まで回復",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "male"
   },
   {
     "id": 458,
@@ -8270,6 +8727,7 @@ window.characterData = [
       "desc": "休息時、全軍の兵が大回復する",
       "type": "recover_hp",
       "value": 0
-    }
+    },
+    "gender": "female"
   }
 ];
