@@ -1,5 +1,5 @@
 
-// game_core.js - Ver 43.0 (Shop, Speed, & Full Features)
+// game_core.js - Ver 43.1 (Fix Starter Distribution)
 
 const SAVE_KEY = 'sengoku_idle_save_v41_full'; 
 const SECONDS_PER_DAY = 10; 
@@ -101,7 +101,6 @@ const ACHIEVEMENT_DATA = [
     {id:47, name: "単騎駆け", cond: "武将1名で制覇", reward_text: "一騎当千"},
     {id:48, name: "敵中突破", cond: "総兵力500以下で制覇", reward_text: "奇跡の生還"},
     {id:49, name: "戦の申し子", cond: "無傷(HP100%)で制覇", reward_text: "完全勝利"},
-    // 追加分
     {id:50, name: "天下無敵", cond: "すべての戦場を「かけあし進軍」で制覇", reward_text: "神速の行軍"},
     {id:51, name: "天下覇王", cond: "すべての戦場を「電撃強行軍」で制覇", reward_text: "電光石火"}
 ];
@@ -130,7 +129,7 @@ const TACTICS_DATA = [
     {name: "釜の底より薪を抜く", desc: "敵兵糧を減らす", source: "天と地と"},
     {name: "水を混ぜて魚を探る", desc: "撤退時の兵糧減少なし", source: "初黒星"},
     {name: "金蝉、殻を脱ぐ", desc: "兵半減で撤退", source: "死神の如し"},
-    {name: "門を関ざして賊を捕らう", desc: "敵より大勢なら攻撃UP", source: "怒涛の進軍"},
+    {name: "門を関ざして賊を捕らう", desc: "敵より少勢なら攻撃UP", source: "怒涛の進軍"},
     {name: "遠く交わり近く攻む", desc: "C・N武将の攻撃UP", source: "人材宝庫"},
     {name: "道を借りて各を伐つ", desc: "戦闘回避率アップ", source: "策士"},
     {name: "梁を盗み柱に換える", desc: "相性を無視する", source: "知将"},
@@ -270,8 +269,13 @@ function sellTreasure(treasureId) {
 function loadSaveData() {
     const json = localStorage.getItem(SAVE_KEY);
     let data;
-    if (!json) { saveData(DEFAULT_SAVE); data = JSON.parse(JSON.stringify(DEFAULT_SAVE)); } 
-    else { data = JSON.parse(json); }
+    if (!json) { 
+        // デフォルトデータを返す (saveDataはしない)
+        data = JSON.parse(JSON.stringify(DEFAULT_SAVE)); 
+    } else { 
+        data = JSON.parse(json); 
+    }
+    // Migration
     if (!data.prisoners) data.prisoners = [];
     if (!data.deck) data.deck = [null, null, null];
     if (!data.s_ranks) data.s_ranks = [];
@@ -282,15 +286,6 @@ function loadSaveData() {
     if (!data.collected_treasures) data.collected_treasures = [];
     if (!data.records) data.records = { totalDistance: 0, totalBattles: 0, totalWins: 0, totalDead: 0, retreatCount: 0, winStreak: 0, gachaCount: 0, capturedCount: 0, totalReleased: 0 };
     
-    if (window.characterData && window.characterData.length > 0) {
-        let starter = window.characterData.find(c => c.name.includes("織田信長") && c.rarity === "R");
-        if (!starter) starter = window.characterData.find(c => c.name.includes("織田信長"));
-        if (!starter) starter = window.characterData[0];
-        if (starter && !data.owned_ids.includes(starter.id)) {
-            data.owned_ids.push(starter.id);
-            localStorage.setItem(SAVE_KEY, JSON.stringify(data));
-        }
-    }
     return { ...DEFAULT_SAVE, ...data };
 }
 function saveData(data) { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); }
@@ -311,21 +306,44 @@ function importSaveData(code) {
         return false;
     } catch(e) { console.error("Import Error:", e); return false; }
 }
+
+// 初期配布を強化
 function checkAndDistributeStarter() {
     if (!window.characterData || window.characterData.length === 0) return { success: false };
+    
+    // 現在のデータをロード
     const currentSave = loadSaveData();
+    let updated = false;
+    let msg = "";
+
+    // 1. 武将配布 (R織田信長)
     let starterChar = window.characterData.find(c => c.name.includes("織田信長") && c.rarity === "R");
-    if (!starterChar) starterChar = window.characterData.find(c => c.name.includes("織田信長"));
-    if (!starterChar) starterChar = window.characterData[0];
-    if (starterChar) {
-        if (!currentSave.owned_ids.includes(starterChar.id)) {
-            currentSave.owned_ids.push(starterChar.id);
-            saveData(currentSave);
-            return { success: true, name: starterChar.name, rarity: starterChar.rarity };
-        }
+    if (!starterChar) starterChar = window.characterData[0]; // Fallback
+
+    if (starterChar && !currentSave.owned_ids.includes(starterChar.id)) {
+        currentSave.owned_ids.push(starterChar.id);
+        // デッキの1番目にセット
+        if (currentSave.deck[0] === null) currentSave.deck[0] = starterChar.id;
+        updated = true;
+        msg += `・武将「${starterChar.name}」\n`;
+    }
+
+    // 2. 資源配布 (救済措置: 所持金0かつ手形0なら初期状態とみなす)
+    // 既存ユーザーでもデータリセット後ならこれに該当するはず
+    if (currentSave.money === 0 && (!currentSave.items.ticket || currentSave.items.ticket === 0)) {
+        currentSave.money = 5000;
+        currentSave.items.ticket = 5;
+        updated = true;
+        msg += "・軍資金 5000\n・手形 5枚\n";
+    }
+
+    if (updated) {
+        saveData(currentSave);
+        return { success: true, message: msg };
     }
     return { success: false };
 }
+
 function findCharacterByNameAndRarity(fullName) {
     if(!window.characterData) return null;
     const rarity = fullName.match(/^[A-Z]+/)[0];
@@ -336,7 +354,6 @@ function findCharacterByNameAndRarity(fullName) {
 function checkAchievements(save) {
     const newAchieved = [];
     const newTactics = [];
-    
     const ownedChars = save.owned_ids.map(id => getCharacterById(id)).filter(c => c);
     const lastStats = save.records.lastExpeditionStats; 
 
@@ -916,6 +933,7 @@ function simulateExpeditionLoop(quest, deck, weather, bossChar, tactic, foodMult
         if (quest.interference && quest.interference.length > 0 && Math.random() < (0.3 / luck)) { 
             eventOccurred = true;
             const inf = quest.interference[Math.floor(Math.random() * quest.interference.length)];
+            
             if (tactic && tactic.name === "蒼天航路") {
                 addLog(d, `${d}日目: <span class="ev-skill" data-char="戦術" data-skill="${tactic.name}">戦術【${tactic.name}】が${inf}を無効化！</span>`);
             } else {
