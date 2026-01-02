@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -55,9 +56,20 @@
         .r-SR { color: #c0c0c0; font-weight:bold; } .r-R { color: #d94; font-weight:bold; }
         
         .treasure-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap:5px; padding:10px; }
-        .treasure-item { background:#111; border:1px solid #333; padding:5px; text-align:center; font-size:0.75rem; border-radius:4px; }
+        .treasure-item { background:#111; border:1px solid #333; padding:5px; text-align:center; font-size:0.75rem; border-radius:4px; cursor:pointer; }
         .tr-unlocked { border-color:#d4af37; color:#fff; background: #332200; }
         .tr-rank { color:#ffd700; font-weight:bold; }
+        
+        /* Shop Styles */
+        .shop-grid { display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+        .shop-item { background:#2a2a2a; border:1px solid #555; padding:10px; cursor:pointer; transition:0.2s; }
+        .shop-item:active { transform:scale(0.95); background:#444; }
+        .shop-icon { font-size:2rem; margin-bottom:5px; }
+        .shop-name { font-weight:bold; color:#fff; }
+        .shop-price { color:#ffd700; font-size:0.9rem; }
+        
+        .sell-item { display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #333; align-items:center; }
+        .sell-btn { padding:4px 8px; background:#533; color:#fcc; border:1px solid #744; font-size:0.8rem; cursor:pointer; }
     </style>
 </head>
 <body>
@@ -87,9 +99,20 @@
                 <span style="font-size:0.9rem; font-weight:bold;">戦術:</span>
                 <select id="tactic-select"></select>
             </div>
+            
+            <div class="tactic-select-box" style="border-top:0;">
+                <span style="font-size:0.9rem; font-weight:bold;">行軍:</span>
+                <select id="speed-select" style="background:#111; color:#fff; border:1px solid #555; padding:5px; flex:1; margin-left:10px;">
+                    <option value="normal">通常進軍 (標準)</option>
+                    <option value="kakeashi">かけあし進軍 (時間半減/兵糧1.5倍)</option>
+                    <option value="dengeki">電撃強行軍 (即完了/兵糧3倍/敵強化)</option>
+                </select>
+            </div>
+
             <div style="display:flex; justify-content:space-between; padding:5px; background:#222; margin-bottom:5px;">
                 <button onclick="openAchModal()" style="flex:1; margin-right:5px; padding:5px; font-size:0.8rem; background:#444; color:#fff; border:1px solid #666;">🏆 実績</button>
-                <button onclick="openTreasureModal()" style="flex:1; margin-left:5px; padding:5px; font-size:0.8rem; background:#446; color:#fff; border:1px solid #668;">🍵 家宝一覧</button>
+                <button onclick="openShopModal()" style="flex:1; margin:0 5px; padding:5px; font-size:0.8rem; background:#353; color:#fff; border:1px solid #464;">🛒 万屋</button>
+                <button onclick="openTreasureModal()" style="flex:1; margin-left:5px; padding:5px; font-size:0.8rem; background:#446; color:#fff; border:1px solid #668;">🍵 家宝</button>
             </div>
             
             <p style="font-size:0.8rem; color:#aaa; text-align:center;">
@@ -128,6 +151,7 @@
     </div>
 </div>
 
+<!-- Modals -->
 <div id="prisoner-modal" class="modal">
     <div class="modal-content">
         <h3 id="pm-name" style="color:#d4af37; font-size:1.3rem; margin:5px 0;"></h3>
@@ -164,6 +188,32 @@
         <div id="treasure-status" style="font-size:0.85rem; margin-bottom:10px;"></div>
         <div id="treasure-list" class="treasure-grid" style="max-height:400px; overflow-y:auto;"></div>
         <button class="btn-act btn-close" onclick="document.getElementById('treasure-modal').style.display='none'">閉じる</button>
+    </div>
+</div>
+
+<div id="shop-modal" class="modal">
+    <div class="modal-content">
+        <h3 style="color:#d4af37; border-bottom:1px solid #444; padding-bottom:5px;">万屋</h3>
+        <div style="text-align:center; margin-bottom:15px;">
+            所持銀貨: <span id="shop-money" style="color:#ffd700; font-weight:bold;">0</span>
+        </div>
+        <div class="shop-grid">
+            <div class="shop-item" onclick="shopBuy('ticket')">
+                <div class="shop-icon">🎫</div>
+                <div class="shop-name">手形</div>
+                <div class="shop-price">500銭</div>
+            </div>
+            <div class="shop-item" onclick="shopBuy('kokoro')">
+                <div class="shop-icon">🗝️</div>
+                <div class="shop-name">ココロの鍵</div>
+                <div class="shop-price">2000銭</div>
+            </div>
+        </div>
+        <div style="margin-top:15px; border-top:1px dashed #444; paddingTop:10px;">
+            <h4 style="color:#ccc; margin:5px 0;">家宝売却</h4>
+            <div id="sell-list" style="max-height:150px; overflow-y:auto; text-align:left;"></div>
+        </div>
+        <button class="btn-act btn-close" onclick="document.getElementById('shop-modal').style.display='none'">閉じる</button>
     </div>
 </div>
 
@@ -266,7 +316,14 @@
 
     function startExpedition(quest) {
         const tactic = document.getElementById('tactic-select').value;
-        const res = startExpeditionCore(quest.id, tactic);
+        const speed = document.getElementById('speed-select').value;
+        
+        // Confirm for Dengeki
+        if (speed === 'dengeki') {
+            if (!confirm("電撃強行軍は兵糧消費が激しく、敵が強化されます。\n実行しますか？")) return;
+        }
+        
+        const res = startExpeditionCore(quest.id, tactic, speed);
         if (res.error) { alert(res.error); return; }
         currentSave = loadSaveData();
         resumeExpedition();
@@ -459,7 +516,8 @@
                 if (exp.stats.dead > 0) msg += `\n[Hint] 撤退者を出さずに勝利せよ\n`;
             }
             const tacticObj = exp.tactic ? TACTICS_DATA.find(t=>t.name===exp.tactic) : null;
-            const rate = calculateCaptureProb(currentSave.deck.map(id=>getCharacterById(id)), q.boss_r, tacticObj);
+            const bossChar = getCharacterById(exp.bossId);
+            const rate = calculateCaptureProb(currentSave.deck.map(id=>getCharacterById(id)), bossChar, tacticObj);
             if (Math.random() * 100 < rate) { 
                 currentSave.prisoners.push({ id: exp.bossId, time: Date.now() }); 
                 currentSave.records.capturedCount = (currentSave.records.capturedCount || 0) + 1;
@@ -604,6 +662,63 @@
             list.appendChild(div);
         });
         document.getElementById('treasure-modal').style.display='flex';
+    }
+    
+    // Shop Logic
+    function openShopModal() {
+        document.getElementById('shop-money').textContent = (currentSave.money || 0).toLocaleString();
+        renderSellList();
+        document.getElementById('shop-modal').style.display = 'flex';
+    }
+    
+    function shopBuy(itemId) {
+        const res = buyItem(itemId);
+        if (res.success) {
+            currentSave = res.current; // sync
+            updateResourceDisplay();
+            document.getElementById('shop-money').textContent = (currentSave.money || 0).toLocaleString();
+            alert(res.msg);
+        } else {
+            alert(res.msg);
+        }
+    }
+    
+    function renderSellList() {
+        const list = document.getElementById('sell-list');
+        list.innerHTML = '';
+        const collected = currentSave.collected_treasures || [];
+        if (collected.length === 0) {
+            list.innerHTML = '<div style="padding:10px; color:#888;">売却できる家宝がありません</div>';
+            return;
+        }
+        
+        collected.forEach(tid => {
+            const t = TREASURE_DATA.find(x => x.id === tid);
+            if (!t) return;
+            const price = t.rank * 100;
+            const div = document.createElement('div');
+            div.className = 'sell-item';
+            div.innerHTML = `
+                <div>
+                    <div style="font-weight:bold; color:#d4af37;">${t.name}</div>
+                    <div style="font-size:0.7rem; color:#aaa;">ランク${t.rank}</div>
+                </div>
+                <button class="sell-btn" onclick="doSell(${tid})">売却 (${price}銭)</button>
+            `;
+            list.appendChild(div);
+        });
+    }
+    
+    function doSell(tid) {
+        if (!confirm("本当に売却しますか？\n(失った家宝は再入手が必要です)")) return;
+        const res = sellTreasure(tid);
+        if (res.success) {
+            currentSave = res.current;
+            updateResourceDisplay();
+            document.getElementById('shop-money').textContent = (currentSave.money || 0).toLocaleString();
+            renderSellList();
+            alert(res.msg);
+        }
     }
 
     function debugSkip(){if(currentSave.expedition){currentSave.expedition.startTime=0;currentSave.expedition.endTime=1;saveData(currentSave);updateLogs();}}

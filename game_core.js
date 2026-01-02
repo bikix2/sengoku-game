@@ -1,13 +1,16 @@
 
-// game_core.js - Ver 40.0 (Hardcore Balance: Strategy Required)
+// game_core.js - Ver 43.0 (Shop, Speed, & Full Features)
 
-const SAVE_KEY = 'sengoku_idle_save_v40_hardcore'; // Key changed to reset/migrate if needed, but user might want to keep save. 
-// Actually, better to keep the same key if compatible, but usually version up implies compat check.
-// Let's stick to the previous key base to allow carry over if structure is same.
-// The previous key was 'sengoku_idle_save_v39_treasure'. I'll keep it.
+const SAVE_KEY = 'sengoku_idle_save_v41_full'; 
 const SECONDS_PER_DAY = 10; 
 
-// --- ■0. 因縁データ ---
+const REGION_MAP = {
+    "east": ["陸奥", "出羽", "越後", "信濃", "上野", "下野", "常陸", "武蔵", "下総", "上総", "安房", "相模", "甲斐", "駿河", "伊豆"],
+    "central": ["越中", "能登", "加賀", "越前", "美濃", "飛騨", "尾張", "三河", "遠江", "近江", "伊勢", "志摩", "山城", "大和", "紀伊", "河内", "和泉", "摂津", "丹波", "丹後", "但馬", "播磨"],
+    "west": ["因幡", "伯耆", "出雲", "石見", "隠岐", "美作", "備前", "備中", "備後", "安芸", "周防", "長門", "淡路", "阿波", "讃岐", "伊予", "土佐", "筑前", "筑後", "豊前", "豊後", "肥前", "肥後", "日向", "大隅", "薩摩"]
+};
+
+// --- FATE DATA ---
 const FATE_DATA = [
     { me: "上杉謙信", boss: "武田信玄", title: "川中島の決戦", text: "甲斐の虎よ、今日こそ決着をつけようぞ！" },
     { me: "武田信玄", boss: "上杉謙信", title: "川中島の決戦", text: "越後の龍か... 相手にとって不足なし！" },
@@ -42,40 +45,12 @@ const FATE_DATA = [
     { me: "雑賀孫市", boss: "織田信長", title: "石山合戦", text: "俺たちの鉄砲は、魔王をも貫くぜ！" },
     { me: "前田慶次", boss: "前田利家", title: "加賀の傾奇者", text: "叔父御、たまには派手に暴れようぜ！" },
     { me: "服部半蔵", boss: "風魔小太郎", title: "忍びの頂上決戦", text: "伊賀の忍びと風魔の忍び... 生きて帰るは一人。" },
-    { me: "宮本武蔵", boss: "佐々木小次郎", title: "巌流島の決闘", text: "小次郎敗れたり！" }
+    { me: "宮本武蔵", boss: "佐々木小次郎", title: "巌流島の決闘", text: "小次郎敗れたり！" },
+    { me: "武蔵坊弁慶", boss: "源義経", title: "安宅の関", text: "御曹司、ここはそれがしにお任せあれ！" },
+    { me: "帰蝶", boss: "織田信長", title: "蝮の娘", text: "父の無念... 晴らさせてもらいます。" }
 ];
 
-// --- ■0.5 財宝データ ---
-const TREASURE_DATA = [
-    {id: 1, name: "九十九茄子", type: "茶入", rank: 10}, {id: 2, name: "松本茄子", type: "茶入", rank: 9}, {id: 3, name: "富士茄子", type: "茶入", rank: 9},
-    {id: 4, name: "七夕茄子", type: "茶入", rank: 8}, {id: 5, name: "国司茄子", type: "茶入", rank: 8}, {id: 6, name: "北野茄子", type: "茶入", rank: 8},
-    {id: 7, name: "宗悟茄子", type: "茶入", rank: 7}, {id: 8, name: "紹鴎茄子", type: "茶入", rank: 7}, {id: 9, name: "若狭茄子", type: "茶入", rank: 7},
-    {id: 10, name: "京極茄子", type: "茶入", rank: 6}, {id: 11, name: "茜屋茄子", type: "茶入", rank: 6}, {id: 12, name: "豊後茄子", type: "茶入", rank: 6},
-    {id: 13, name: "松花", type: "茶壺", rank: 10}, {id: 14, name: "三日月", type: "茶壺", rank: 10}, {id: 15, name: "松島", type: "茶壺", rank: 9},
-    {id: 16, name: "橋立", type: "茶壺", rank: 8}, {id: 17, name: "金花", type: "茶壺", rank: 8}, {id: 18, name: "浅茅", type: "茶壺", rank: 7},
-    {id: 19, name: "千鳥", type: "茶壺", rank: 7}, {id: 20, name: "生野", type: "茶壺", rank: 6}, {id: 21, name: "打雲", type: "茶壺", rank: 6},
-    {id: 22, name: "楢柴肩衝", type: "茶入", rank: 10}, {id: 23, name: "新田肩衝", type: "茶入", rank: 10}, {id: 24, "name": "初花肩衝", type: "茶入", rank: 10},
-    {id: 25, name: "北野肩衝", type: "茶入", rank: 9}, {id: 26, name: "遅桜肩衝", type: "茶入", rank: 9}, {id: 27, name: "松屋肩衝", type: "茶入", rank: 8},
-    {id: 28, name: "安国寺肩衝", type: "茶入", rank: 8}, {id: 29, name: "玉垣肩衝", type: "茶入", rank: 8}, {id: 30, name: "油屋肩衝", type: "茶入", rank: 7},
-    {id: 31, name: "在中庵肩衝", type: "茶入", rank: 7}, {id: 32, name: "勢高肩衝", type: "茶入", rank: 7}, {id: 33, name: "博多肩衝", type: "茶入", rank: 6},
-    {id: 34, name: "唐支那肩衝", type: "茶入", rank: 6}, {id: 35, name: "円城寺", type: "花入", rank: 7}, {id: 36, name: "夜長", type: "花入", rank: 7},
-    {id: 37, name: "尺八", type: "花入", rank: 7}, {id: 38, name: "細川井戸", type: "茶碗", rank: 7}, {id: 39, name: "加賀井戸", type: "茶碗", rank: 7},
-    {id: 40, name: "喜左衛門井戸", type: "茶碗", rank: 7}, {id: 41, name: "松本舟", type: "花入", rank: 7}, {id: 42, name: "針屋舟", type: "花入", rank: 7},
-    {id: 43, name: "淡路屋舟", type: "花入", rank: 7}, {id: 44, name: "童子切", type: "刀剣", rank: 10}, {id: 45, name: "大包平", type: "刀剣", rank: 10},
-    {id: 46, name: "三日月宗近", type: "刀剣", rank: 10}, {id: 47, name: "鬼丸", type: "刀剣", rank: 10}, {id: 48, name: "大典太", type: "刀剣", rank: 10},
-    {id: 49, name: "数珠丸", type: "刀剣", rank: 9}, {id: 50, name: "大般若長光", type: "刀剣", rank: 9}, {id: 51, name: "小竜景光", type: "刀剣", rank: 9},
-    {id: 52, name: "宗三左文字", type: "刀剣", rank: 8}, {id: 53, name: "へし切長谷部", type: "刀剣", rank: 8}, {id: 54, name: "雷切", type: "刀剣", rank: 8},
-    {id: 55, name: "村正", type: "刀剣", rank: 8}, {id: 56, name: "日光一文字", type: "刀剣", rank: 7}, {id: 57, name: "菊一文字", type: "刀剣", rank: 7},
-    {id: 58, name: "和泉守兼定", type: "刀剣", rank: 7}, {id: 59, name: "陸奥守吉行", type: "刀剣", rank: 7}, {id: 60, name: "加州清光", type: "刀剣", rank: 6},
-    {id: 61, name: "長曽祢虎徹", type: "刀剣", rank: 6}, {id: 62, name: "蜻蛉切", type: "槍", rank: 10}, {id: 63, name: "日本号", type: "槍", rank: 10},
-    {id: 64, name: "御手杵", type: "槍", rank: 10}, {id: 65, name: "一期一振", type: "刀剣", rank: 9}, {id: 66, name: "平蜘蛛", type: "釜", rank: 10},
-    {id: 67, name: "銀貨", type: "財宝", rank: 1}, {id: 68, name: "砂金", type: "財宝", rank: 2}, {id: 69, name: "金塊", type: "財宝", rank: 3},
-    {id: 70, name: "翡翠", type: "財宝", rank: 4}, {id: 71, name: "珊瑚", type: "財宝", rank: 5}, {id: 72, name: "瑪瑙", type: "財宝", rank: 6},
-    {id: 73, name: "水晶", type: "財宝", rank: 7}, {id: 74, name: "孔雀石", type: "財宝", rank: 8}, {id: 75, name: "黒真珠", type: "財宝", rank: 9},
-    {id: 76, name: "ダイヤモンド", type: "財宝", rank: 10}
-];
-
-// --- ■0.6 実績データ ---
+// --- ACHIEVEMENT DATA ---
 const ACHIEVEMENT_DATA = [
     {id:1, name: "国取り開始", cond: "最初の戦場をクリア", reward_tactic: "出陣ことはじめ"},
     {id:2, name: "初国獲り", cond: "1つの地域を制覇", reward_tactic: null},
@@ -117,9 +92,21 @@ const ACHIEVEMENT_DATA = [
     {id:38, name: "大解雇", cond: "武将を30人解雇", reward_text: "冷徹な采配"},
     {id:39, name: "天下三肩付", cond: "楢柴・新田・初花肩衝を収集", reward_text: "天下の三肩付！"},
     {id:40, name: "天下五剣", cond: "童子切・大包平・三日月・鬼丸・大典太を収集", reward_text: "天下五剣！"},
-    {id:41, name: "天下の大数寄者", cond: "財宝を30種類以上収集", reward_text: "目利きの大名"}
+    {id:41, name: "天下の大数寄者", cond: "財宝を30種類以上収集", reward_text: "目利きの大名"},
+    {id:42, name: "風雲児", cond: "東日本を制覇", reward_text: "東国の覇者"},
+    {id:43, name: "麒麟児", cond: "中央を制覇", reward_text: "天下の麒麟児"},
+    {id:44, name: "革命児", cond: "西日本を制覇", reward_text: "西国の革命児"},
+    {id:45, name: "達人", cond: "R以上の武将1名のみで制覇", reward_text: "武の極み"},
+    {id:46, name: "戦上手", cond: "C以下の武将3名で制覇", reward_text: "用兵の妙"},
+    {id:47, name: "単騎駆け", cond: "武将1名で制覇", reward_text: "一騎当千"},
+    {id:48, name: "敵中突破", cond: "総兵力500以下で制覇", reward_text: "奇跡の生還"},
+    {id:49, name: "戦の申し子", cond: "無傷(HP100%)で制覇", reward_text: "完全勝利"},
+    // 追加分
+    {id:50, name: "天下無敵", cond: "すべての戦場を「かけあし進軍」で制覇", reward_text: "神速の行軍"},
+    {id:51, name: "天下覇王", cond: "すべての戦場を「電撃強行軍」で制覇", reward_text: "電光石火"}
 ];
 
+// --- TACTICS DATA ---
 const TACTICS_DATA = [
     {name: "出陣ことはじめ", desc: "敵兵を少し減らす", source: "国取り開始"},
     {name: "逃げるを上とする", desc: "兵力7割以下で撤退", source: "敗軍の将"},
@@ -155,16 +142,49 @@ const TACTICS_DATA = [
     {name: "天を欺き海を渡る", desc: "兵糧切れで即撤退", source: "勇み足"},
     {name: "暗かに陳倉に渡る", desc: "野営時1名回復", source: "天竜のくじ"},
     {name: "東に叫んで西を撃つ", desc: "運上昇(財宝発見率UP)", source: "100人組手"},
-    {name: "美人の計", desc: "女性武将で敵攻撃半減", source: "浅井三姉妹"}
+    {name: "美人の計", desc: "女性武将で敵攻撃半減", source: "浅井三姉妹"},
+    {name: "天地明察", desc: "【超】敵の特技を無効化(手形10枚)", source: "超戦術", isSuper: true, cost: 10},
+    {name: "蒼天航路", desc: "【超】罠・妨害を完全無効(手形10枚)", source: "超戦術", isSuper: true, cost: 10},
+    {name: "翔ぶが如く", desc: "【超】進軍速度4倍(手形10枚)", source: "超戦術", isSuper: true, cost: 10}
 ];
 
-// --- ■1. 兵種相関図 (調整: 相性の影響を強化) ---
+// --- TREASURE DATA ---
+const TREASURE_DATA = [
+    {id: 1, name: "九十九茄子", type: "茶入", rank: 10}, {id: 2, name: "松本茄子", type: "茶入", rank: 9}, {id: 3, name: "富士茄子", type: "茶入", rank: 9},
+    {id: 4, name: "七夕茄子", type: "茶入", rank: 8}, {id: 5, name: "国司茄子", type: "茶入", rank: 8}, {id: 6, name: "北野茄子", type: "茶入", rank: 8},
+    {id: 7, name: "宗悟茄子", type: "茶入", rank: 7}, {id: 8, name: "紹鴎茄子", type: "茶入", rank: 7}, {id: 9, name: "若狭茄子", type: "茶入", rank: 7},
+    {id: 10, name: "京極茄子", type: "茶入", rank: 6}, {id: 11, name: "茜屋茄子", type: "茶入", rank: 6}, {id: 12, name: "豊後茄子", type: "茶入", rank: 6},
+    {id: 13, name: "松花", type: "茶壺", rank: 10}, {id: 14, name: "三日月", type: "茶壺", rank: 10}, {id: 15, name: "松島", type: "茶壺", rank: 9},
+    {id: 16, name: "橋立", type: "茶壺", rank: 8}, {id: 17, name: "金花", type: "茶壺", rank: 8}, {id: 18, name: "浅茅", type: "茶壺", rank: 7},
+    {id: 19, name: "千鳥", type: "茶壺", rank: 7}, {id: 20, name: "生野", type: "茶壺", rank: 6}, {id: 21, name: "打雲", type: "茶壺", rank: 6},
+    {id: 22, name: "楢柴肩衝", type: "茶入", rank: 10}, {id: 23, name: "新田肩衝", type: "茶入", rank: 10}, {id: 24, "name": "初花肩衝", type: "茶入", rank: 10},
+    {id: 25, name: "北野肩衝", type: "茶入", rank: 9}, {id: 26, name: "遅桜肩衝", type: "茶入", rank: 9}, {id: 27, name: "松屋肩衝", type: "茶入", rank: 8},
+    {id: 28, name: "安国寺肩衝", type: "茶入", rank: 8}, {id: 29, name: "玉垣肩衝", type: "茶入", rank: 8}, {id: 30, name: "油屋肩衝", type: "茶入", rank: 7},
+    {id: 31, name: "在中庵肩衝", type: "茶入", rank: 7}, {id: 32, name: "勢高肩衝", type: "茶入", rank: 7}, {id: 33, name: "博多肩衝", type: "茶入", rank: 6},
+    {id: 34, name: "唐支那肩衝", type: "茶入", rank: 6}, {id: 35, name: "円城寺", type: "花入", rank: 7}, {id: 36, name: "夜長", type: "花入", rank: 7},
+    {id: 37, name: "尺八", type: "花入", rank: 7}, {id: 38, name: "細川井戸", type: "茶碗", rank: 7}, {id: 39, name: "加賀井戸", type: "茶碗", rank: 7},
+    {id: 40, name: "喜左衛門井戸", type: "茶碗", rank: 7}, {id: 41, name: "松本舟", type: "花入", rank: 7}, {id: 42, name: "針屋舟", type: "花入", rank: 7},
+    {id: 43, name: "淡路屋舟", type: "花入", rank: 7}, {id: 44, name: "童子切", type: "刀剣", rank: 10}, {id: 45, name: "大包平", type: "刀剣", rank: 10},
+    {id: 46, name: "三日月宗近", type: "刀剣", rank: 10}, {id: 47, name: "鬼丸", type: "刀剣", rank: 10}, {id: 48, name: "大典太", type: "刀剣", rank: 10},
+    {id: 49, name: "数珠丸", type: "刀剣", rank: 9}, {id: 50, name: "大般若長光", type: "刀剣", rank: 9}, {id: 51, name: "小竜景光", type: "刀剣", rank: 9},
+    {id: 52, name: "宗三左文字", type: "刀剣", rank: 8}, {id: 53, name: "へし切長谷部", type: "刀剣", rank: 8}, {id: 54, name: "雷切", type: "刀剣", rank: 8},
+    {id: 55, name: "村正", type: "刀剣", rank: 8}, {id: 56, name: "日光一文字", type: "刀剣", rank: 7}, {id: 57, name: "菊一文字", type: "刀剣", rank: 7},
+    {id: 58, name: "和泉守兼定", type: "刀剣", rank: 7}, {id: 59, name: "陸奥守吉行", type: "刀剣", rank: 7}, {id: 60, name: "加州清光", type: "刀剣", rank: 6},
+    {id: 61, name: "長曽祢虎徹", type: "刀剣", rank: 6}, {id: 62, name: "蜻蛉切", type: "槍", rank: 10}, {id: 63, name: "日本号", type: "槍", rank: 10},
+    {id: 64, name: "御手杵", type: "槍", rank: 10}, {id: 65, name: "一期一振", type: "刀剣", rank: 9}, {id: 66, name: "平蜘蛛", type: "釜", rank: 10},
+    {id: 67, name: "銀貨", type: "財宝", rank: 1}, {id: 68, name: "砂金", type: "財宝", rank: 2}, {id: 69, name: "金塊", type: "財宝", rank: 3},
+    {id: 70, name: "翡翠", type: "財宝", rank: 4}, {id: 71, name: "珊瑚", type: "財宝", rank: 5}, {id: 72, name: "瑪瑙", type: "財宝", rank: 6},
+    {id: 73, name: "水晶", type: "財宝", rank: 7}, {id: 74, name: "孔雀石", type: "財宝", rank: 8}, {id: 75, name: "黒真珠", type: "財宝", rank: 9},
+    {id: 76, name: "ダイヤモンド", type: "財宝", rank: 10}
+];
+
+// --- TYPE MATRIX ---
 const TYPE_MATRIX = {
     "足軽": { "足軽":1.0, "弓兵":1.8, "騎馬":0.5, "鉄砲":0.5, "忍者":0.5, "水兵":1.8 },
     "弓兵": { "足軽":0.5, "弓兵":1.0, "騎馬":1.8, "鉄砲":1.8, "忍者":0.5, "水兵":0.5 },
     "騎馬": { "足軽":1.8, "弓兵":0.5, "騎馬":1.0, "鉄砲":0.5, "忍者":1.8, "水兵":0.5 },
     "鉄砲": { "足軽":1.8, "弓兵":0.5, "騎馬":1.8, "鉄砲":1.0, "忍者":1.8, "水兵":0.5 },
-    "忍者": { "足軽":1.8, "弓兵":1.8, "騎馬":0.5, "鉄砲":0.5, "忍者":1.0, "水兵":1.5 }, // Ninja is tricky/strong
+    "忍者": { "足軽":1.8, "弓兵":1.8, "騎馬":0.5, "鉄砲":0.5, "忍者":1.0, "水兵":1.5 },
     "水兵": { "足軽":0.5, "弓兵":1.8, "騎馬":1.8, "鉄砲":1.8, "忍者":0.5, "水兵":1.0 }
 };
 
@@ -173,8 +193,7 @@ const TARGET_PREF = {
     "弓兵": "back",  "忍者": "back",  "騎馬": "all"
 };
 
-// --- ■3. クエストデータ ---
-// Difficulty reflects the need for tactics
+// --- QUEST DATA ---
 const QUEST_DATA = [
     { id: 101, region:"尾張", name: "稲生", diff: 1, money: 100, food: 4, boss_r: "N", type: "足軽", terrain: "平原", interference: [], s_cond: "R織田信長", s_reward_char: "R竹中半兵衛" },
     { id: 102, region:"尾張", name: "桶狭間", diff: 3, money: 300, food: 9, boss_r: "C", type: "弓兵", terrain: "山岳", interference: ["悪天候"], s_cond: "R織田信長", s_reward_char: "R竹中半兵衛" },
@@ -211,32 +230,42 @@ const QUEST_DATA = [
     { id: 1802, region:"越後", name: "春日山城", diff: 13, money: 3000, food: 180, boss_r: "SSR", type: "騎馬", terrain: "城郭", interference: ["奇襲", "悪天候", "計略", "足止め罠", "傷病"], s_cond: "SSR上杉謙信" }
 ];
 
-// ... (DEFAULT_SAVE, loadSaveData, etc. remain the same as previous version) ...
-const DEFAULT_SAVE = {
-    money: 5000,
-    items: { ticket: 5, kokoro: 0 }, 
-    owned_ids: [],
-    deck: [null, null, null],
-    prisoners: [], 
-    expedition: null,
-    locked_ids: [],
-    s_ranks: [], 
-    completed_regions: [],
-    achievements: [], 
-    tactics: ["逃げるを上となす", "出陣ことはじめ"], 
-    collected_treasures: [], 
-    records: { 
-        totalDistance: 0,
-        totalBattles: 0,
-        totalWins: 0,
-        totalDead: 0,
-        retreatCount: 0,
-        winStreak: 0,
-        gachaCount: 0,
-        capturedCount: 0,
-        totalReleased: 0
-    }
+// --- SHOP LOGIC ---
+const SHOP_PRICES = {
+    "ticket": 500, 
+    "kokoro": 2000 
 };
+
+function buyItem(itemId) {
+    const save = loadSaveData();
+    const price = SHOP_PRICES[itemId];
+    if (!price) return { success: false, msg: "商品が見つかりません" };
+    
+    if (save.money < price) return { success: false, msg: "銀貨が足りません" };
+    
+    save.money -= price;
+    if (itemId === "ticket") save.items.ticket = (save.items.ticket || 0) + 1;
+    if (itemId === "kokoro") save.items.kokoro = (save.items.kokoro || 0) + 1;
+    
+    saveData(save);
+    return { success: true, msg: "購入しました！", current: save };
+}
+
+function sellTreasure(treasureId) {
+    const save = loadSaveData();
+    const idx = save.collected_treasures.indexOf(treasureId);
+    if (idx === -1) return { success: false, msg: "所持していません" };
+    
+    const tData = TREASURE_DATA.find(t => t.id === treasureId);
+    const price = tData ? tData.rank * 100 : 100;
+    
+    save.collected_treasures.splice(idx, 1);
+    save.money += price;
+    saveData(save);
+    return { success: true, msg: `売却しました (+${price}銭)`, current: save };
+}
+
+// --- CORE FUNCTIONS ---
 
 function loadSaveData() {
     const json = localStorage.getItem(SAVE_KEY);
@@ -253,7 +282,6 @@ function loadSaveData() {
     if (!data.collected_treasures) data.collected_treasures = [];
     if (!data.records) data.records = { totalDistance: 0, totalBattles: 0, totalWins: 0, totalDead: 0, retreatCount: 0, winStreak: 0, gachaCount: 0, capturedCount: 0, totalReleased: 0 };
     
-    // 強制配布ロジック
     if (window.characterData && window.characterData.length > 0) {
         let starter = window.characterData.find(c => c.name.includes("織田信長") && c.rarity === "R");
         if (!starter) starter = window.characterData.find(c => c.name.includes("織田信長"));
@@ -305,12 +333,21 @@ function findCharacterByNameAndRarity(fullName) {
     return window.characterData.find(c => c.name.includes(name) && c.rarity === rarity);
 }
 
-// ... (checkAchievements, cancelExpedition remain same) ...
 function checkAchievements(save) {
     const newAchieved = [];
     const newTactics = [];
     
     const ownedChars = save.owned_ids.map(id => getCharacterById(id)).filter(c => c);
+    const lastStats = save.records.lastExpeditionStats; 
+
+    const checkRegionComplete = (regionList) => {
+        const targetQIds = [];
+        QUEST_DATA.forEach(q => {
+            if (regionList.includes(q.region)) targetQIds.push(q.id);
+        });
+        if (targetQIds.length === 0) return false;
+        return targetQIds.every(qid => save.s_ranks.includes(qid));
+    };
 
     ACHIEVEMENT_DATA.forEach(ach => {
         if (save.achievements.includes(ach.id)) return; 
@@ -335,33 +372,45 @@ function checkAchievements(save) {
             case "吸血大名": cleared = save.records.totalDead >= 100; break;
             case "人材宝庫": cleared = save.owned_ids.length >= 50; break;
             case "大軍団": cleared = save.owned_ids.length >= 100; break;
-            case "真田三代": 
-                const sanadas = ["真田幸隆", "真田昌幸", "真田幸村"];
-                cleared = sanadas.every(n => ownedChars.some(c => c.name.includes(n)));
-                break;
-            case "浅井三姉妹":
-                const azais = ["茶々", "初", "江"];
-                cleared = azais.every(n => ownedChars.some(c => c.name.includes(n)));
-                break;
+            case "真田三代": cleared = ["真田幸隆", "真田昌幸", "真田幸村"].every(n => ownedChars.some(c => c.name.includes(n))); break;
+            case "浅井三姉妹": cleared = ["茶々", "初", "江"].every(n => ownedChars.some(c => c.name.includes(n))); break;
             case "人たらし大名": cleared = save.records.capturedCount >= 5; break;
             case "天竜のくじ": cleared = save.records.gachaCount >= 50; break;
             case "100人組手": cleared = save.records.totalWins >= 100; break; 
             case "解雇": cleared = save.records.totalReleased >= 1; break;
             case "大解雇": cleared = save.records.totalReleased >= 30; break;
-            case "天下三肩付":
-                const katatsuki = [22, 23, 24]; // 楢柴, 新田, 初花
-                cleared = katatsuki.every(id => save.collected_treasures.includes(id));
-                break;
-            case "天下五剣":
-                const goken = [44, 45, 46, 47, 48]; 
-                cleared = goken.every(id => save.collected_treasures.includes(id));
-                break;
+            case "天下三肩付": cleared = [22, 23, 24].every(id => save.collected_treasures.includes(id)); break;
+            case "天下五剣": cleared = [44, 45, 46, 47, 48].every(id => save.collected_treasures.includes(id)); break;
             case "天下の大数寄者": cleared = save.collected_treasures.length >= 30; break;
-            default: break;
+            case "風雲児": cleared = checkRegionComplete(REGION_MAP.east); break;
+            case "麒麟児": cleared = checkRegionComplete(REGION_MAP.central); break;
+            case "革命児": cleared = checkRegionComplete(REGION_MAP.west); break;
+        }
+
+        if (lastStats && lastStats.result === 'win') {
+            switch (ach.name) {
+                case "達人": cleared = lastStats.deckRarities.some(r => ["R","SR","SSR","UR","LOB"].includes(r)); break;
+                case "戦上手": cleared = lastStats.deckRarities.every(r => ["C","N"].includes(r)) && lastStats.deckCount === 3; break;
+                case "単騎駆け": cleared = lastStats.deckCount === 1; break;
+                case "敵中突破": cleared = lastStats.startHp <= 500; break; 
+                case "戦の申し子": cleared = lastStats.maxHp === lastStats.endHp; break;
+                case "大軍勢": cleared = lastStats.maxHp >= 10000; break;
+                case "死中活路": cleared = lastStats.endFood <= 0; break;
+                case "怒涛の進軍": cleared = lastStats.questDiff >= 6; break;
+                case "獅子奮迅": cleared = lastStats.questDiff >= 9; break;
+                case "仇は討った": cleared = lastStats.deadCount >= 1; break; 
+                case "先手必勝": cleared = lastStats.preemptive; break;
+                case "天下無敵": cleared = (lastStats.speedMode === "kakeashi"); break;
+                case "天下覇王": cleared = (lastStats.speedMode === "dengeki"); break;
+            }
+            
+            if (ach.cond.includes("(敵)に勝利") && save.records.lastDefeatedBoss) {
+                if (ach.cond.includes(save.records.lastDefeatedBoss)) cleared = true;
+            }
         }
         
-        if (ach.cond.includes("(敵)に勝利") && save.records.lastDefeatedBoss) {
-             if (ach.cond.includes(save.records.lastDefeatedBoss)) cleared = true;
+        if (lastStats && lastStats.result !== 'win') {
+             if (ach.name === "勇み足" && lastStats.endFood <= 0 && lastStats.result === 'retired') cleared = true; 
         }
 
         if (cleared) {
@@ -398,9 +447,10 @@ function cancelExpedition() {
     const currentDay = Math.min(q.food, (elapsed / totalDuration) * q.food);
     
     exp.result = 'retired';
-    exp.endTime = now;
+    exp.endTime = now; // 即時終了
     
     exp.logs.events = exp.logs.events.filter(ev => ev.day <= currentDay);
+
     exp.logs.daysTraveled = currentDay;
     exp.logs.events.push({ day: currentDay, text: `<span class="ev-bad">全軍撤退！進軍を中止し帰還しました。</span>` });
 
@@ -411,7 +461,7 @@ function cancelExpedition() {
     saveData(save);
 }
 
-function startExpeditionCore(questId, tacticName) {
+function startExpeditionCore(questId, tacticName, speedMode = "normal") {
     const save = loadSaveData();
     const deck = save.deck.map(id => getCharacterById(id));
     const quest = QUEST_DATA.find(q => q.id === questId);
@@ -419,20 +469,54 @@ function startExpeditionCore(questId, tacticName) {
     if (!deck.some(c => c)) return { error: "大将がいません" };
     
     let tactic = null;
-    if (tacticName && save.tactics.includes(tacticName)) {
+    if (tacticName) {
         tactic = TACTICS_DATA.find(t => t.name === tacticName);
+        if (tactic && save.tactics.includes(tacticName)) {
+            if (tactic.isSuper) {
+                const cost = tactic.cost || 10;
+                if ((save.items.ticket || 0) < cost) return { error: `手形が足りません(必要: ${cost}枚)` };
+                save.items.ticket -= cost;
+            }
+        } else {
+            tactic = null;
+        }
     }
 
     const bossChar = (window.characterData.filter(c => c.rarity === quest.boss_r)[0]) || window.characterData[0];
     const weather = determineWeather(quest.id);
-    const logs = simulateExpeditionLoop(quest, deck, weather, bossChar, tactic);
+    
+    let timeMult = 1.0;
+    let foodMult = 1.0;
+    let diffMult = 1.0;
+    
+    if (speedMode === "kakeashi") { timeMult = 0.5; foodMult = 1.5; }
+    if (speedMode === "dengeki") { timeMult = 0.1; foodMult = 3.0; diffMult = 1.5; }
+    
+    if (tactic && tactic.name === "翔ぶが如く") timeMult *= 0.25;
+
+    const logs = simulateExpeditionLoop(quest, deck, weather, bossChar, tactic, foodMult, diffMult);
     const actualDays = logs.daysTraveled;
-    const duration = actualDays * SECONDS_PER_DAY * 1000;
+    const duration = actualDays * SECONDS_PER_DAY * 1000 * timeMult;
     const now = Date.now();
     
     if (logs.gainedItems) {
         if (logs.gainedItems.kokoro > 0) save.items.kokoro = (save.items.kokoro || 0) + logs.gainedItems.kokoro;
     }
+    
+    const validDeck = deck.filter(c => c);
+    save.records.lastExpeditionStats = {
+        result: logs.result,
+        startHp: validDeck.reduce((a,c)=>a+c.hp,0),
+        maxHp: validDeck.reduce((a,c)=>a+c.hp,0),
+        endHp: logs.stats.hpRate * validDeck.reduce((a,c)=>a+c.hp,0),
+        endFood: logs.finalFood,
+        deckCount: validDeck.length,
+        deckRarities: validDeck.map(c=>c.rarity),
+        questDiff: quest.diff,
+        deadCount: logs.stats.dead,
+        preemptive: logs.preemptiveOccurred,
+        speedMode: speedMode
+    };
 
     save.expedition = { 
         questId: quest.id, 
@@ -445,7 +529,8 @@ function startExpeditionCore(questId, tacticName) {
         captured: logs.capturedIds, 
         stats: logs.stats,
         tactic: tactic ? tactic.name : null,
-        treasures: logs.treasures
+        treasures: logs.treasures,
+        speedMode: speedMode
     };
     saveData(save);
     return { success: true };
@@ -456,36 +541,41 @@ function parseSkill(char) {
     const desc = char.skill.desc || ""; 
     const effect = { type: 'none', name: char.skill.name, desc: desc, rate: 0.3, power: 1.0, targets: [], encounterMod: 0 };
     
-    if (desc.includes("財宝") && desc.includes("発見") && desc.includes("確率")) { 
-        effect.type = "treasure_rate_up"; 
-        effect.power = desc.includes("高確率") ? 0.15 : 0.05; 
-        return effect; 
+    if (desc.includes("財宝")) {
+        if (desc.includes("発見") && desc.includes("確率")) { effect.type = "treasure_rate_up"; effect.power = desc.includes("高確率") ? 0.15 : 0.05; return effect; }
+        if (desc.includes("イベント")) { effect.type = "treasure_rate_up"; effect.power = 0.15; return effect; }
+        if (desc.includes("ココロの鍵")) { effect.type = "treasure_to_key"; return effect; }
+        if (desc.includes("使って")) {
+            if (desc.includes("兵") && desc.includes("兵糧")) effect.type = "treasure_heal_both";
+            else if (desc.includes("兵糧")) effect.type = "treasure_heal_food";
+            else effect.type = "treasure_heal_hp";
+            return effect;
+        }
     }
-    if (desc.includes("財宝") && desc.includes("イベント")) { 
-        effect.type = "treasure_rate_up"; 
-        effect.power = 0.15; 
-        return effect; 
-    }
-    if (desc.includes("財宝") && desc.includes("使って")) {
-        if (desc.includes("兵") && desc.includes("兵糧")) effect.type = "treasure_heal_both";
-        else if (desc.includes("兵糧")) effect.type = "treasure_heal_food";
-        else effect.type = "treasure_heal_hp";
-        return effect;
-    }
-    if (desc.includes("財宝") && desc.includes("ココロの鍵")) { 
-        effect.type = "treasure_to_key"; 
-        return effect; 
+
+    if (desc.includes("防御") || desc.includes("軽減") || desc.includes("半減")) { effect.type = "def_up"; effect.power = 0.5; return effect; }
+    if (desc.includes("2回") || desc.includes("連続") || desc.includes("２回")) { effect.type = "multi_attack"; effect.count = 2; return effect; }
+    if (desc.includes("全体") || desc.includes("全員")) { effect.type = "aoe_attack"; return effect; }
+    if (desc.includes("毒")) { effect.type = "poison"; return effect; }
+    if (desc.includes("混乱")) { effect.type = "confusion"; return effect; }
+    
+    const slayers = { "騎馬": "騎馬", "鉄砲": "鉄砲", "槍": "足軽", "弓": "弓兵", "男": "male", "女": "female", "織田": "織田家", "武田": "武田家", "上杉": "上杉家" };
+    for (let k in slayers) {
+        if (desc.includes(k) && (desc.includes("強い") || desc.includes("キラー") || desc.includes("特効"))) {
+            effect.type = "slayer"; effect.target = slayers[k]; effect.power = 2.0; return effect;
+        }
     }
 
     if (desc.includes("高確率") || desc.includes("しばしば")) effect.rate = 0.7;
     if (desc.includes("必ず") || desc.includes("100%")) effect.rate = 1.0;
     if (desc.includes("稀に") || desc.includes("ときどき")) effect.rate = 0.2;
     if (desc.includes("超大幅")) effect.power = 3.0; else if (desc.includes("大幅") || desc.includes("2倍")) effect.power = 2.0; else if (desc.includes("1.5倍")) effect.power = 1.5; else if (desc.includes("半減")) effect.power = 0.5;
+    
     const preventMap = { "罠": "足止め罠", "奇襲": "奇襲", "悪天候": "悪天候", "計略": "計略", "布陣": "布陣失敗", "傷病": "傷病" };
     const prevents = [];
     Object.keys(preventMap).forEach(k => { if (desc.includes(k) && (desc.includes("無効")||desc.includes("防"))) prevents.push(preventMap[k]); });
     if (prevents.length > 0) { effect.type = "prevent"; effect.targets = prevents; return effect; }
-    if (desc.includes("一撃必殺")) { effect.type = "instant_kill"; return effect; }
+    if (desc.includes("一撃必殺") || desc.includes("葬り去る")) { effect.type = "instant_kill"; return effect; }
     if (desc.includes("攻撃力") && desc.includes("アップ")) { effect.type = "buff_atk"; return effect; }
     if (desc.includes("反射")) { effect.type = "reflect"; effect.reflectTarget = desc.includes("騎馬")?"騎馬":(desc.includes("鉄砲")?"鉄砲":"all"); return effect; }
     if (desc.includes("回復")) { effect.type = desc.includes("兵糧")?"heal_food":"heal_hp"; return effect; }
@@ -500,45 +590,70 @@ function isFemale(char) {
     return fNames.some(n => char.name.includes(n));
 }
 
-function simulateBattle(deck, enemy, quest, tactic) {
+function simulateBattle(deck, enemy, quest, tactic, diffMult=1.0) {
     const battleLog = [];
     
     let lowRarityBuff = (tactic && tactic.name === "遠く交わり近く攻む") ? 1.5 : 1.0;
     
+    let synergyAtkMod = 1.0;
+    if (deck.filter(c => c && c.name.includes("真田")).length >= 3) synergyAtkMod *= 1.2;
+    if (deck.filter(c => c && ["茶々", "初", "江"].includes(c.name)).length >= 3) synergyAtkMod *= 1.2;
+    if (deck.filter(c => c && c.clan === "織田家").length >= 3) synergyAtkMod *= 1.1;
+
     let myParty = deck.map((c, i) => {
         if (!c) return null;
         let war = c.war;
         if ((c.rarity === 'N' || c.rarity === 'C') && lowRarityBuff > 1.0) war = Math.floor(war * lowRarityBuff);
-        return { ...c, currentHp: c.hp, pos: i, isDead: false, skill: parseSkill(c), war: war, gender: c.gender || (isFemale(c) ? 'female' : 'male') };
+        war = Math.floor(war * synergyAtkMod); 
+        return { ...c, currentHp: c.hp, pos: i, isDead: false, skill: parseSkill(c), war: war, gender: c.gender || (isFemale(c) ? 'female' : 'male'), status: [] };
     });
     
+    let enemySkill = parseSkill(enemy);
+    if (tactic && tactic.name === "天地明察") {
+        enemySkill = { type: 'none', rate: 0 };
+        battleLog.push(`<span class="ev-skill" data-char="戦術" data-skill="${tactic.name}">超戦術【${tactic.name}】！敵の特技を封じた！</span>`);
+    }
+
     let enemyUnit = {
         name: enemy.name, rarity: enemy.rarity, type: enemy.type || "足軽",
-        // ★ HARDCORE ADJUSTMENT: Enemy scaling
-        war: Math.floor(enemy.war * (1.0 + quest.diff * 0.2)), 
-        hp: Math.floor(enemy.hp * (1.0 + quest.diff * 0.5)),
-        skill: parseSkill(enemy),
-        maxHp: Math.floor(enemy.hp * (1.0 + quest.diff * 0.5)) 
+        war: Math.floor(enemy.war * (1.0 + quest.diff * 0.2) * diffMult), 
+        hp: Math.floor(enemy.hp * (1.0 + quest.diff * 0.5) * diffMult),
+        skill: enemySkill,
+        maxHp: Math.floor(enemy.hp * (1.0 + quest.diff * 0.5) * diffMult),
+        status: []
     };
     battleLog.push(`敵将【${enemyUnit.name}】(${enemyUnit.type})と遭遇！`);
     
-    // Tactics checks...
     if (tactic && tactic.name === "美人の計") {
         if (myParty.some(c => c && isFemale(c))) {
             battleLog.push(`<span class="ev-skill" data-char="戦術" data-skill="${tactic.name}">【美人の計】発動！敵攻撃力激減！</span>`);
             enemyUnit.war = Math.floor(enemyUnit.war * 0.3); 
         }
     }
-    // ... other tactics (Wei/Zhao, etc) kept as is, but their impact is naturally higher now against strong enemies.
-    // Maybe buff some tactics?
+
     if (tactic && tactic.name === "魏を囲んで趙を救う" && enemyUnit.hp <= 1000) {
-        // Buffed from 1.5 to 2.0 to handle stronger bosses
         battleLog.push(`<span class="ev-skill" data-char="戦術" data-skill="${tactic.name}">戦術【${tactic.name}】発動！味方攻撃力UP！</span>`);
         myParty.forEach(c => { if(c) c.war = Math.floor(c.war * 2.0); }); 
     }
-    // ...
+    if (tactic && tactic.name === "岸を隔てて火を観る" && enemyUnit.hp <= 1000) {
+        battleLog.push(`<span class="ev-skill" data-char="戦術" data-skill="${tactic.name}">戦術【${tactic.name}】発動！敵攻撃力DOWN！</span>`);
+        enemyUnit.war = Math.floor(enemyUnit.war * 0.7);
+    }
+    if (tactic && tactic.name === "刀を借りて人を殺す") {
+        let dmg = Math.floor(enemyUnit.hp * 0.1);
+        enemyUnit.hp -= dmg;
+        battleLog.push(`<span class="ev-skill" data-char="戦術" data-skill="${tactic.name}">戦術【${tactic.name}】発動！敵に${dmg}のダメージ！</span>`);
+    }
+    const myTotalHp = myParty.reduce((a,c)=>a+(c?c.currentHp:0), 0);
+    if (tactic && tactic.name === "門を関ざして賊を捕らう" && enemyUnit.hp > myTotalHp) {
+        battleLog.push(`<span class="ev-skill" data-char="戦術" data-skill="${tactic.name}">戦術【${tactic.name}】発動！大軍相手に奮起し攻撃UP！</span>`);
+        myParty.forEach(c => { if(c) c.war = Math.floor(c.war * 1.5); });
+    }
+    if (tactic && tactic.name === "出陣ことはじめ") {
+         enemyUnit.hp -= 10;
+         battleLog.push(`<span class="ev-skill" data-char="戦術" data-skill="${tactic.name}">戦術【${tactic.name}】発動！敵に10のダメージ！</span>`);
+    }
 
-    // FATE checks...
     myParty.forEach(c => {
         if(!c) return;
         const fate = FATE_DATA.find(f => c.name.includes(f.me) && enemyUnit.name.includes(f.boss));
@@ -547,35 +662,96 @@ function simulateBattle(deck, enemy, quest, tactic) {
         }
     });
 
-    // Opening skills...
-    // ... Benkei/Kicho skills ...
+    myParty.forEach(c => {
+        if (c && !c.isDead && c.skill.type === 'instant_kill' && Math.random() < c.skill.rate) {
+            enemyUnit.hp = 0; 
+            battleLog.push(`<span class="ev-skill" data-char="${c.name}" data-skill="${c.skill.name}">【${c.name}】の${c.skill.name}！</span><span class="ev-good">一撃必殺！</span>`);
+        }
+    });
+    if (tactic && tactic.name === "将を射んとすれば馬を射よ" && Math.random() < 0.05) {
+        enemyUnit.hp = 0;
+        battleLog.push(`<span class="ev-skill" data-char="戦術" data-skill="${tactic.name}">戦術【${tactic.name}】発動！敵将を射抜いた！</span>`);
+    }
+    
+    if (enemyUnit.hp > 0 && enemyUnit.skill.type === 'instant_kill' && Math.random() < enemyUnit.skill.rate) {
+        let targets = myParty.filter(c => c && !c.isDead);
+        if (targets.length > 0) {
+            let victim = targets[Math.floor(Math.random() * targets.length)];
+            victim.currentHp = 0; victim.isDead = true;
+            battleLog.push(`<span class="ev-bad ev-skill" data-char="${enemyUnit.name}" data-skill="${enemyUnit.skill.name}">敵【${enemyUnit.name}】の${enemyUnit.skill.name}！</span><span class="ev-bad">【${victim.name}】は倒れた...</span>`);
+        }
+    }
 
-    // Battle Loop
+    if (enemyUnit.hp <= 0) {
+        battleLog.push(`<span class="ev-good flash-on-win">敵将を討ち取ったり！</span>`);
+        let currentTotal = 0, maxTotal = 0, dead = 0;
+        myParty.forEach(c => { if(c) { currentTotal += Math.max(0, c.currentHp); maxTotal += c.hp; if(c.isDead) dead++; } });
+        return { result: 'win', log: battleLog, remainingHpRate: (currentTotal/maxTotal), deadCount: dead };
+    }
+
+    if (myParty.every(c => !c || c.isDead)) {
+        battleLog.push("部隊壊滅...");
+        return { result: 'defeat', log: battleLog, remainingHpRate: 0, deadCount: deck.filter(x=>x).length };
+    }
+
+    let isPreemptive = false;
+    let myTotalHpVal = myParty.reduce((a,c)=>a+(c?c.currentHp:0),0);
+    if (tactic && tactic.name === "手に順いて羊を引く" && enemyUnit.hp > myTotalHpVal) isPreemptive = true;
+    if (tactic && tactic.name === "樹上に花を咲かす" && myParty.some(c => c && c.rarity === 'N')) isPreemptive = true;
+    if (tactic && tactic.name === "草を打って蛇を驚かす") isPreemptive = false; 
+
     for (let turn = 1; turn <= 10; turn++) {
-        // Tactics retreat logic...
+        if (tactic && tactic.name === "逃げるを上とする" && (myParty.reduce((a,c)=>a+(c?c.currentHp:0),0) / myParty.reduce((a,c)=>a+(c?c.hp:0),0)) <= 0.7) {
+             battleLog.push(`<span class="ev-skill" data-char="戦術" data-skill="${tactic.name}">戦術【${tactic.name}】！不利を悟り撤退！</span>`);
+             return { result: 'retired', log: battleLog, remainingHpRate: 0, deadCount: myParty.filter(c=>c&&c.isDead).length };
+        }
 
-        // Player Attack
-        let totalDmg = 0;
         myParty.forEach(c => {
             if (!c || c.isDead) return;
-            let m = TYPE_MATRIX[c.type][enemyUnit.type] || 1.0;
-            // Tactics: Beam stealing pillar (ignore typing)
-            if (tactic && tactic.name === "梁を盗み柱に換える") m = 1.0;
-            
-            if (c.skill.type === 'buff_atk' && Math.random() < c.skill.rate) m *= c.skill.power;
-            
-            if (c.name === "武蔵坊弁慶") {
-                if (myParty.some(p => p && !p.isDead && p.gender === 'male' && p !== c)) m *= 1.5; 
+            if (c.status.includes('confusion') && Math.random() < 0.3) {
+                let selfDmg = Math.floor(c.war * 0.5);
+                c.currentHp -= selfDmg;
+                battleLog.push(`<span class="ev-bad">【${c.name}】は混乱している！自分を攻撃して${selfDmg}のダメージ！</span>`);
+                return;
+            }
+            if (c.status.includes('poison')) {
+                let poisonDmg = Math.floor(c.hp * 0.05);
+                c.currentHp -= poisonDmg;
+                if(c.currentHp <= 0) c.isDead = true;
+                battleLog.push(`<span class="ev-bad" style="font-size:0.7rem;">(毒: ${c.name} -${poisonDmg})</span>`);
+                if(c.isDead) return;
             }
 
-            if (tactic && tactic.name === "無中に有を生ず" && c.currentHp <= c.hp * 0.5) m *= 2.0;
+            let attacks = (c.skill.type === 'multi_attack') ? c.skill.count : 1;
+            
+            for(let i=0; i<attacks; i++) {
+                let m = TYPE_MATRIX[c.type][enemyUnit.type] || 1.0;
+                if (tactic && tactic.name === "梁を盗み柱に換える") m = 1.0;
+                
+                if (c.skill.type === 'buff_atk' && Math.random() < c.skill.rate) m *= c.skill.power;
+                if (c.name === "武蔵坊弁慶" && myParty.some(p => p && !p.isDead && p.gender === 'male' && p !== c)) m *= 1.5; 
+                if (tactic && tactic.name === "無中に有を生ず" && c.currentHp <= c.hp * 0.5) m *= 2.0;
+                
+                if (c.skill.type === 'slayer') {
+                    let isTarget = false;
+                    if (enemyUnit.type === c.skill.target) isTarget = true;
+                    if (isTarget) { m *= c.skill.power; battleLog.push(`<span class="ev-critical">【${c.name}】の特攻！</span>`); }
+                }
 
-            let dmg = Math.floor(c.war * m * (0.9 + Math.random() * 0.2));
-            if (Math.random() < 0.1) { dmg = Math.floor(dmg * 1.5); battleLog.push(`<span class="ev-critical">【${c.name}】の会心の一撃！</span>`); }
-            totalDmg += dmg;
+                let dmg = Math.floor(c.war * m * (0.9 + Math.random() * 0.2));
+                if (Math.random() < 0.1) { dmg = Math.floor(dmg * 1.5); battleLog.push(`<span class="ev-critical">【${c.name}】の会心の一撃！</span>`); }
+                
+                if (c.skill.type === 'aoe_attack') battleLog.push(`【${c.name}】の全体攻撃！`);
+
+                enemyUnit.hp -= dmg;
+                battleLog.push(`味方攻撃: ${dmg}ダメージ (敵残:${Math.max(0, enemyUnit.hp)})`);
+            }
+            
+            if (c.skill.type === 'poison' && Math.random() < 0.3) {
+                if(!enemyUnit.status.includes('poison')) { enemyUnit.status.push('poison'); battleLog.push(`<span class="ev-bad">敵【${enemyUnit.name}】に毒を与えた！</span>`); }
+            }
         });
-        enemyUnit.hp -= totalDmg;
-        battleLog.push(`味方攻撃: ${totalDmg}ダメ (敵残:${Math.max(0, enemyUnit.hp)})`);
+
         if (enemyUnit.hp <= 0) {
             battleLog.push(`<span class="ev-good flash-on-win">敵将を討ち取ったり！</span>`);
             let currentTotal = 0, maxTotal = 0, dead = 0;
@@ -583,7 +759,13 @@ function simulateBattle(deck, enemy, quest, tactic) {
             return { result: 'win', log: battleLog, remainingHpRate: (currentTotal/maxTotal), deadCount: dead };
         }
         
-        // Enemy Attack
+        if (enemyUnit.status.includes('poison')) {
+            let pDmg = Math.floor(enemyUnit.maxHp * 0.05);
+            enemyUnit.hp -= pDmg;
+            battleLog.push(`<span class="ev-bad" style="font-size:0.7rem;">(毒: 敵 -${pDmg})</span>`);
+            if (enemyUnit.hp <= 0) return { result: 'win', log: battleLog, remainingHpRate: 1, deadCount: 0 };
+        }
+
         const pref = TARGET_PREF[enemyUnit.type] || "random";
         let targets = myParty.filter(c => c && !c.isDead);
         if (targets.length === 0) break;
@@ -593,57 +775,75 @@ function simulateBattle(deck, enemy, quest, tactic) {
         else victim = targets[Math.floor(Math.random() * targets.length)];
 
         if (victim) {
-            // Evasion/Tactics...
-            
-            // Damage calc
-            let enemyAtkPower = enemyUnit.war;
-            if (enemyUnit.skill.type === 'buff_atk' && Math.random() < enemyUnit.skill.rate) {
-                enemyAtkPower *= enemyUnit.skill.power;
-                battleLog.push(`<span class="ev-bad ev-skill" data-char="${enemyUnit.name}" data-skill="${enemyUnit.skill.name}">敵【${enemyUnit.name}】の${enemyUnit.skill.name}！</span>`);
-            }
-            let m = TYPE_MATRIX[enemyUnit.type][victim.type] || 1.0;
-            if (tactic && tactic.name === "梁を盗み柱に換える") m = 1.0;
+            if (tactic && tactic.name === "煉瓦を投げて玉を引く" && Math.random() < 0.2) {
+                 battleLog.push(`<span class="ev-skill" data-char="戦術" data-skill="${tactic.name}">【${victim.name}】は戦術により攻撃を回避！</span>`);
+            } else {
+                let enemyAtkPower = enemyUnit.war;
+                if (enemyUnit.skill.type === 'buff_atk' && Math.random() < enemyUnit.skill.rate) {
+                    enemyAtkPower *= enemyUnit.skill.power;
+                    battleLog.push(`<span class="ev-bad ev-skill" data-char="${enemyUnit.name}" data-skill="${enemyUnit.skill.name}">敵【${enemyUnit.name}】の${enemyUnit.skill.name}！</span>`);
+                }
+                
+                if (enemyUnit.skill.type === 'aoe_attack' && Math.random() < 0.3) {
+                    battleLog.push(`<span class="ev-bad ev-skill">敵【${enemyUnit.name}】の全体攻撃！</span>`);
+                    targets.forEach(t => {
+                        let aoeDmg = Math.floor(enemyAtkPower * 0.8 * (TYPE_MATRIX[enemyUnit.type][t.type]||1.0));
+                        if (t.skill.type === 'def_up') { aoeDmg = Math.floor(aoeDmg * t.skill.power); }
+                        t.currentHp -= aoeDmg;
+                        if(t.currentHp<=0) { t.isDead = true; battleLog.push(`<span class="ev-bad">【${t.name}】撤退</span>`); }
+                    });
+                } else {
+                    let m = TYPE_MATRIX[enemyUnit.type][victim.type] || 1.0;
+                    if (tactic && tactic.name === "梁を盗み柱に換える") m = 1.0;
 
-            // Reflect logic...
-            
-            let dmg = Math.floor(enemyAtkPower * m * (0.9 + Math.random() * 0.2));
-            if (Math.random() < 0.1) { dmg = Math.floor(dmg * 1.5); battleLog.push(`<span class="ev-bad ev-critical">敵【${enemyUnit.name}】の痛恨の一撃！</span>`); }
-            victim.currentHp -= dmg;
-            battleLog.push(`<span class="log-dmg">敵攻撃: 【${victim.name}】に${dmg}</span>`);
-            
-            if (victim.currentHp <= 0) { 
-                victim.isDead = true; 
-                battleLog.push(`<span class="ev-bad">【${victim.name}】撤退</span>`);
-                if (tactic && tactic.name === "空城の計") {
-                    battleLog.push(`<span class="ev-skill" data-char="戦術" data-skill="${tactic.name}">戦術【${tactic.name}】！味方撤退により全軍退却！</span>`);
-                    return { result: 'retired', log: battleLog, remainingHpRate: 0, deadCount: myParty.filter(c=>c&&c.isDead).length };
+                    if (victim.skill.type === 'reflect' && (victim.skill.reflectTarget === 'all' || victim.skill.reflectTarget === enemyUnit.type)) {
+                        enemyUnit.hp -= Math.floor(enemyUnit.war * 1.5);
+                        battleLog.push(`<span class="ev-reflect">【${victim.name}】反射！</span>`);
+                    } else {
+                        let dmg = Math.floor(enemyAtkPower * m * (0.9 + Math.random() * 0.2));
+                        if (Math.random() < 0.1) { dmg = Math.floor(dmg * 1.5); battleLog.push(`<span class="ev-bad ev-critical">敵【${enemyUnit.name}】の痛恨の一撃！</span>`); }
+                        
+                        if (victim.skill.type === 'def_up') { 
+                            dmg = Math.floor(dmg * victim.skill.power); 
+                            battleLog.push(`<span class="ev-skill" style="font-size:0.8rem">【${victim.name}】防御 (${victim.skill.name})</span>`);
+                        }
+
+                        victim.currentHp -= dmg;
+                        battleLog.push(`<span class="log-dmg">敵攻撃: 【${victim.name}】に${dmg}</span>`);
+                        
+                        if (enemyUnit.skill.type === 'poison' && Math.random() < 0.3) victim.status.push('poison');
+                        if (enemyUnit.skill.type === 'confusion' && Math.random() < 0.3) victim.status.push('confusion');
+
+                        if (victim.currentHp <= 0) { 
+                            victim.isDead = true; 
+                            battleLog.push(`<span class="ev-bad">【${victim.name}】撤退</span>`);
+                            if (tactic && tactic.name === "空城の計") {
+                                battleLog.push(`<span class="ev-skill" data-char="戦術" data-skill="${tactic.name}">戦術【${tactic.name}】！味方撤退により全軍退却！</span>`);
+                                return { result: 'retired', log: battleLog, remainingHpRate: 0, deadCount: myParty.filter(c=>c&&c.isDead).length };
+                            }
+                        }
+                    }
                 }
             }
         }
-        // Enemy heal...
-        // Tactic reduce enemy food...
 
         if (myParty.every(c => !c || c.isDead)) { battleLog.push("全滅..."); return { result: 'defeat', log: battleLog, remainingHpRate: 0, deadCount: 3 }; }
     }
     return { result: 'draw', log: battleLog, remainingHpRate: 0, deadCount: 0 };
 }
 
-function simulateExpeditionLoop(quest, deck, weather, bossChar, tactic) {
+function simulateExpeditionLoop(quest, deck, weather, bossChar, tactic, foodMult=1.0, diffMult=1.0) {
     const events = [];
     const capturedIds = [];
     const treasures = [];
     const gainedItems = { kokoro: 0 }; 
     const totalDays = quest.food; 
-    
-    // ★ HARDCORE ADJUSTMENT: Food Scarcity
-    // Previously * 1.2 + 20. Now * 1.0 + 10.
-    // Players MUST bring healer or tactics for long journeys.
-    let currentFood = Math.floor(deck.reduce((s, c) => s + (c ? c.cost : 0), 0) * 1.0) + 15;
+    let currentFood = Math.floor(deck.reduce((s, c) => s + (c ? c.cost : 0), 0) * 1.0 * foodMult) + 15;
     
     let hp = deck.reduce((s, c) => s + (c ? c.hp : 0), 0);
     const maxHp = hp;
     let totalDead = 0;
-    
+    let ladderUsed = false;
     let luck = 1.0;
     if (tactic && tactic.name === "東に叫んで西を撃つ") luck = 2.0;
 
@@ -655,6 +855,7 @@ function simulateExpeditionLoop(quest, deck, weather, bossChar, tactic) {
     });
 
     const addLog = (day, text) => events.push({ day: day, text: text });
+    let preemptiveOccurred = false;
 
     addLog(0, `<span class="log-time">出発</span> 兵糧:${currentFood} (行程:${totalDays}日)`);
     if (tactic) addLog(0, `<span style="color:#d4af37;">【戦術採用】${tactic.name}</span>`);
@@ -662,28 +863,27 @@ function simulateExpeditionLoop(quest, deck, weather, bossChar, tactic) {
     for (let d = 1; d <= totalDays; d++) {
         let cost = (weather === '雪') ? 2 : 1;
         if (tactic && tactic.name === "桑を指して槐を罵る") cost = Math.max(0, cost - 1);
-
         const healer = deck.find(c => c && parseSkill(c).type === 'heal_food');
         if (healer && Math.random() < parseSkill(healer).rate) cost = 0;
-        
         currentFood -= cost;
         
-        // ... (Food check logic) ...
+        if (tactic && tactic.name === "屋根に上げて梯子を外す" && !ladderUsed && (hp / maxHp <= 0.5)) {
+            currentFood += 50; ladderUsed = true;
+            addLog(d, `<span class="ev-skill" data-char="戦術" data-skill="${tactic.name}">戦術【${tactic.name}】！兵糧50回復！</span>`);
+        }
+        
         if (tactic && tactic.name === "天を欺き海を渡る" && currentFood <= 0) {
              addLog(d, `${d}日目: <span class="ev-skill" data-char="戦術" data-skill="${tactic.name}">戦術【${tactic.name}】！兵糧尽き撤退</span>`);
-             return { events: events, result: 'retired', capturedIds: capturedIds, weather: weather, stats: { hpRate: hp/maxHp, dead: totalDead }, daysTraveled: d, treasures: treasures, gainedItems: gainedItems };
+             return { events: events, result: 'retired', capturedIds: capturedIds, weather: weather, stats: { hpRate: hp/maxHp, dead: totalDead }, daysTraveled: d, treasures: treasures, gainedItems: gainedItems, finalFood: currentFood };
         }
-
         if (currentFood <= 0) {
             addLog(d, `${d}日目(糧${currentFood}): <span class="ev-bad">兵糧尽きる... 撤退</span>`);
-            return { events: events, result: 'retired', capturedIds: capturedIds, weather: weather, stats: { hpRate: 0, dead: 0 }, daysTraveled: d, treasures: treasures, gainedItems: gainedItems };
+            return { events: events, result: 'retired', capturedIds: capturedIds, weather: weather, stats: { hpRate: 0, dead: 0 }, daysTraveled: d, treasures: treasures, gainedItems: gainedItems, finalFood: currentFood };
         }
 
-        // ... (Treasure logic) ...
         if (Math.random() < treasureBaseRate) {
             const t = TREASURE_DATA[Math.floor(Math.random() * TREASURE_DATA.length)];
             let handled = false;
-            // ... (Treasure skills logic remains same) ...
             const keyConverter = deck.find(c => c && parseSkill(c).type === 'treasure_to_key');
             if (keyConverter && Math.random() < 0.3) {
                 gainedItems.kokoro++;
@@ -693,29 +893,18 @@ function simulateExpeditionLoop(quest, deck, weather, bossChar, tactic) {
             if (!handled) {
                 const bothHealer = deck.find(c => c && parseSkill(c).type === 'treasure_heal_both');
                 if (bothHealer) {
-                    const healHp = Math.floor(maxHp * 0.2);
-                    hp = Math.min(maxHp, hp + healHp);
-                    currentFood += 10;
-                    addLog(d, `${d}日目: <span class="ev-skill" data-char="${bothHealer.name}" data-skill="${bothHealer.skill.name}">【${bothHealer.name}】が財宝を使って兵と兵糧を回復！</span>`);
+                    hp = Math.min(maxHp, hp + Math.floor(maxHp * 0.2)); currentFood += 10;
+                    addLog(d, `${d}日目: <span class="ev-skill" data-char="${bothHealer.name}">【${bothHealer.name}】が財宝で回復！</span>`);
                     handled = true;
                 }
             }
             if (!handled) {
                 const foodHealer = deck.find(c => c && parseSkill(c).type === 'treasure_heal_food');
-                if (foodHealer) {
-                    currentFood += 20;
-                    addLog(d, `${d}日目: <span class="ev-skill" data-char="${foodHealer.name}" data-skill="${foodHealer.skill.name}">【${foodHealer.name}】が財宝を使って兵糧を回復！</span>`);
-                    handled = true;
-                }
+                if (foodHealer) { currentFood += 20; addLog(d, `${d}日目: 【${foodHealer.name}】が財宝で兵糧回復！`); handled = true; }
             }
             if (!handled) {
                 const hpHealer = deck.find(c => c && parseSkill(c).type === 'treasure_heal_hp');
-                if (hpHealer) {
-                    const healHp = Math.floor(maxHp * 0.3);
-                    hp = Math.min(maxHp, hp + healHp);
-                    addLog(d, `${d}日目: <span class="ev-skill" data-char="${hpHealer.name}" data-skill="${hpHealer.skill.name}">【${hpHealer.name}】が財宝を使って兵力を回復！</span>`);
-                    handled = true;
-                }
+                if (hpHealer) { hp = Math.min(maxHp, hp + Math.floor(maxHp * 0.3)); addLog(d, `${d}日目: 【${hpHealer.name}】が財宝で兵力回復！`); handled = true; }
             }
             if (!handled) {
                 treasures.push(t.id);
@@ -724,57 +913,47 @@ function simulateExpeditionLoop(quest, deck, weather, bossChar, tactic) {
         }
 
         let eventOccurred = false;
-        // ★ HARDCORE ADJUSTMENT: Interference Rate increased
-        // Was 0.2 / luck. Now 0.3 / luck.
         if (quest.interference && quest.interference.length > 0 && Math.random() < (0.3 / luck)) { 
             eventOccurred = true;
             const inf = quest.interference[Math.floor(Math.random() * quest.interference.length)];
-            const block = deck.find(c => c && parseSkill(c).type === 'prevent' && parseSkill(c).targets.includes(inf));
-            
-            let tacticBlock = false;
-            if (tactic) {
-                if (inf === "足止め罠" && tactic.name === "連環の計") tacticBlock = true;
-                if (inf === "奇襲" && tactic.name === "苦肉の計") tacticBlock = true;
-                if (inf === "計略" && tactic.name === "反間の計") tacticBlock = true;
-            }
-
-            if (block) {
-                addLog(d, `${d}日目(糧${currentFood}): <span class="ev-skill" data-char="${block.name}" data-skill="妨害回避">【${block.name}】が${inf}を回避！</span>`);
-            } else if (tacticBlock) {
-                addLog(d, `${d}日目(糧${currentFood}): <span class="ev-skill" data-char="戦術" data-skill="${tactic.name}">戦術【${tactic.name}】が${inf}を無効化！</span>`);
+            if (tactic && tactic.name === "蒼天航路") {
+                addLog(d, `${d}日目: <span class="ev-skill" data-char="戦術" data-skill="${tactic.name}">戦術【${tactic.name}】が${inf}を無効化！</span>`);
             } else {
-                let dmg = 0;
-                if (inf === "悪天候" || inf === "計略") {
-                    currentFood -= 5;
-                    addLog(d, `${d}日目(糧${currentFood}): <span class="ev-bad">${inf}により兵糧5を失った...</span>`);
-                } else {
-                    // ★ HARDCORE: More damage from interference (20%)
-                    dmg = Math.floor(maxHp * 0.20);
-                    hp -= dmg;
-                    addLog(d, `${d}日目(糧${currentFood}): <span class="ev-bad log-dmg">${inf}被害！ 兵${dmg}減少</span>`);
+                const block = deck.find(c => c && parseSkill(c).type === 'prevent' && parseSkill(c).targets.includes(inf));
+                let tacticBlock = false;
+                if (tactic) {
+                    if (inf === "足止め罠" && tactic.name === "連環の計") tacticBlock = true;
+                    if (inf === "奇襲" && tactic.name === "苦肉の計") tacticBlock = true;
+                    if (inf === "計略" && tactic.name === "反間の計") tacticBlock = true;
+                }
+                if (block) { addLog(d, `${d}日目(糧${currentFood}): <span class="ev-skill" data-char="${block.name}" data-skill="妨害回避">【${block.name}】が${inf}を回避！</span>`); }
+                else if (tacticBlock) { addLog(d, `${d}日目(糧${currentFood}): <span class="ev-skill" data-char="戦術" data-skill="${tactic.name}">戦術【${tactic.name}】が${inf}を無効化！</span>`); }
+                else {
+                    let dmg = 0;
+                    if (inf === "悪天候" || inf === "計略") { currentFood -= 5; addLog(d, `${d}日目(糧${currentFood}): <span class="ev-bad">${inf}により兵糧5を失った...</span>`); }
+                    else { dmg = Math.floor(maxHp * 0.20); hp -= dmg; addLog(d, `${d}日目(糧${currentFood}): <span class="ev-bad log-dmg">${inf}被害！ 兵${dmg}減少</span>`); }
                 }
             }
         }
-        else if (Math.random() < 0.3) { // ★ HARDCORE: Battle rate increased (was 0.25)
+        else if (Math.random() < 0.3) { 
             let avoid = false;
             if (tactic && tactic.name === "道を借りて各を伐つ" && Math.random() < 0.5) avoid = true;
-            
             if (!avoid) {
                 eventOccurred = true;
                 currentFood -= 2;
-                // ★ HARDCORE: Stronger random enemies
-                const enemy = { name: "敵部隊", rarity: "N", type: quest.type, war: 40 + (quest.diff*8), hp: 300 + (quest.diff*80) };
-                const battle = simulateBattle(deck, enemy, quest, tactic);
-                
+                const enemy = { name: "敵部隊", rarity: "N", type: quest.type, war: 40 + (quest.diff*8) * diffMult, hp: 300 + (quest.diff*80) * diffMult };
+                const battle = simulateBattle(deck, enemy, quest, tactic, diffMult);
                 if (battle.result === 'win') {
                     addLog(d, `${d}日目(糧${currentFood}): 敵部隊を撃破！(兵糧-2)`);
                     if (Math.random() * 100 < 5) capturedIds.push(window.characterData[0].id);
                     if (tactic && tactic.name === "笑裏に刀を蔵す") { currentFood += 1; }
                 } else if (battle.result === 'retired') {
                     addLog(d, `${d}日目: 戦闘より撤退。`);
-                    return { events: events, result: 'retired', capturedIds: capturedIds, weather: weather, stats: { hpRate: hp/maxHp, dead: totalDead }, daysTraveled: d, treasures: treasures, gainedItems: gainedItems };
+                    return { events: events, result: 'retired', capturedIds: capturedIds, weather: weather, stats: { hpRate: hp/maxHp, dead: totalDead }, daysTraveled: d, treasures: treasures, gainedItems: gainedItems, finalFood: currentFood };
                 } else {
-                    hp -= Math.floor(maxHp * 0.2);
+                    let dmg = Math.floor(maxHp * 0.2);
+                    if (tactic && tactic.name === "痴を偽るも転せず" && currentFood <= 50) { dmg = Math.floor(dmg * 0.5); addLog(d, `<span class="ev-skill" style="font-size:0.8rem">戦術【痴を偽るも転せず】により被害軽減</span>`); }
+                    hp -= dmg;
                     addLog(d, `${d}日目(糧${currentFood}): <span class="ev-bad log-dmg">敗走... 被害を受けた。(兵糧-2)</span>`);
                 }
                 totalDead += battle.deadCount;
@@ -783,32 +962,16 @@ function simulateExpeditionLoop(quest, deck, weather, bossChar, tactic) {
             }
         }
         
-        if (tactic && tactic.name === "逸を以って労を待つ") {
-            let heal = Math.floor(maxHp * 0.01);
-            hp = Math.min(maxHp, hp + heal);
-        }
-        if (tactic && tactic.name === "暗かに陳倉に渡る") {
-            let heal = Math.floor(maxHp * 0.01);
-            hp = Math.min(maxHp, hp + heal);
-        }
+        if (tactic && tactic.name === "逸を以って労を待つ") { hp = Math.min(maxHp, hp + Math.floor(maxHp * 0.01)); }
+        if (tactic && tactic.name === "暗かに陳倉に渡る") { hp = Math.min(maxHp, hp + Math.floor(maxHp * 0.01)); }
 
-        if (!eventOccurred) {
-            addLog(d, `${d}日目(糧${currentFood}): 順調に進軍中...`);
-        }
-        
-        if (hp <= 0) {
-            addLog(d, `${d}日目(糧${currentFood}): <span class="ev-bad">部隊全滅... 敗北</span>`);
-            return { events: events, result: 'defeat', capturedIds: capturedIds, weather: weather, stats: { hpRate: 0, dead: totalDead }, daysTraveled: d, treasures: treasures, gainedItems: gainedItems };
-        }
-        if (currentFood <= 0) {
-            addLog(d, `${d}日目: <span class="ev-bad">兵糧尽きる... 撤退</span>`);
-            return { events: events, result: 'retired', capturedIds: capturedIds, weather: weather, stats: { hpRate: 0, dead: totalDead }, daysTraveled: d, treasures: treasures, gainedItems: gainedItems };
-        }
+        if (!eventOccurred) addLog(d, `${d}日目(糧${currentFood}): 順調に進軍中...`);
+        if (hp <= 0) { addLog(d, `${d}日目(糧${currentFood}): <span class="ev-bad">部隊全滅... 敗北</span>`); return { events: events, result: 'defeat', capturedIds: capturedIds, weather: weather, stats: { hpRate: 0, dead: totalDead }, daysTraveled: d, treasures: treasures, gainedItems: gainedItems, finalFood: currentFood }; }
     }
 
     addLog(totalDays, `<span class="ev-battle">目的地到着！敵本陣【${bossChar.name}】と決戦！</span>`);
-    const bossBattle = simulateBattle(deck, bossChar, quest, tactic);
-    bossBattle.log.forEach((l, idx) => { if (idx > 0) addLog(totalDays + 0.1, l); });
+    const bossBattle = simulateBattle(deck, bossChar, quest, tactic, diffMult);
+    bossBattle.log.forEach((l, idx) => { if (idx > 0) addLog(totalDays + 0.1, l); if(l.includes("先制")) preemptiveOccurred = true; });
     totalDead += bossBattle.deadCount;
 
     return { 
@@ -819,7 +982,9 @@ function simulateExpeditionLoop(quest, deck, weather, bossChar, tactic) {
         stats: { hpRate: bossBattle.remainingHpRate, dead: totalDead },
         daysTraveled: totalDays,
         treasures: treasures,
-        gainedItems: gainedItems
+        gainedItems: gainedItems,
+        finalFood: currentFood,
+        preemptiveOccurred: preemptiveOccurred
     };
 }
 
@@ -827,35 +992,21 @@ function determineWeather(questId) { const seeds = ["晴れ", "雨", "曇り", "
 function calculateCaptureProb(deck, enemyChar, tactic) { 
     let maxRate = 0;
     if (!enemyChar) return 0;
-    
     const enemyRarity = enemyChar.rarity;
     const enemyGender = enemyChar.gender || "male"; 
-
     deck.forEach(c => {
         if (!c) return;
         const s = parseSkill(c);
         if (s.type === 'capture_up') {
             let base = (c.rarity === 'LOB' || c.rarity === 'UR') ? 10.0 : 1.0;
-            if (c.rarity === 'SSR') base = 5.0; // SSRの基本値補正
-            
+            if (c.rarity === 'SSR') base = 5.0; 
             let val = base * s.power; 
-            
-            // ★帰蝶 (蝮の娘) の特例★
-            if (c.name === "帰蝶") {
-                if (enemyGender === "male") {
-                    val = 50.0; // 超々々大幅
-                } else {
-                    val = 0; 
-                }
-            }
-            
+            if (c.name === "帰蝶") { if (enemyGender === "male") val = 50.0; else val = 0; }
             if (val > maxRate) maxRate = val;
         }
     });
-    
     let baseRate = maxRate * 5 + 5;
     if (enemyRarity === 'SSR' || enemyRarity === 'UR') baseRate = Math.min(50, maxRate * 5); 
     if (tactic && tactic.name === "捕らんと欲すれば暫く待て") baseRate += 10;
-    
     return Math.min(95, baseRate);
 }
