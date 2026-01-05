@@ -1,11 +1,12 @@
-/* style.css - Ver 34.0 */
+/* style.css - Ver 35.0 (Bottom Nav Resize) */
 body {
     background-color: #202020;
     color: #e0e0e0;
     font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
     margin: 0;
     padding: 0;
-    padding-bottom: 80px;
+    /* メニューが大きくなるため、下部の余白を広げました */
+    padding-bottom: 100px;
 }
 
 header {
@@ -30,13 +31,44 @@ button:disabled { background: #555; border-color: #333; color: #888; cursor: not
 .box { background: #333; border: 1px solid #555; padding: 15px; border-radius: 5px; margin-bottom: 15px; }
 img { background: #000; display: inline-block; object-fit: cover; }
 
+/* --- ステージ一覧・ロック --- */
+.stage-item {
+    position: relative;
+    /* transition: background 0.2s; */
+}
+.stage-locked {
+    background: #2a2a2a !important;
+    border-color: #444 !important;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+/* --- バッジ --- */
+.badge { display:inline-block; padding:1px 4px; border-radius:3px; margin-right:4px; border:1px solid #555; font-size:0.75rem; }
+.badge-danger { color:#f55; border-color:#f55; background:#200; }
+.badge-weather { color:#aad; border-color:#aad; }
+.badge-clear { background-color: #0055aa; color: white; border-color: #0077cc; }
+.badge-s { background-color: #d4af37; color: #332200; border-color: #ffdd55; font-weight:bold; }
+
+/* --- 下部メニュー (変更点) --- */
 nav.bottom-nav {
     position: fixed; bottom: 0; left: 0; width: 100%;
     background: #1a1a1a; border-top: 1px solid #333;
-    display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000;
+    display: flex; justify-content: space-around; 
+    /* 余白を広げて高さを確保 */
+    padding: 15px 0; 
+    z-index: 1000;
 }
-nav.bottom-nav a { color: #888; text-decoration: none; font-size: 0.9rem; font-weight: bold; }
-nav.bottom-nav a.active { color: #d4af37; }
+nav.bottom-nav a { 
+    color: #888; 
+    text-decoration: none; 
+    /* 文字サイズを大きく (0.9rem -> 1.3rem) */
+    font-size: 1.3rem; 
+    font-weight: bold; 
+    /* タップしやすいようにパディングを追加 */
+    padding: 5px 10px;
+}
+nav.bottom-nav a.active { color: #d4af37; border-bottom: 2px solid #d4af37; }
 
 /* --- ★以下、新演出用アニメーション --- */
 

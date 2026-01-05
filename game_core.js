@@ -1,4 +1,4 @@
-// game_core.js - Ver 49.1 (Full Complete Version)
+// game_core.js - Ver 50.0 (Ura-Japan Support & Code Split)
 
 const SAVE_KEY = 'sengoku_idle_save_v41_full'; 
 const SECONDS_PER_DAY = 10; 
@@ -30,18 +30,7 @@ const RELEASE_RATES = {
     "LOB": { v: 50, t: 't' }  // 手形50
 };
 
-// --- REGION REWARDS (地域制覇報酬) ---
-const REGION_REWARDS = {
-    "east": { name: "伊達政宗", rarity: "R" },
-    "central": { name: "織田信長", rarity: "R" },
-    "west": { name: "毛利元就", rarity: "R" }
-};
-
-const REGION_MAP = {
-    "east": ["陸奥", "出羽", "越後", "信濃", "上野", "下野", "常陸", "武蔵", "下総", "上総", "安房", "相模", "甲斐", "駿河", "伊豆"],
-    "central": ["越中", "能登", "加賀", "越前", "美濃", "飛騨", "尾張", "三河", "遠江", "近江", "伊勢", "志摩", "山城", "大和", "紀伊", "河内", "和泉", "摂津", "丹波", "丹後", "但馬", "播磨"],
-    "west": ["因幡", "伯耆", "出雲", "石見", "隠岐", "美作", "備前", "備中", "備後", "安芸", "周防", "長門", "淡路", "阿波", "讃岐", "伊予", "土佐", "筑前", "筑後", "豊前", "豊後", "肥前", "肥後", "日向", "大隅", "薩摩"]
-};
+// ※ REGION_REWARDS, REGION_MAP は quest_data.js に移動しました
 
 // --- FATE DATA ---
 const FATE_DATA = [
@@ -225,139 +214,7 @@ const TARGET_PREF = {
     "弓兵": "back",  "忍者": "back",  "騎馬": "all"
 };
 
-// --- QUEST DATA ---
-const QUEST_DATA = [
-    // --- 1. 尾張・美濃 ---
-    { id: 101, region: "尾張・美濃", name: "稲生", diff: 1, money: 200, food: 4, boss_r: "C", type: "足軽", terrain: "平原", interference: [], s_cond: "R織田信長", s_reward_char: "R織田信長" },
-    { id: 102, region: "尾張・美濃", name: "浮野・岩倉城", diff: 1, money: 200, food: 6, boss_r: "C", type: "足軽", terrain: "平原", interference: [], s_cond: "R織田信長", s_reward_char: "R織田信長" },
-    { id: 103, region: "尾張・美濃", name: "桶狭間", diff: 2, money: 1000, food: 9, boss_r: "C", type: "弓兵", terrain: "平原", interference: ["悪天候"], s_cond: "R織田信長", s_reward_char: "R織田信長" },
-    { id: 104, region: "尾張・美濃", name: "小牧・長久手", diff: 3, money: 400, food: 12, boss_r: "R", type: "鉄砲", terrain: "平原", interference: ["悪天候"], s_cond: "R羽柴秀吉", s_reward_char: "C木下藤吉郎" },
-
-    // --- 2. 山城 ---
-    { id: 201, region: "山城", name: "比叡山", diff: 2, money: 1000, food: 9, boss_r: "C", type: "足軽", terrain: "山岳", interference: [], s_cond: "C明智光秀" },
-    { id: 202, region: "山城", name: "山崎", diff: 2, money: 1000, food: 12, boss_r: "C", type: "足軽", terrain: "平原", interference: [], s_cond: "R羽柴秀吉" },
-    { id: 203, region: "山城", name: "二条城", diff: 2, money: 1000, food: 15, boss_r: "SR", type: "足軽", terrain: "城郭", interference: [], s_cond: "R織田信長" },
-    { id: 204, region: "山城", name: "将軍地蔵山城", diff: 3, money: 1000, food: 20, boss_r: "SR", type: "足軽", terrain: "山岳", interference: [], s_cond: "R三好長慶", s_reward_char: "R三好長慶" },
-
-    // --- 3. 河内 ---
-    { id: 301, region: "河内", name: "飯盛山城", diff: 3, money: 1000, food: 10, boss_r: "N", type: "弓兵", terrain: "山岳", interference: [], s_cond: "R三好長慶" },
-    { id: 302, region: "河内", name: "天王寺", diff: 3, money: 2000, food: 18, boss_r: "N", type: "弓兵", terrain: "平原", interference: [], s_cond: "SSR真田幸村" },
-    { id: 303, region: "河内", name: "八尾・若江", diff: 3, money: 2000, food: 24, boss_r: "C", type: "弓兵", terrain: "平原", interference: [], s_cond: "R藤堂高虎" },
-    { id: 304, region: "河内", name: "大坂城", diff: 4, money: 3000, food: 26, boss_r: "R", type: "弓兵", terrain: "城郭", interference: ["足止め罠"], s_cond: "UR征夷大将軍家康" },
-    { id: 305, region: "河内", name: "道明寺", diff: 4, money: 2000, food: 25, boss_r: "R", type: "弓兵", terrain: "平原", interference: [], s_cond: "R伊達政宗", s_reward_char: "R細川ガラシャ" },
-
-    // --- 4. 越前 ---
-    { id: 401, region: "越前", name: "九頭竜川", diff: 4, money: 400, food: 24, boss_r: "N", type: "騎馬", terrain: "河川", interference: ["悪天候"], s_cond: "R朝倉宗滴" },
-    { id: 402, region: "越前", name: "姉川", diff: 4, money: 400, food: 30, boss_r: "C", type: "騎馬", terrain: "河川", interference: ["悪天候"], s_cond: "R織田信長" },
-    { id: 403, region: "越前", name: "金ヶ崎", diff: 4, money: 1000, food: 33, boss_r: "R", type: "騎馬", terrain: "山岳", interference: ["悪天候"], s_cond: "C木下藤吉郎" },
-    { id: 404, region: "越前", name: "一乗谷城", diff: 4, money: 2000, food: 36, boss_r: "C", type: "騎馬", terrain: "城郭", interference: ["悪天候"], s_cond: "R織田信長" },
-    { id: 405, region: "越前", name: "刀根坂", diff: 4, money: 3000, food: 30, boss_r: "C", type: "騎馬", terrain: "山岳", interference: ["悪天候"], s_cond: "R織田信長", s_reward_char: "R朝倉宗滴" },
-
-    // --- 5. 近江 ---
-    { id: 501, region: "近江", name: "野良田", diff: 5, money: 400, food: 24, boss_r: "R", type: "騎馬", terrain: "平原", interference: ["奇襲"], s_cond: "R浅井長政" },
-    { id: 502, region: "近江", name: "長浜城", diff: 5, money: 1000, food: 27, boss_r: "C", type: "鉄砲", terrain: "城郭", interference: ["奇襲"], s_cond: "R羽柴秀吉" },
-    { id: 503, region: "近江", name: "賤ヶ岳", diff: 5, money: 1000, food: 36, boss_r: "C", type: "騎馬", terrain: "山岳", interference: ["奇襲"], s_cond: "R福島正則" },
-    { id: 504, region: "近江", name: "小谷城", diff: 5, money: 2000, food: 45, boss_r: "R", type: "騎馬", terrain: "城郭", interference: ["奇襲"], s_cond: "R織田信長" },
-    { id: 505, region: "近江", name: "佐和山城", diff: 5, money: 4000, food: 35, boss_r: "R", type: "騎馬", terrain: "城郭", interference: ["奇襲"], s_cond: "R石田三成", s_reward_char: "R浅井長政" },
-
-    // --- 6. 紀伊・大和 ---
-    { id: 601, region: "紀伊・大和", name: "雑賀川", diff: 6, money: 2000, food: 30, boss_r: "R", type: "足軽", terrain: "河川", interference: ["計略"], s_cond: "R雑賀孫市" },
-    { id: 602, region: "紀伊・大和", name: "信貴山城", diff: 6, money: 3000, food: 45, boss_r: "R", type: "鉄砲", terrain: "城郭", interference: ["計略"], s_cond: "R羽柴秀吉" },
-    { id: 603, region: "紀伊・大和", name: "多聞山城", diff: 6, money: 8000, food: 58, boss_r: "R", type: "鉄砲", terrain: "城郭", interference: ["足止め罠", "計略"], s_cond: "R織田信長", s_reward_char: "R松永久秀" },
-
-    // --- 7. 摂津・備前 ---
-    { id: 701, region: "摂津・備前", name: "榎並城", diff: 6, money: 1000, food: 27, boss_r: "C", type: "足軽", terrain: "平原", interference: ["布陣失敗"], s_cond: "R織田信長" },
-    { id: 702, region: "摂津・備前", name: "越水城", diff: 6, money: 2000, food: 40, boss_r: "R", type: "足軽", terrain: "城郭", interference: ["布陣失敗"], s_cond: "R三好長慶" },
-    { id: 703, region: "摂津・備前", name: "石山本願寺", diff: 7, money: 3000, food: 55, boss_r: "R", type: "足軽", terrain: "城郭", interference: ["布陣失敗"], s_cond: "R織田信長" },
-    { id: 704, region: "摂津・備前", name: "淀川堤", diff: 7, money: 8000, food: 55, boss_r: "R", type: "足軽", terrain: "河川", interference: ["計略", "布陣失敗"], s_cond: "R九鬼嘉隆", s_reward_char: "SR雑賀孫市" },
-
-    // --- 8. 駿河 ---
-    { id: 801, region: "駿河", name: "小豆坂", diff: 6, money: 200, food: 30, boss_r: "C", type: "弓兵", terrain: "平原", interference: ["足止め罠"], s_cond: "C今川義元" },
-    { id: 802, region: "駿河", name: "高天神城", diff: 6, money: 400, food: 45, boss_r: "C", type: "弓兵", terrain: "城郭", interference: ["足止め罠"], s_cond: "R徳川家康" },
-    { id: 803, region: "駿河", name: "駿府城", diff: 7, money: 400, food: 54, boss_r: "C", type: "弓兵", terrain: "城郭", interference: ["足止め罠"], s_cond: "R徳川家康" },
-    { id: 804, region: "駿河", name: "安祥城", diff: 7, money: 6000, food: 50, boss_r: "R", type: "弓兵", terrain: "平原", interference: ["奇襲"], s_cond: "R織田信長", s_reward_char: "SR太原雪斎" },
-
-    // --- 9. 豊前・豊後 ---
-    { id: 901, region: "豊前・豊後", name: "戸次川", diff: 7, money: 2000, food: 24, boss_r: "N", type: "足軽", terrain: "河川", interference: ["悪天候", "計略"], s_cond: "R島津家久" },
-    { id: 902, region: "豊前・豊後", name: "勢場ケ原", diff: 7, money: 2000, food: 42, boss_r: "R", type: "騎馬", terrain: "平原", interference: ["悪天候", "計略"], s_cond: "C大友宗麟" },
-    { id: 903, region: "豊前・豊後", name: "石垣原", diff: 7, money: 3000, food: 48, boss_r: "SR", type: "足軽", terrain: "山岳", interference: ["悪天候", "計略"], s_cond: "R黒田官兵衛" },
-    { id: 904, region: "豊前・豊後", name: "臼杵城", diff: 8, money: 4000, food: 72, boss_r: "C", type: "鉄砲", terrain: "城郭", interference: ["悪天候", "計略"], s_cond: "R島津義久", s_reward_char: "SR立花誾千代" },
-
-    // --- 10. 肥前・肥後 ---
-    { id: 1001, region: "肥前・肥後", name: "根白坂", diff: 7, money: 3000, food: 24, boss_r: "N", type: "騎馬", terrain: "山岳", interference: ["奇襲", "足止め罠"], s_cond: "R黒田官兵衛" },
-    { id: 1002, region: "肥前・肥後", name: "島原", diff: 7, money: 3000, food: 42, boss_r: "C", type: "騎馬", terrain: "平原", interference: ["奇襲", "足止め罠"], s_cond: "R島津家久" },
-    { id: 1003, region: "肥前・肥後", name: "今山", diff: 7, money: 4000, food: 48, boss_r: "R", type: "足軽", terrain: "山岳", interference: ["奇襲", "足止め罠"], s_cond: "R鍋島直茂" },
-    { id: 1004, region: "肥前・肥後", name: "須古城", diff: 8, money: 6000, food: 72, boss_r: "C", type: "足軽", terrain: "城郭", interference: ["奇襲", "足止め罠"], s_cond: "R島津義久", s_reward_char: "SR鍋島直茂" },
-
-    // --- 11. 陸奥・出羽 ---
-    { id: 1101, region: "陸奥・出羽", name: "摺上原", diff: 8, money: 3000, food: 48, boss_r: "R", type: "騎馬", terrain: "平原", interference: ["悪天候", "奇襲"], s_cond: "R伊達政宗" },
-    { id: 1102, region: "陸奥・出羽", name: "長谷堂城", diff: 8, money: 4000, food: 54, boss_r: "R", type: "騎馬", terrain: "城郭", interference: ["悪天候", "奇襲"], s_cond: "R直江兼続" },
-    { id: 1103, region: "陸奥・出羽", name: "小手森城", diff: 8, money: 4000, food: 80, boss_r: "R", type: "鉄砲", terrain: "城郭", interference: ["悪天候", "奇襲"], s_cond: "R伊達政宗" },
-    { id: 1104, region: "陸奥・出羽", name: "米沢城", diff: 8, money: 4000, food: 88, boss_r: "SR", type: "騎馬", terrain: "城郭", interference: ["悪天候", "奇襲"], s_cond: "R直江兼続" },
-    { id: 1105, region: "陸奥・出羽", name: "青葉城", diff: 9, money: 6000, food: 120, boss_r: "R", type: "騎馬", terrain: "城郭", interference: ["悪天候", "奇襲"], s_cond: "R伊達政宗", s_reward_char: "SR片倉小十郎" },
-
-    // --- 12. 上野・武蔵 ---
-    { id: 1201, region: "上野・武蔵", name: "小沢原", diff: 8, money: 400, food: 24, boss_r: "R", type: "足軽", terrain: "平原", interference: ["足止め罠"], s_cond: "R北条氏康" },
-    { id: 1202, region: "上野・武蔵", name: "鉢形城", diff: 8, money: 400, food: 28, boss_r: "C", type: "足軽", terrain: "城郭", interference: ["足止め罠"], s_cond: "C前田利家" },
-    { id: 1203, region: "上野・武蔵", name: "国府台", diff: 8, money: 1000, food: 48, boss_r: "R", type: "忍者", terrain: "平原", interference: ["足止め罠"], s_cond: "R北条氏康" },
-    { id: 1204, region: "上野・武蔵", name: "河越城", diff: 8, money: 2000, food: 54, boss_r: "C", type: "足軽", terrain: "城郭", interference: ["足止め罠"], s_cond: "R北条氏康" },
-    { id: 1205, region: "上野・武蔵", name: "小田原城", diff: 9, money: 12000, food: 150, boss_r: "R", type: "足軽", terrain: "城郭", interference: ["足止め罠"], s_cond: "UR豊太閤秀吉", s_reward_char: "R北条氏康" },
-
-    // --- 13. 土佐・南海 ---
-    { id: 1301, region: "土佐・南海", name: "一宮城", diff: 8, money: 2000, food: 36, boss_r: "N", type: "水兵", terrain: "城郭", interference: ["布陣失敗", "傷病"], s_cond: "R長宗我部元親" },
-    { id: 1302, region: "土佐・南海", name: "引田", diff: 8, money: 2000, food: 42, boss_r: "C", type: "水兵", terrain: "海戦", interference: ["布陣失敗", "傷病"], s_cond: "R長宗我部元親" },
-    { id: 1303, region: "土佐・南海", name: "天霧城", diff: 8, money: 3000, food: 72, boss_r: "SR", type: "水兵", terrain: "城郭", interference: ["布陣失敗", "傷病"], s_cond: "R長宗我部元親" },
-    { id: 1304, region: "土佐・南海", name: "湯築城", diff: 8, money: 3000, food: 48, boss_r: "SR", type: "水兵", terrain: "城郭", interference: ["布陣失敗", "傷病"], s_cond: "R小早川隆景" },
-    { id: 1305, region: "土佐・南海", name: "白地城", diff: 9, money: 4000, food: 100, boss_r: "SSR", type: "水兵", terrain: "城郭", interference: ["布陣失敗", "傷病"], s_cond: "R長宗我部元親", s_reward_char: "SR長宗我部信親" },
-
-    // --- 14. 三河 ---
-    { id: 1401, region: "三河", name: "三方ヶ原", diff: 9, money: 4000, food: 96, boss_r: "R", type: "弓兵", terrain: "平原", interference: ["奇襲", "布陣失敗"], s_cond: "R武田信玄" },
-    { id: 1402, region: "三河", name: "長篠", diff: 9, money: 6000, food: 112, boss_r: "SR", type: "騎馬", terrain: "平原", interference: ["奇襲", "布陣失敗"], s_cond: "R織田信長" },
-    { id: 1403, region: "三河", name: "浜松城", diff: 9, money: 8000, food: 150, boss_r: "SR", type: "騎馬", terrain: "城郭", interference: ["奇襲", "布陣失敗"], s_cond: "R徳川家康", s_reward_char: "SR酒井忠次" },
-
-    // --- 15. 安芸・山陽 ---
-    { id: 1501, region: "安芸・山陽", name: "三木城", diff: 9, money: 2000, food: 60, boss_r: "C", type: "水兵", terrain: "城郭", interference: ["計略", "奇襲", "傷病"], s_cond: "R羽柴秀吉" },
-    { id: 1502, region: "安芸・山陽", name: "鳥取城", diff: 9, money: 3000, food: 66, boss_r: "C", type: "足軽", terrain: "城郭", interference: ["計略", "奇襲", "傷病"], s_cond: "R羽柴秀吉" },
-    { id: 1503, region: "安芸・山陽", name: "有田城", diff: 9, money: 4000, food: 96, boss_r: "R", type: "足軽", terrain: "城郭", interference: ["計略", "奇襲", "傷病"], s_cond: "R毛利元就" },
-    { id: 1504, region: "安芸・山陽", name: "厳島", diff: 9, money: 4000, food: 104, boss_r: "SR", type: "水兵", terrain: "海戦", interference: ["計略", "奇襲", "傷病"], s_cond: "R毛利元就" },
-    { id: 1505, region: "安芸・山陽", name: "吉田郡山城", diff: 9, money: 6000, food: 140, boss_r: "SSR", type: "弓兵", terrain: "城郭", interference: ["計略", "奇襲", "傷病"], s_cond: "R毛利元就", s_reward_char: "SR小早川隆景" },
-
-    // --- 16. 薩摩 ---
-    { id: 1601, region: "薩摩", name: "平佐城", diff: 9, money: 3000, food: 48, boss_r: "R", type: "鉄砲", terrain: "城郭", interference: ["奇襲", "計略"], s_cond: "R小西行長" },
-    { id: 1602, region: "薩摩", name: "沖田畷", diff: 9, money: 6000, food: 54, boss_r: "R", type: "鉄砲", terrain: "湿地", interference: ["奇襲", "計略"], s_cond: "R島津家久" },
-    { id: 1603, region: "薩摩", name: "耳川", diff: 9, money: 6000, food: 80, boss_r: "R", type: "足軽", terrain: "河川", interference: ["奇襲", "計略"], s_cond: "R島津家久" },
-    { id: 1604, region: "薩摩", name: "内城", diff: 9, money: 8000, food: 110, boss_r: "R", type: "鉄砲", terrain: "城郭", interference: ["奇襲", "計略"], s_cond: "R島津義久", s_reward_char: "SR島津歳久" },
-
-    // --- 17. 信濃・甲斐 ---
-    { id: 1701, region: "信濃・甲斐", name: "上田原", diff: 10, money: 4000, food: 60, boss_r: "R", type: "騎馬", terrain: "平原", interference: ["奇襲", "悪天候", "計略", "足止め罠"], s_cond: "R真田幸隆" },
-    { id: 1702, region: "信濃・甲斐", name: "上田城", diff: 10, money: 6000, food: 128, boss_r: "R", type: "騎馬", terrain: "城郭", interference: ["奇襲", "悪天候", "計略", "足止め罠"], s_cond: "R真田昌幸" },
-    { id: 1703, region: "信濃・甲斐", name: "川中島", diff: 10, money: 8000, food: 136, boss_r: "R", type: "騎馬", terrain: "平原", interference: ["奇襲", "悪天候", "計略", "足止め罠"], s_cond: "R武田信玄" },
-    { id: 1704, region: "信濃・甲斐", name: "躑躅ヶ崎館", diff: 10, money: 10000, food: 180, boss_r: "SSR", type: "騎馬", terrain: "城郭", interference: ["奇襲", "悪天候", "計略", "傷病"], s_cond: "R武田信玄", s_reward_char: "SR山本勘助" },
-
-    // --- 18. 越後 ---
-    { id: 1801, region: "越後", name: "尻垂坂", diff: 10, money: 4000, food: 60, boss_r: "R", type: "足軽", terrain: "平原", interference: ["奇襲", "悪天候", "計略", "足止め罠", "傷病"], s_cond: "R上杉謙信" },
-    { id: 1802, region: "越後", name: "七尾城", diff: 10, money: 6000, food: 96, boss_r: "R", type: "騎馬", terrain: "城郭", interference: ["奇襲", "悪天候", "計略", "足止め罠"], s_cond: "R上杉謙信" },
-    { id: 1803, region: "越後", name: "手取川", diff: 10, money: 8000, food: 136, boss_r: "R", type: "騎馬", terrain: "河川", interference: ["奇襲", "悪天候", "計略", "足止め罠", "傷病"], s_cond: "R上杉謙信" },
-    { id: 1804, region: "越後", name: "春日山城", diff: 10, money: 10000, food: 180, boss_r: "SSR", type: "騎馬", terrain: "城郭", interference: ["奇襲", "悪天候", "計略", "足止め罠", "傷病"], s_cond: "R上杉謙信", s_reward_char: "SR直江景綱" },
-
-    // --- 19. イベント (曜日限定等) ---
-    { id: 9001, region: "イベント", name: "【月曜】大坂の役", diff: 8, money: 8000, food: 111, boss_r: "SSR", type: "騎馬", terrain: "城郭", interference: ["布陣失敗", "足止め罠", "傷病"], s_cond: "UR征夷大将軍家康", s_reward_char: "SR千姫" },
-    { id: 9002, region: "イベント", name: "【火曜】安土城", diff: 8, money: 6000, food: 80, boss_r: "R", type: "鉄砲", terrain: "城郭", interference: ["布陣失敗"], s_cond: "R織田信長" },
-    { id: 9003, region: "イベント", name: "【火曜】下田城", diff: 8, money: 8000, food: 83, boss_r: "C", type: "弓兵", terrain: "城郭", interference: ["足止め罠", "傷病"], s_cond: "R徳川家康" },
-    { id: 9004, region: "イベント", name: "【火曜】江戸城", diff: 10, money: 12000, food: 135, boss_r: "UR", type: "足軽", terrain: "城郭", interference: ["奇襲", "布陣失敗"], s_cond: "SR酒井忠次" },
-    { id: 9005, region: "イベント", name: "【水曜】駿河湾海戦", diff: 8, money: 4000, food: 73, boss_r: "R", type: "騎馬", terrain: "海戦", interference: ["悪天候", "布陣失敗"], s_cond: "R九鬼嘉隆" },
-    { id: 9006, region: "イベント", name: "【水曜】九度山", diff: 8, money: 4000, food: 90, boss_r: "SR", type: "鉄砲", terrain: "山岳", interference: ["奇襲", "足止め罠"], s_cond: "SR真田信之" },
-    { id: 9007, region: "イベント", name: "【木曜】石橋山", diff: 8, money: 8000, food: 95, boss_r: "SR", type: "忍者", terrain: "山岳", interference: ["奇襲", "布陣失敗"], s_cond: "R雑賀孫市" },
-    { id: 9008, region: "イベント", name: "【木曜】伊賀の里", diff: 7, money: 4000, food: 60, boss_r: "SR", type: "忍者", terrain: "山岳", interference: ["奇襲", "傷病"], s_cond: "R徳川家康" },
-    { id: 9009, region: "イベント", name: "【木曜】巌流島", diff: 8, money: 6000, food: 90, boss_r: "SR", type: "足軽", terrain: "海戦", interference: ["奇襲", "足止め罠", "悪天候"], s_cond: "SR宮本武蔵" },
-    { id: 9010, region: "イベント", name: "【金曜】石見銀山", diff: 8, money: 4000, food: 90, boss_r: "R", type: "足軽", terrain: "山岳", interference: ["足止め罠", "傷病"], s_cond: "R毛利元就" },
-    { id: 9011, region: "イベント", name: "【金曜】南蛮渡来船", diff: 5, money: 1000, food: 35, boss_r: "C", type: "水兵", terrain: "海戦", interference: ["悪天候"], s_cond: "Cザビエル" },
-    { id: 9012, region: "イベント", name: "【金曜】佐渡金山", diff: 8, money: 12000, food: 77, boss_r: "SR", type: "足軽", terrain: "山岳", interference: ["傷病", "足止め罠"], s_cond: "SR宇佐美定満" },
-    { id: 9013, region: "イベント", name: "【土日】伊勢湾の海賊", diff: 6, money: 3000, food: 60, boss_r: "R", type: "水兵", terrain: "海戦", interference: ["奇襲"], s_cond: "SSR武田信玄" },
-    { id: 9014, region: "イベント", name: "【土曜】関ヶ原(対東軍)", diff: 10, money: 12000, food: 260, boss_r: "R", type: "足軽", terrain: "平原", interference: ["悪天候", "奇襲", "布陣失敗"], s_cond: "R石田三成" },
-    { id: 9015, region: "イベント", name: "【日曜】本能寺の変", diff: 10, money: 12000, food: 240, boss_r: "UR", type: "鉄砲", terrain: "城郭", interference: ["奇襲"], s_cond: "SSR明智光秀" },
-    { id: 9016, region: "イベント", name: "【日曜】関ヶ原(対西軍)", diff: 10, money: 12000, food: 260, boss_r: "R", type: "足軽", terrain: "平原", interference: ["悪天候", "奇襲", "布陣失敗"], s_cond: "R徳川家康" }
-];
+// ※ QUEST_DATA も quest_data.js に移動しました
 
 const DEFAULT_SAVE = {
     money: 5000,
@@ -371,7 +228,9 @@ const DEFAULT_SAVE = {
     completed_regions: [],
     achievements: [], 
     tactics: ["逃げるを上となす", "出陣ことはじめ"], 
-    collected_treasures: [], 
+    collected_treasures: [],
+    cleared_stages: [], // クリア済みステージID
+    last_setup: { tactic: null, speed: 'normal' }, // 前回の設定
     records: { 
         totalDistance: 0,
         totalBattles: 0,
@@ -399,6 +258,8 @@ function loadSaveData() {
     if (!data.achievements) data.achievements = [];
     if (!data.tactics) data.tactics = ["逃げるを上となす", "出陣ことはじめ"];
     if (!data.collected_treasures) data.collected_treasures = [];
+    if (!data.cleared_stages) data.cleared_stages = []; // 新規項目初期化
+    if (!data.last_setup) data.last_setup = { tactic: null, speed: 'normal' }; // 新規項目初期化
     if (!data.records) data.records = { totalDistance: 0, totalBattles: 0, totalWins: 0, totalDead: 0, retreatCount: 0, winStreak: 0, gachaCount: 0, capturedCount: 0, totalReleased: 0 };
     
     if (window.characterData && window.characterData.length > 0) {
@@ -579,6 +440,45 @@ function cancelExpedition() {
     saveData(save);
 }
 
+// --- 出陣条件チェック関数 (新規追加) ---
+function checkQuestCondition(deckIds, questId) {
+    const quest = QUEST_DATA.find(q => q.id === questId);
+    if (!quest || !quest.entry_cond) return true; // 条件なしならOK
+
+    const cond = quest.entry_cond;
+    // デッキIDから武将オブジェクトを取得
+    const deck = deckIds.map(id => window.characterData.find(c => c.id === id)).filter(c => c);
+    
+    // 統計値計算
+    let count = 0;
+    
+    if (cond.type === 'hp') {
+        const totalHp = deck.reduce((sum, c) => sum + c.hp, 0);
+        if (cond.op === '<=' && totalHp > cond.value) return false;
+        if (cond.op === '>=' && totalHp < cond.value) return false;
+    } 
+    else if (cond.type === 'total_cost') {
+        const totalCost = deck.reduce((sum, c) => sum + (c.cost || 0), 0);
+        if (cond.op === '<=' && totalCost > cond.value) return false;
+        if (cond.op === '>=' && totalCost < cond.value) return false;
+    }
+    else {
+        // カウント系条件
+        deck.forEach(c => {
+            if (cond.type === 'clan' && c.clan.includes(cond.value)) count++;
+            if (cond.type === 'rarity_count' && c.rarity === cond.value) count++;
+            if (cond.type === 'gender_count' && (c.gender || 'male') === cond.value) count++;
+            if (cond.type === 'type_count' && c.type === cond.value) count++;
+            if (cond.type === 'char' && c.name === cond.value.replace(/^[RCSRU]+/,'')) count++; // 接頭辞除外
+        });
+        
+        if (cond.op === '>=' && count < cond.count) return false;
+        if (cond.op === '<=' && count > cond.count) return false;
+    }
+    
+    return true;
+}
+
 // --- startExpeditionCore ---
 function startExpeditionCore(questId, tacticName, speedMode = 'normal') {
     const save = loadSaveData();
@@ -586,6 +486,13 @@ function startExpeditionCore(questId, tacticName, speedMode = 'normal') {
     const quest = QUEST_DATA.find(q => q.id === questId);
     if (!quest) return { error: "クエストが見つかりません" };
     if (!deck.some(c => c)) return { error: "大将がいません" };
+
+    // ★出陣条件チェック
+    if (quest.entry_cond) {
+        if (!checkQuestCondition(save.deck, questId)) {
+             return { error: `出陣条件を満たしていません！\n(${quest.cond_desc})` };
+        }
+    }
     
     const speedConfig = MARCH_SPEEDS[speedMode] || MARCH_SPEEDS['normal'];
 
@@ -603,10 +510,7 @@ function startExpeditionCore(questId, tacticName, speedMode = 'normal') {
         }
     }
 
-    // ★修正: ボス選出のフォールバックロジックを強化
     let bossCandidates = window.characterData.filter(c => c.rarity === quest.boss_r);
-    
-    // 候補がいない場合、レアリティを下げて探す (例: NがいなければC、CがいなければR...)
     if (bossCandidates.length === 0) {
         const priority = ["N", "C", "R", "SR", "SSR", "UR"];
         for(let r of priority) {
@@ -614,14 +518,11 @@ function startExpeditionCore(questId, tacticName, speedMode = 'normal') {
              if (bossCandidates.length > 0) break;
         }
     }
-    
-    // それでもいない場合はリストの最初 (Kenshin)
     const bossChar = bossCandidates.length > 0 
         ? bossCandidates[Math.floor(Math.random() * bossCandidates.length)] 
         : window.characterData[0];
 
     const weather = determineWeather(quest.id);
-    
     const logs = simulateExpeditionLoop(quest, deck, weather, bossChar, tactic, speedConfig);
     const actualDays = logs.daysTraveled;
     
@@ -708,19 +609,15 @@ function parseSkill(char) {
     Object.keys(preventMap).forEach(k => { if (desc.includes(k) && (desc.includes("無効")||desc.includes("防"))) prevents.push(preventMap[k]); });
     if (prevents.length > 0) { effect.type = "prevent"; effect.targets = prevents; return effect; }
     
-    // ★修正: 一撃必殺スキルの確率計算ロジック
     if (desc.includes("一撃必殺") || desc.includes("葬り去る") || desc.includes("一撃で倒す")) {
         effect.type = "instant_kill";
-        
-        // 1. 文言によるベース確率
-        let baseRate = 0.05; // デフォルト(記述なし)
+        let baseRate = 0.05; 
         if (desc.includes("1/100")) baseRate = 0.01;
         else if (desc.includes("ごく稀") || desc.includes("ごくまれ")) baseRate = 0.02;
         else if (desc.includes("稀") || desc.includes("まれ")) baseRate = 0.04;
         else if (desc.includes("一定の確率")) baseRate = 0.06;
         else if (desc.includes("高確率") || desc.includes("しばしば")) baseRate = 0.12;
 
-        // 2. レアリティ補正
         let rarityMult = 1.0;
         const r = char.rarity;
         if (r === 'N' || r === 'C') rarityMult = 0.8;
@@ -729,7 +626,6 @@ function parseSkill(char) {
         else if (r === 'SSR') rarityMult = 1.5;
         else if (r === 'UR' || r === 'LOB') rarityMult = 2.0;
 
-        // 3. 最終計算とキャップ(上限25%)
         effect.rate = Math.min(0.25, baseRate * rarityMult); 
         return effect;
     }
@@ -980,7 +876,6 @@ function simulateBattle(deck, enemy, quest, tactic, diffMod = 1.0) {
 
         if (myParty.every(c => !c || c.isDead)) { battleLog.push("全滅..."); return { result: 'defeat', log: battleLog, remainingHpRate: 0, deadCount: 3 }; }
     }
-    // ★追加: 引き分けメッセージ
     battleLog.push(`<span class="ev-bad">勝負つかず... (時間切れ引き分け)</span>`);
     return { result: 'draw', log: battleLog, remainingHpRate: 0, deadCount: 0 };
 }
@@ -1011,7 +906,6 @@ function simulateExpeditionLoop(quest, deck, weather, bossChar, tactic, speedCon
     const addLog = (day, text) => events.push({ day: day, text: text });
     let preemptiveOccurred = false;
 
-    // 速度モードのログ表示
     addLog(0, `<span class="log-time">出発</span> 兵糧:${currentFood} (行程:${totalDays}日)`);
     if (speedConfig.name !== "通常進軍") {
         addLog(0, `<span style="color:#faa; border:1px solid #f88; padding:2px;">【${speedConfig.name}】</span> ${speedConfig.desc}`);
@@ -1106,7 +1000,6 @@ function simulateExpeditionLoop(quest, deck, weather, bossChar, tactic, speedCon
                 eventOccurred = true;
                 currentFood -= 2;
                 const enemy = { name: "敵部隊", rarity: "N", type: quest.type, war: 40 + (quest.diff*8), hp: 300 + (quest.diff*80) };
-                // 雑魚戦にもdiffModを適用
                 const battle = simulateBattle(deck, enemy, quest, tactic, speedConfig.diffMod);
                 if (battle.result === 'win') {
                     addLog(d, `${d}日目(糧${currentFood}): 敵部隊を撃破！(兵糧-2)`);
@@ -1134,7 +1027,6 @@ function simulateExpeditionLoop(quest, deck, weather, bossChar, tactic, speedCon
     }
 
     addLog(totalDays, `<span class="ev-battle">目的地到着！敵本陣【${bossChar.name}】と決戦！</span>`);
-    // ボス戦にもdiffModを適用
     const bossBattle = simulateBattle(deck, bossChar, quest, tactic, speedConfig.diffMod);
     bossBattle.log.forEach((l, idx) => { if (idx > 0) addLog(totalDays + 0.1, l); if(l.includes("先制")) preemptiveOccurred = true; });
     totalDead += bossBattle.deadCount;
