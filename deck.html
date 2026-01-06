@@ -77,41 +77,50 @@
             font-size: 0.7rem; padding: 1px 4px; border-radius: 0 0 0 4px;
         }
 
-        /* --- 大型詳細モーダル --- */
+        /* --- 大型詳細モーダル (レイアウト調整版) --- */
         .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:2000; align-items:center; justify-content:center; }
+        
         .modal-content { 
             background: #222; border: 2px solid #d4af37; 
-            padding: 15px; 
-            width: 95%; max-width: 500px; /* 幅を拡張 */
-            max-height: 90vh; overflow-y: auto;
+            width: 95%; max-width: 450px; /* 幅を少し狭める */
+            max-height: 85vh; /* 画面内に収まるように */
             border-radius: 8px; text-align: center; color: #ccc; 
+            display: flex; flex-direction: column; /* 上下分割レイアウト */
+            padding: 0; overflow: hidden; /* 全体スクロール禁止 */
         }
+
+        /* ヘッダー・フッター固定、中身だけスクロール */
+        .modal-header { padding: 10px; background: #2a2a2a; border-bottom: 1px solid #444; flex-shrink: 0; }
+        .modal-scroll-area { padding: 10px; overflow-y: auto; flex: 1; }
+        .modal-footer { padding: 10px; background: #2a2a2a; border-top: 1px solid #444; flex-shrink: 0; display:flex; flex-direction:column; gap:5px; }
+
         .large-char-img { 
-            max-width: 250px; width: 80%; 
-            border: 3px solid #555; margin: 10px auto; display: block; 
+            max-width: 180px; /* 画像サイズ縮小 */
+            width: 70%; 
+            border: 2px solid #555; margin: 5px auto 10px auto; display: block; 
             box-shadow: 0 0 10px #000;
         }
         .status-table {
-            width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 0.9rem;
+            width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 0.85rem;
         }
-        .status-table th { background: #333; color: #aaa; padding: 5px; border: 1px solid #444; width: 25%; }
-        .status-table td { background: #1a1a1a; padding: 5px; border: 1px solid #444; color: #fff; }
+        .status-table th { background: #333; color: #aaa; padding: 4px; border: 1px solid #444; width: 25%; }
+        .status-table td { background: #1a1a1a; padding: 4px; border: 1px solid #444; color: #fff; }
         
         .skill-box {
-            background: #332200; border: 1px solid #d4af37; padding: 10px;
-            margin-bottom: 15px; text-align: left; border-radius: 4px;
+            background: #332200; border: 1px solid #d4af37; padding: 8px;
+            margin-bottom: 10px; text-align: left; border-radius: 4px;
         }
         .profile-box {
-            font-size: 0.85rem; color: #aaa; text-align: left; 
-            padding: 10px; background: #111; border: 1px solid #333; margin-bottom: 10px;
-            line-height: 1.5;
+            font-size: 0.8rem; color: #aaa; text-align: left; 
+            padding: 8px; background: #111; border: 1px solid #333; margin-bottom: 5px;
+            line-height: 1.4;
         }
 
-        .btn-act { width:100%; padding:12px; margin-top:5px; border:none; cursor:pointer; font-weight:bold; border-radius:4px; font-size:0.95rem; }
+        .btn-act { width:100%; padding:10px; border:none; cursor:pointer; font-weight:bold; border-radius:4px; font-size:0.9rem; }
         .btn-equip { background: #d4af37; color:#000; }
-        .btn-lock { background: #335; color:#fff; border:1px solid #66a; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .btn-lock { background: #335; color:#fff; border:1px solid #66a; display: flex; align-items: center; justify-content: center; gap: 5px; margin-bottom: 5px; }
         .btn-sell { background: #522; color:#fcc; border:1px solid #844; }
-        .btn-close { background: #444; color:#fff; border:1px solid #666; margin-top:15px; }
+        .btn-close { background: #444; color:#fff; border:1px solid #666; }
 
         .sort-area { padding: 5px 10px; text-align: right; background: #111; border-bottom: 1px solid #333; font-size:0.8rem; }
         .rarity-UR { color: #f0f; font-weight: bold; }
@@ -271,36 +280,42 @@
         }
 
         area.innerHTML = `
-            <div style="font-size:1.2rem; font-weight:bold; color:${getRarityColor(char.rarity)}; margin-bottom:5px;">
-                [${char.rarity}] ${char.name}
-            </div>
-            <img src="jpg/${char.image}" class="large-char-img" onerror="this.style.display='none'">
-            
-            <table class="status-table">
-                <tr><th>兵種</th><td>${char.type}</td> <th>勢力</th><td>${char.clan}</td></tr>
-                <tr><th>性別</th><td>${char.gender === 'female' ? '女' : '男'}</td> <th>コスト</th><td>${char.cost}</td></tr>
-                <tr><th>兵数</th><td style="color:#8f8; font-weight:bold;">${char.hp}</td> <th>戦力</th><td style="color:#f88; font-weight:bold;">${char.war}</td></tr>
-            </table>
-
-            <div class="skill-box">
-                <div style="color:#d4af37; font-weight:bold; margin-bottom:5px;">
-                    ★ ${char.skill ? char.skill.name : 'なし'}
-                </div>
-                <div style="font-size:0.85rem; line-height:1.4;">
-                    ${char.skill ? char.skill.desc : '-'}
+            <div class="modal-header">
+                <div style="font-size:1.1rem; font-weight:bold; color:${getRarityColor(char.rarity)};">
+                    [${char.rarity}] ${char.name}
                 </div>
             </div>
+            
+            <div class="modal-scroll-area">
+                <img src="jpg/${char.image}" class="large-char-img" onerror="this.style.display='none'">
+                
+                <table class="status-table">
+                    <tr><th>兵種</th><td>${char.type}</td> <th>勢力</th><td>${char.clan}</td></tr>
+                    <tr><th>性別</th><td>${char.gender === 'female' ? '女' : '男'}</td> <th>コスト</th><td>${char.cost}</td></tr>
+                    <tr><th>兵数</th><td style="color:#8f8; font-weight:bold;">${char.hp}</td> <th>戦力</th><td style="color:#f88; font-weight:bold;">${char.war}</td></tr>
+                </table>
 
-            <div class="profile-box">
-                ${char.profile || '詳細な情報はありません。'}
+                <div class="skill-box">
+                    <div style="color:#d4af37; font-weight:bold; margin-bottom:5px; font-size:0.9rem;">
+                        ★ ${char.skill ? char.skill.name : 'なし'}
+                    </div>
+                    <div style="font-size:0.8rem; line-height:1.4;">
+                        ${char.skill ? char.skill.desc : '-'}
+                    </div>
+                </div>
+
+                <div class="profile-box">
+                    ${char.profile || '詳細な情報はありません。'}
+                </div>
             </div>
 
-            <button class="btn-act btn-lock" onclick="toggleLock(${char.id})" style="background:${lockColor}">
-                ${lockLabel}
-            </button>
-            
-            ${actionButtons}
-            <button class="btn-act btn-close" onclick="closeModal()">閉じる</button>
+            <div class="modal-footer">
+                <button class="btn-act btn-lock" onclick="toggleLock(${char.id})" style="background:${lockColor}">
+                    ${lockLabel}
+                </button>
+                ${actionButtons}
+                <button class="btn-act btn-close" onclick="closeModal()">閉じる</button>
+            </div>
         `;
 
         document.getElementById('detail-modal').style.display = 'flex';

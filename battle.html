@@ -36,23 +36,31 @@
         
         /* モーダル共通スタイル（拡張版） */
         .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:2000; align-items:center; justify-content:center; }
+        
         .modal-content { 
             background: #222; border: 2px solid #d4af37; 
-            padding: 15px; width: 95%; max-width: 500px; 
-            max-height: 90vh; overflow-y: auto;
+            width: 95%; max-width: 450px; 
+            max-height: 85vh; /* 画面内に収める */
             border-radius: 8px; text-align: center; color: #ccc; 
+            display: flex; flex-direction: column;
+            padding: 0; overflow: hidden; 
         }
-        .large-char-img { max-width: 250px; width: 80%; border: 3px solid #555; margin: 10px auto; display: block; box-shadow: 0 0 10px #000; }
-        .status-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 0.9rem; }
-        .status-table th { background: #333; color: #aaa; padding: 5px; border: 1px solid #444; width: 25%; }
-        .status-table td { background: #1a1a1a; padding: 5px; border: 1px solid #444; color: #fff; }
-        .skill-box { background: #332200; border: 1px solid #d4af37; padding: 10px; margin-bottom: 15px; text-align: left; border-radius: 4px; }
-        .profile-box { font-size: 0.85rem; color: #aaa; text-align: left; padding: 10px; background: #111; border: 1px solid #333; margin-bottom: 10px; line-height: 1.5; }
 
-        .btn-act { width:100%; padding:12px; margin-top:8px; border:none; cursor:pointer; font-weight:bold; border-radius:4px; font-size:0.95rem; }
+        .modal-header { padding: 10px; background: #2a2a2a; border-bottom: 1px solid #444; flex-shrink: 0; }
+        .modal-scroll-area { padding: 10px; overflow-y: auto; flex: 1; }
+        .modal-footer { padding: 10px; background: #2a2a2a; border-top: 1px solid #444; flex-shrink: 0; display:flex; flex-direction:column; gap:5px; }
+
+        .large-char-img { max-width: 180px; width: 70%; border: 2px solid #555; margin: 5px auto 10px auto; display: block; box-shadow: 0 0 10px #000; }
+        .status-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 0.85rem; }
+        .status-table th { background: #333; color: #aaa; padding: 4px; border: 1px solid #444; width: 25%; }
+        .status-table td { background: #1a1a1a; padding: 4px; border: 1px solid #444; color: #fff; }
+        .skill-box { background: #332200; border: 1px solid #d4af37; padding: 8px; margin-bottom: 10px; text-align: left; border-radius: 4px; }
+        .profile-box { font-size: 0.8rem; color: #aaa; text-align: left; padding: 8px; background: #111; border: 1px solid #333; margin-bottom: 5px; line-height: 1.4; }
+
+        .btn-act { width:100%; padding:10px; border:none; cursor:pointer; font-weight:bold; border-radius:4px; font-size:0.95rem; }
         .btn-key { background: #d4af37; color:#000; box-shadow:0 2px 0 #886622; }
         .btn-coin { background: #446; color:#fff; border:1px solid #668; box-shadow:0 2px 0 #224; }
-        .btn-close { background: #444; color: #fff; border: 1px solid #666; margin-top: 15px; }
+        .btn-close { background: #444; color: #fff; border: 1px solid #666; }
         .debug-btn { margin-top:10px; background:#444; color:#ccc; border:1px solid #666; padding:5px; }
         
         .resource-bar { display:flex; justify-content:space-around; background:#111; padding:5px; border-bottom:1px solid #444; font-size:0.9rem; color:#ccc; }
@@ -821,31 +829,34 @@
         actButtons += `<button class="btn-act" onclick="actionPrisoner('release')" style="background:#333;border:1px solid #555;">解放する (報酬: ${rText})</button>`;
 
         modalContent.innerHTML = `
-            <div style="font-size:1.2rem; font-weight:bold; color:${getRarityColor(c.rarity)}; margin-bottom:5px;">
-                [${c.rarity}] ${c.name}
-            </div>
-            <img src="jpg/${c.image}" class="large-char-img" onerror="this.style.display='none'">
-            
-            <table class="status-table">
-                <tr><th>兵種</th><td>${c.type}</td> <th>勢力</th><td>${c.clan}</td></tr>
-                <tr><th>性別</th><td>${c.gender === 'female' ? '女' : '男'}</td> <th>コスト</th><td>${c.cost}</td></tr>
-                <tr><th>兵数</th><td style="color:#8f8; font-weight:bold;">${c.hp}</td> <th>戦力</th><td style="color:#f88; font-weight:bold;">${c.war}</td></tr>
-            </table>
-
-            <div class="skill-box">
-                <div style="color:#d4af37; font-weight:bold; margin-bottom:5px;">
-                    ★ ${c.skill ? c.skill.name : 'なし'}
-                </div>
-                <div style="font-size:0.85rem; line-height:1.4;">
-                    ${c.skill ? c.skill.desc : '-'}
+            <div class="modal-header">
+                <div style="font-size:1.1rem; font-weight:bold; color:${getRarityColor(c.rarity)};">
+                    [${c.rarity}] ${c.name}
                 </div>
             </div>
+            <div class="modal-scroll-area">
+                <img src="jpg/${c.image}" class="large-char-img" onerror="this.style.display='none'">
+                
+                <table class="status-table">
+                    <tr><th>兵種</th><td>${c.type}</td> <th>勢力</th><td>${c.clan}</td></tr>
+                    <tr><th>性別</th><td>${c.gender === 'female' ? '女' : '男'}</td> <th>コスト</th><td>${c.cost}</td></tr>
+                    <tr><th>兵数</th><td style="color:#8f8; font-weight:bold;">${c.hp}</td> <th>戦力</th><td style="color:#f88; font-weight:bold;">${c.war}</td></tr>
+                </table>
 
-            <div class="profile-box">
-                ${c.profile || '詳細な情報はありません。'}
+                <div class="skill-box">
+                    <div style="color:#d4af37; font-weight:bold; margin-bottom:5px;">
+                        ★ ${c.skill ? c.skill.name : 'なし'}
+                    </div>
+                    <div style="font-size:0.85rem; line-height:1.4;">
+                        ${c.skill ? c.skill.desc : '-'}
+                    </div>
+                </div>
+
+                <div class="profile-box">
+                    ${c.profile || '詳細な情報はありません。'}
+                </div>
             </div>
-
-            <div style="background:#222; padding:10px; border-top:1px solid #444;">
+            <div class="modal-footer">
                 ${actButtons}
                 <button class="btn-act btn-close" onclick="closeModal()">閉じる</button>
             </div>
