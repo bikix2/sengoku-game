@@ -20,6 +20,8 @@
         .badge { display:inline-block; padding:1px 4px; border-radius:3px; margin-right:4px; border:1px solid #555; }
         .badge-danger { color:#f55; border-color:#f55; background:#200; }
         .badge-weather { color:#aad; border-color:#aad; }
+        .badge-new { background: linear-gradient(135deg, #d00, #f00); color: #fff; font-weight: bold; border: 1px solid #faa; text-shadow: 0 0 2px #000; margin-left: 5px; font-size: 0.7rem; }
+        
         .s-cond { font-size: 0.75rem; color: #aaa; margin-top: 2px; }
         .s-cond-ok { color: #0f0; font-weight: bold; }
         .s-mark { color: #ffd700; font-weight: bold; margin-right: 5px; text-shadow: 0 0 3px #d4af37; }
@@ -32,11 +34,21 @@
         .prisoner-check { transform: scale(1.5); margin-right: 15px; cursor: pointer; }
         .prisoner-thumb { width: 45px; height: 45px; object-fit: cover; border: 1px solid #555; margin-right: 10px; }
         
+        /* モーダル共通スタイル（拡張版） */
         .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:2000; align-items:center; justify-content:center; }
-        .modal-content { background:#222; border:2px solid #d4af37; padding:20px; width:95%; max-width:400px; border-radius:8px; text-align:center; max-height:90vh; overflow-y:auto; color:#ccc; }
-        .char-img { max-width: 140px; border: 2px solid #555; margin: 10px auto; display:block; }
-        .detail-table { width:100%; font-size:0.9rem; margin-bottom:15px; border-collapse: collapse; }
-        .detail-table td { padding: 6px; border-bottom: 1px solid #333; text-align:left; color:#ccc; }
+        .modal-content { 
+            background: #222; border: 2px solid #d4af37; 
+            padding: 15px; width: 95%; max-width: 500px; 
+            max-height: 90vh; overflow-y: auto;
+            border-radius: 8px; text-align: center; color: #ccc; 
+        }
+        .large-char-img { max-width: 250px; width: 80%; border: 3px solid #555; margin: 10px auto; display: block; box-shadow: 0 0 10px #000; }
+        .status-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 0.9rem; }
+        .status-table th { background: #333; color: #aaa; padding: 5px; border: 1px solid #444; width: 25%; }
+        .status-table td { background: #1a1a1a; padding: 5px; border: 1px solid #444; color: #fff; }
+        .skill-box { background: #332200; border: 1px solid #d4af37; padding: 10px; margin-bottom: 15px; text-align: left; border-radius: 4px; }
+        .profile-box { font-size: 0.85rem; color: #aaa; text-align: left; padding: 10px; background: #111; border: 1px solid #333; margin-bottom: 10px; line-height: 1.5; }
+
         .btn-act { width:100%; padding:12px; margin-top:8px; border:none; cursor:pointer; font-weight:bold; border-radius:4px; font-size:0.95rem; }
         .btn-key { background: #d4af37; color:#000; box-shadow:0 2px 0 #886622; }
         .btn-coin { background: #446; color:#fff; border:1px solid #668; box-shadow:0 2px 0 #224; }
@@ -214,25 +226,8 @@
 </div>
 
 <div id="prisoner-modal" class="modal">
-    <div class="modal-content">
-        <h3 id="pm-name" style="color:#d4af37; font-size:1.3rem; margin:5px 0;"></h3>
-        <div id="pm-rarity" style="font-weight:bold; font-size:1.1rem; margin-bottom:5px;"></div>
-        <img id="pm-img" src="" class="char-img" onerror="this.style.display='none'">
-        <table class="detail-table">
-            <tr><td style="color:#888; width:70px;">兵種</td><td id="pm-type"></td></tr>
-            <tr><td style="color:#888;">勢力</td><td id="pm-clan"></td></tr>
-            <tr><td style="color:#888;">戦力</td><td id="pm-war" style="color:#f88; font-weight:bold;"></td></tr>
-            <tr><td style="color:#888;">兵数</td><td id="pm-hp" style="color:#8f8; font-weight:bold;"></td></tr>
-        </table>
-        <div style="background:#332200; border:1px solid #664400; padding:10px; margin-bottom:15px; border-radius:4px; text-align:left;">
-            <div id="pm-skill-name" style="color:#d4af37; font-weight:bold; margin-bottom:3px;"></div>
-            <div id="pm-skill-desc" style="font-size:0.85rem; color:#ccc; line-height:1.4;"></div>
+    <div class="modal-content" id="prisoner-modal-content">
         </div>
-        <div style="background:#222; padding:10px; border-top:1px solid #444;">
-            <div id="act-buttons"></div>
-            <button class="btn-act btn-close" onclick="closeModal()">閉じる</button>
-        </div>
-    </div>
 </div>
 
 <div id="ach-modal" class="modal">
@@ -273,7 +268,6 @@
         const errorDiv = document.getElementById('error-display');
         let errorMsg = "";
 
-        // 1. game_core.js が読み込まれているかチェック
         if (typeof QUEST_DATA === 'undefined') {
             errorMsg += '【エラー】プログラム(game_core.js)が正しく読み込まれていません。<br>' +
                         'QUEST_DATAが見つかりません。<br>';
@@ -289,7 +283,6 @@
             return;
         }
 
-        // 2. セーブデータロード
         try {
             if (typeof loadSaveData !== 'function') {
                 throw new Error("loadSaveData関数が見つかりません。game_core.jsを確認してください。");
@@ -302,7 +295,6 @@
             return;
         }
 
-        // 3. 初期配布チェック
         if(typeof checkAndDistributeStarter === 'function') {
             const res = checkAndDistributeStarter();
             if (res.success) {
@@ -311,10 +303,9 @@
             }
         }
 
-        // 4. 前回の戦術を復元
         if (currentSave.last_setup) {
             if (currentSave.last_setup.tactic) {
-                setTimeout(() => { // DOM描画待ち
+                setTimeout(() => { 
                     const sel = document.getElementById('tactic-select');
                     if (sel) sel.value = currentSave.last_setup.tactic;
                 }, 100);
@@ -329,7 +320,7 @@
 
         updateResourceDisplay();
         renderTacticSelect(); 
-        updateSpeedDesc(); // 初期表示更新
+        updateSpeedDesc(); 
         
         if(currentSave.expedition) { switchTab('quest'); resumeExpedition(); }
         else { renderQuestList(); renderPrisoners(); }
@@ -384,7 +375,6 @@
         if(tab==='prisoner') renderPrisoners();
     }
 
-    // --- 管理者モード切替 ---
     function toggleAdminMode() {
         if (isAdminMode) {
             isAdminMode = false;
@@ -399,8 +389,7 @@
             }
         }
         document.getElementById('admin-indicator').style.display = isAdminMode ? 'inline' : 'none';
-        renderQuestList(); // 再描画
-        // 出陣中の場合ボタン表示更新
+        renderQuestList();
         if (document.getElementById('scene-progress').style.display === 'block') {
             document.getElementById('admin-controls').style.display = isAdminMode ? 'block' : 'none';
         }
@@ -421,13 +410,12 @@
             let prevQuestId = null;
 
             QUEST_DATA.forEach((q, index) => {
-                // 開放ロジック
                 let isLocked = true;
                 if (q.region === "イベント") {
                     isLocked = false;
                 } else {
                     if (prevQuestId === null) {
-                        isLocked = false; // 最初の通常ステージは開放
+                        isLocked = false; 
                     } else {
                         if (currentSave.cleared_stages && currentSave.cleared_stages.includes(prevQuestId)) {
                             isLocked = false;
@@ -436,13 +424,12 @@
                     prevQuestId = q.id;
                 }
 
-                if (isAdminMode) isLocked = false; // 管理者は全開放
+                if (isAdminMode) isLocked = false;
 
                 const w = determineWeather(q.id);
                 let badges = `<span class="badge badge-weather">${w}</span>`;
                 if (q.interference) q.interference.forEach(inf => badges += ` <span class="badge badge-danger">⚠${inf}</span>`);
                 
-                // バッジ表示
                 let sMark = "";
                 if (currentSave.s_ranks.includes(q.id)) {
                     sMark = `<span class="badge badge-s">S</span>`;
@@ -465,7 +452,7 @@
                 }
                 
                 const div = document.createElement('div'); 
-                div.className = 'box stage-item'; // CSSクラス追加
+                div.className = 'box stage-item'; 
                 if (isLocked) div.classList.add('stage-locked');
 
                 div.style.cssText = 'margin-bottom:8px; border:1px solid #444; padding:10px; display:flex; justify-content:space-between; align-items:center;';
@@ -510,7 +497,6 @@
             }
         }
 
-        // --- 戦術の保存 ---
         if (!currentSave.last_setup) currentSave.last_setup = {};
         currentSave.last_setup.tactic = tactic;
         currentSave.last_setup.speed = speedMode;
@@ -530,10 +516,7 @@
         const exp = currentSave.expedition;
         const isBlitz = (exp && exp.speedMode === 'blitz');
         
-        // 撤退ボタン制御：電撃強行軍でなければ表示（通常/管理者問わず）
         document.getElementById('btn-retreat').style.display = isBlitz ? 'none' : 'block';
-
-        // デバッグボタン制御：管理者のみ
         document.getElementById('admin-controls').style.display = isAdminMode ? 'block' : 'none';
 
         const q=QUEST_DATA.find(x=>x.id===currentSave.expedition.questId);
@@ -620,11 +603,8 @@
             if (exp.result === 'draw') status = "引分";
             document.getElementById('timer').textContent = status;
             document.getElementById('btn-finish').style.display = 'block';
-            
-            // 終了時は撤退・デバッグボタン非表示
             document.getElementById('btn-retreat').style.display = 'none';
             document.getElementById('admin-controls').style.display = 'none'; 
-            
             clearInterval(timerId);
         } else {
             const m = Math.floor(timeLeft / 60000);
@@ -677,7 +657,6 @@
 
         let msg = ""; let rank = "D";
         if (exp.result === 'win') {
-            // --- クリア情報の保存 ---
             if (!currentSave.cleared_stages.includes(q.id)) {
                 currentSave.cleared_stages.push(q.id);
             }
@@ -781,13 +760,28 @@
         if(!currentSave) return;
         const l=document.getElementById('prisoner-list'); l.innerHTML='';
         if(currentSave.prisoners.length===0){l.innerHTML='<div style="padding:20px;text-align:center;">なし</div>';return;}
+        
         currentSave.prisoners.forEach((p,i)=>{
             const c=getCharacterById(p.id);
+            const isOwned = currentSave.owned_ids.includes(p.id);
+            const newBadge = !isOwned ? '<span class="badge-new">New</span>' : '';
+            
             const d=document.createElement('div'); d.className='prisoner-row';
-            d.innerHTML=`<div style="display:flex;align-items:center;flex:1;"><input type="checkbox" class="prisoner-check" value="${i}"><img src="jpg/${c.image}" class="prisoner-thumb" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzMzMyIvPjwvc3ZnPg=='"><div class="prisoner-info"><div><span style="color:${getRarityColor(c.rarity)}">[${c.rarity}]</span> ${c.name}</div><div style="font-size:0.7rem;">戦:${c.war}</div></div></div><button onclick="openPrisonerModal(${i})" style="padding:8px 12px;background:#335;color:#fff;border:1px solid #66a;">詳細</button>`;
+            d.innerHTML=`
+                <div style="display:flex;align-items:center;flex:1;">
+                    <input type="checkbox" class="prisoner-check" value="${i}">
+                    <img src="jpg/${c.image}" class="prisoner-thumb" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzMzMyIvPjwvc3ZnPg=='">
+                    <div class="prisoner-info">
+                        <div><span style="color:${getRarityColor(c.rarity)}">[${c.rarity}]</span> ${c.name}${newBadge}</div>
+                        <div style="font-size:0.7rem;">戦:${c.war}</div>
+                    </div>
+                </div>
+                <button onclick="openPrisonerModal(${i})" style="padding:8px 12px;background:#335;color:#fff;border:1px solid #66a;">詳細</button>
+            `;
             l.appendChild(d);
         });
     }
+    
     function setAllChecks(b){document.querySelectorAll('.prisoner-check').forEach(c=>c.checked=b);}
     function bulkRelease(){
         if(!currentSave) return;
@@ -805,31 +799,61 @@
             saveData(currentSave); updateResourceDisplay(); renderPrisoners(); alert("解放しました");
         }
     }
+    
     function openPrisonerModal(i){
         selectedPrisonerIndex=i; const c=getCharacterById(currentSave.prisoners[i].id);
-        document.getElementById('pm-name').textContent=c.name;
-        document.getElementById('pm-rarity').innerHTML=`<span style="color:${getRarityColor(c.rarity)}">${c.rarity}</span>`;
-        document.getElementById('pm-img').src=`jpg/${c.image}`;
-        document.getElementById('pm-type').textContent=c.type; document.getElementById('pm-clan').textContent=c.clan;
-        document.getElementById('pm-war').textContent=c.war; document.getElementById('pm-hp').textContent=c.hp;
-        document.getElementById('pm-skill-name').textContent=c.skill?c.skill.name:'なし';
-        document.getElementById('pm-skill-desc').textContent=c.skill?c.skill.desc:'-';
+        const modalContent = document.getElementById('prisoner-modal-content');
+        
         const isOwned=currentSave.owned_ids.includes(c.id);
-        const ctr=document.getElementById('act-buttons'); ctr.innerHTML='';
-        if(isOwned) ctr.innerHTML='<div style="color:#f55;margin-bottom:10px;border:1px solid #f55;padding:5px;">所持済み</div>';
+        let actButtons = '';
+        if(isOwned) actButtons = '<div style="color:#f55;margin-bottom:10px;border:1px solid #f55;padding:5px;">所持済み</div>';
         else {
             let reqKeys = (c.rarity==='UR'||c.rarity==='SSR') ? 3 : 1;
             let rate = 0;
             if(c.rarity==='N') rate = 90; else if(c.rarity==='C') rate = 60; else if(c.rarity==='R') rate = 30;
-            ctr.innerHTML += `<button class="btn-act btn-key" onclick="actionPrisoner('key', ${reqKeys})">ココロの鍵で登用 (100%)<br><span style="font-size:0.7rem">消費: ${reqKeys}個 (所持:${currentSave.items.kokoro||0})</span></button>`;
-            if(rate > 0) ctr.innerHTML += `<button class="btn-act btn-coin" onclick="actionPrisoner('persuade', ${rate})">説得する (成功率${rate}%)<br><span style="font-size:0.7rem">無料</span></button>`;
-            else ctr.innerHTML += `<div style="margin-top:5px; font-size:0.8rem; color:#888;">※高レアリティのため説得不可</div>`;
+            actButtons += `<button class="btn-act btn-key" onclick="actionPrisoner('key', ${reqKeys})">ココロの鍵で登用 (100%)<br><span style="font-size:0.7rem">消費: ${reqKeys}個 (所持:${currentSave.items.kokoro||0})</span></button>`;
+            if(rate > 0) actButtons += `<button class="btn-act btn-coin" onclick="actionPrisoner('persuade', ${rate})">説得する (成功率${rate}%)<br><span style="font-size:0.7rem">無料</span></button>`;
+            else actButtons += `<div style="margin-top:5px; font-size:0.8rem; color:#888;">※高レアリティのため説得不可</div>`;
         }
+        
         const r=(typeof RELEASE_RATES !== 'undefined') ? RELEASE_RATES[c.rarity] : { v: 10, t: 'm' };
         const rText = r.t==='t' ? `手形${r.v}枚` : `銀貨${r.v}`;
-        ctr.innerHTML+=`<button class="btn-act" onclick="actionPrisoner('release')" style="background:#333;border:1px solid #555;">解放する (報酬: ${rText})</button>`;
+        actButtons += `<button class="btn-act" onclick="actionPrisoner('release')" style="background:#333;border:1px solid #555;">解放する (報酬: ${rText})</button>`;
+
+        modalContent.innerHTML = `
+            <div style="font-size:1.2rem; font-weight:bold; color:${getRarityColor(c.rarity)}; margin-bottom:5px;">
+                [${c.rarity}] ${c.name}
+            </div>
+            <img src="jpg/${c.image}" class="large-char-img" onerror="this.style.display='none'">
+            
+            <table class="status-table">
+                <tr><th>兵種</th><td>${c.type}</td> <th>勢力</th><td>${c.clan}</td></tr>
+                <tr><th>性別</th><td>${c.gender === 'female' ? '女' : '男'}</td> <th>コスト</th><td>${c.cost}</td></tr>
+                <tr><th>兵数</th><td style="color:#8f8; font-weight:bold;">${c.hp}</td> <th>戦力</th><td style="color:#f88; font-weight:bold;">${c.war}</td></tr>
+            </table>
+
+            <div class="skill-box">
+                <div style="color:#d4af37; font-weight:bold; margin-bottom:5px;">
+                    ★ ${c.skill ? c.skill.name : 'なし'}
+                </div>
+                <div style="font-size:0.85rem; line-height:1.4;">
+                    ${c.skill ? c.skill.desc : '-'}
+                </div>
+            </div>
+
+            <div class="profile-box">
+                ${c.profile || '詳細な情報はありません。'}
+            </div>
+
+            <div style="background:#222; padding:10px; border-top:1px solid #444;">
+                ${actButtons}
+                <button class="btn-act btn-close" onclick="closeModal()">閉じる</button>
+            </div>
+        `;
+        
         document.getElementById('prisoner-modal').style.display='flex';
     }
+    
     function closeModal(){document.getElementById('prisoner-modal').style.display='none';}
     function actionPrisoner(act, param){
         if(selectedPrisonerIndex===-1)return;

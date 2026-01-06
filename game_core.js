@@ -1,4 +1,4 @@
-// game_core.js - Ver 50.0 (Ura-Japan Support & Code Split)
+// game_core.js - Ver 53.0 (Add Lock Function)
 
 const SAVE_KEY = 'sengoku_idle_save_v41_full'; 
 const SECONDS_PER_DAY = 10; 
@@ -258,8 +258,12 @@ function loadSaveData() {
     if (!data.achievements) data.achievements = [];
     if (!data.tactics) data.tactics = ["逃げるを上となす", "出陣ことはじめ"];
     if (!data.collected_treasures) data.collected_treasures = [];
-    if (!data.cleared_stages) data.cleared_stages = []; // 新規項目初期化
-    if (!data.last_setup) data.last_setup = { tactic: null, speed: 'normal' }; // 新規項目初期化
+    if (!data.cleared_stages) data.cleared_stages = []; 
+    if (!data.last_setup) data.last_setup = { tactic: null, speed: 'normal' };
+    
+    // ★ロック機能用の初期化
+    if (!data.locked_ids) data.locked_ids = []; 
+    
     if (!data.records) data.records = { totalDistance: 0, totalBattles: 0, totalWins: 0, totalDead: 0, retreatCount: 0, winStreak: 0, gachaCount: 0, capturedCount: 0, totalReleased: 0 };
     
     if (window.characterData && window.characterData.length > 0) {

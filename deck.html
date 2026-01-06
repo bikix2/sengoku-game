@@ -65,18 +65,51 @@
         }
         .char-card:hover { background: #333; border-color: #666; }
         .char-card.in-deck { opacity: 0.6; border-color: #d4af37; background: #221; }
+        
         .deck-badge {
             position: absolute; top: 0; left: 0;
             background: #d4af37; color: #000;
             font-size: 0.6rem; padding: 1px 4px; font-weight: bold;
         }
+        .lock-badge {
+            position: absolute; top: 0; right: 0;
+            background: #444; color: #fff;
+            font-size: 0.7rem; padding: 1px 4px; border-radius: 0 0 0 4px;
+        }
 
-        /* --- モーダル --- */
+        /* --- 大型詳細モーダル --- */
         .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:2000; align-items:center; justify-content:center; }
-        .modal-content { background:#222; border:2px solid #d4af37; padding:20px; width:90%; max-width:350px; border-radius:8px; text-align:center; color:#ccc; }
-        .modal-img { max-width: 120px; border: 2px solid #555; margin: 10px auto; display:block; }
-        .btn-act { width:100%; padding:10px; margin-top:8px; border:none; cursor:pointer; font-weight:bold; border-radius:4px; font-size:0.9rem; }
+        .modal-content { 
+            background: #222; border: 2px solid #d4af37; 
+            padding: 15px; 
+            width: 95%; max-width: 500px; /* 幅を拡張 */
+            max-height: 90vh; overflow-y: auto;
+            border-radius: 8px; text-align: center; color: #ccc; 
+        }
+        .large-char-img { 
+            max-width: 250px; width: 80%; 
+            border: 3px solid #555; margin: 10px auto; display: block; 
+            box-shadow: 0 0 10px #000;
+        }
+        .status-table {
+            width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 0.9rem;
+        }
+        .status-table th { background: #333; color: #aaa; padding: 5px; border: 1px solid #444; width: 25%; }
+        .status-table td { background: #1a1a1a; padding: 5px; border: 1px solid #444; color: #fff; }
+        
+        .skill-box {
+            background: #332200; border: 1px solid #d4af37; padding: 10px;
+            margin-bottom: 15px; text-align: left; border-radius: 4px;
+        }
+        .profile-box {
+            font-size: 0.85rem; color: #aaa; text-align: left; 
+            padding: 10px; background: #111; border: 1px solid #333; margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .btn-act { width:100%; padding:12px; margin-top:5px; border:none; cursor:pointer; font-weight:bold; border-radius:4px; font-size:0.95rem; }
         .btn-equip { background: #d4af37; color:#000; }
+        .btn-lock { background: #335; color:#fff; border:1px solid #66a; display: flex; align-items: center; justify-content: center; gap: 5px; }
         .btn-sell { background: #522; color:#fcc; border:1px solid #844; }
         .btn-close { background: #444; color:#fff; border:1px solid #666; margin-top:15px; }
 
@@ -112,24 +145,8 @@
 </div>
 
 <div id="detail-modal" class="modal">
-    <div class="modal-content">
-        <h3 id="m-name" style="color:#d4af37; margin:5px 0;"></h3>
-        <div id="m-rarity" style="font-weight:bold;"></div>
-        <img id="m-img" src="" class="modal-img" onerror="this.style.display='none'">
-        
-        <div style="display:flex; justify-content:space-around; margin-bottom:10px; font-size:0.9rem;">
-            <div>戦力: <span id="m-war" style="color:#f88; font-weight:bold;"></span></div>
-            <div>兵数: <span id="m-hp" style="color:#8f8; font-weight:bold;"></span></div>
+    <div class="modal-content" id="modal-content-area">
         </div>
-        
-        <div style="background:#332200; padding:8px; border-radius:4px; text-align:left; font-size:0.8rem; margin-bottom:15px;">
-            <div style="color:#d4af37; font-weight:bold;">特技: <span id="m-skill-name"></span></div>
-            <div id="m-skill-desc" style="color:#ccc;"></div>
-        </div>
-
-        <div id="m-actions"></div>
-        <button class="btn-act btn-close" onclick="closeModal()">閉じる</button>
-    </div>
 </div>
 
 <nav class="bottom-nav">
@@ -143,7 +160,7 @@
 <script src="quest_data.js"></script> <script src="game_core.js"></script>
 <script>
     let currentSave = loadSaveData();
-    let sortMode = 'rarity'; // rarity, power
+    let sortMode = 'rarity'; 
     let selectedCharId = null;
 
     window.onload = function() {
@@ -180,7 +197,7 @@
                     `;
                     totalWar += char.war;
                 } else {
-                    currentSave.deck[index] = null; // データ不整合修正
+                    currentSave.deck[index] = null;
                     slot.className = 'deck-slot';
                     slot.innerHTML = `<span class="slot-label">${label}</span><span style="font-size:0.8rem; color:#666;">(空き)</span>`;
                 }
@@ -211,6 +228,7 @@
         chars.forEach(c => {
             const deckIndex = currentSave.deck.indexOf(c.id);
             const isDeck = deckIndex !== -1;
+            const isLocked = currentSave.locked_ids && currentSave.locked_ids.includes(c.id);
             
             const div = document.createElement('div');
             div.className = `char-card ${isDeck ? 'in-deck' : ''}`;
@@ -218,6 +236,7 @@
             
             div.innerHTML = `
                 ${isDeck ? '<span class="deck-badge">編成中</span>' : ''}
+                ${isLocked ? '<span class="lock-badge">🔒</span>' : ''}
                 <div style="font-size:0.7rem; color:${getRarityColor(c.rarity)}">${c.rarity}</div>
                 <img src="jpg/${c.image}" style="width:40px;height:40px;object-fit:cover;" onerror="this.style.display='none'">
                 <div style="font-size:0.75rem; font-weight:bold; white-space:nowrap; overflow:hidden;">${c.name}</div>
@@ -227,7 +246,87 @@
         });
     }
 
-    // --- 操作ロジック ---
+    // --- 詳細モーダル処理 ---
+    function openModal(char, isDeck) {
+        selectedCharId = char.id;
+        const area = document.getElementById('modal-content-area');
+        const isLocked = currentSave.locked_ids && currentSave.locked_ids.includes(char.id);
+        const lockLabel = isLocked ? "🔒 ロック中" : "🔓 ロックする";
+        const lockColor = isLocked ? "#55a" : "#333";
+
+        // 解雇報酬計算
+        const rates = (typeof RELEASE_RATES !== 'undefined') ? RELEASE_RATES : { "N":{v:10,t:'m'}, "R":{v:1,t:'t'} };
+        const r = rates[char.rarity] || { v:10, t:'m' };
+        const rewardText = r.t === 't' ? `手形${r.v}枚` : `銀貨${r.v}`;
+
+        // アクションボタン生成
+        let actionButtons = "";
+        if (isDeck) {
+            actionButtons = `<button class="btn-act" onclick="toggleDeck(${char.id})" style="background:#555; color:#fff;">部隊から外す</button>`;
+        } else {
+            actionButtons = `
+                <button class="btn-act btn-equip" onclick="toggleDeck(${char.id})">部隊に編成する</button>
+                <button class="btn-act btn-sell" onclick="sellChar(${char.id}, '${rewardText}', ${r.v}, '${r.t}')">解雇する (+${rewardText})</button>
+            `;
+        }
+
+        area.innerHTML = `
+            <div style="font-size:1.2rem; font-weight:bold; color:${getRarityColor(char.rarity)}; margin-bottom:5px;">
+                [${char.rarity}] ${char.name}
+            </div>
+            <img src="jpg/${char.image}" class="large-char-img" onerror="this.style.display='none'">
+            
+            <table class="status-table">
+                <tr><th>兵種</th><td>${char.type}</td> <th>勢力</th><td>${char.clan}</td></tr>
+                <tr><th>性別</th><td>${char.gender === 'female' ? '女' : '男'}</td> <th>コスト</th><td>${char.cost}</td></tr>
+                <tr><th>兵数</th><td style="color:#8f8; font-weight:bold;">${char.hp}</td> <th>戦力</th><td style="color:#f88; font-weight:bold;">${char.war}</td></tr>
+            </table>
+
+            <div class="skill-box">
+                <div style="color:#d4af37; font-weight:bold; margin-bottom:5px;">
+                    ★ ${char.skill ? char.skill.name : 'なし'}
+                </div>
+                <div style="font-size:0.85rem; line-height:1.4;">
+                    ${char.skill ? char.skill.desc : '-'}
+                </div>
+            </div>
+
+            <div class="profile-box">
+                ${char.profile || '詳細な情報はありません。'}
+            </div>
+
+            <button class="btn-act btn-lock" onclick="toggleLock(${char.id})" style="background:${lockColor}">
+                ${lockLabel}
+            </button>
+            
+            ${actionButtons}
+            <button class="btn-act btn-close" onclick="closeModal()">閉じる</button>
+        `;
+
+        document.getElementById('detail-modal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('detail-modal').style.display = 'none';
+    }
+
+    // --- アクション ---
+
+    function toggleLock(id) {
+        if (!currentSave.locked_ids) currentSave.locked_ids = [];
+        const idx = currentSave.locked_ids.indexOf(id);
+        if (idx !== -1) {
+            currentSave.locked_ids.splice(idx, 1);
+        } else {
+            currentSave.locked_ids.push(id);
+        }
+        saveData(currentSave);
+        // モーダル表示更新
+        const char = getCharacterById(id);
+        const isDeck = currentSave.deck.includes(id);
+        openModal(char, isDeck);
+        renderList(); // リストの鍵アイコンも更新
+    }
 
     function removeFromDeck(index) {
         if (currentSave.deck[index]) {
@@ -237,55 +336,15 @@
         }
     }
 
-    function openModal(char, isDeck) {
-        selectedCharId = char.id;
-        document.getElementById('m-name').textContent = char.name;
-        document.getElementById('m-rarity').textContent = char.rarity;
-        document.getElementById('m-rarity').className = `rarity-${char.rarity}`;
-        document.getElementById('m-img').src = `jpg/${char.image}`;
-        document.getElementById('m-war').textContent = char.war;
-        document.getElementById('m-hp').textContent = char.hp;
-        document.getElementById('m-skill-name').textContent = char.skill ? char.skill.name : "なし";
-        document.getElementById('m-skill-desc').textContent = char.skill ? char.skill.desc : "-";
-
-        const actDiv = document.getElementById('m-actions');
-        actDiv.innerHTML = '';
-
-        if (isDeck) {
-            actDiv.innerHTML = `<button class="btn-act" onclick="toggleDeck(${char.id})" style="background:#555; color:#fff;">編成から外す</button>`;
-        } else {
-            // 編成ボタン
-            actDiv.innerHTML += `<button class="btn-act btn-equip" onclick="toggleDeck(${char.id})">部隊に編成する</button>`;
-            
-            // 解雇（売却）ボタン
-            // RELEASE_RATESの参照 (game_core.jsにある前提、なければフォールバック)
-            const rates = (typeof RELEASE_RATES !== 'undefined') ? RELEASE_RATES : { "N":{v:10,t:'m'}, "R":{v:1,t:'t'} };
-            const r = rates[char.rarity] || { v:10, t:'m' };
-            const rewardText = r.t === 't' ? `手形${r.v}枚` : `銀貨${r.v}`;
-            
-            actDiv.innerHTML += `<button class="btn-act btn-sell" onclick="sellChar(${char.id}, '${rewardText}', ${r.v}, '${r.t}')">解雇する (＋${rewardText})</button>`;
-        }
-
-        document.getElementById('detail-modal').style.display = 'flex';
-    }
-
-    function closeModal() {
-        document.getElementById('detail-modal').style.display = 'none';
-    }
-
     function toggleDeck(id) {
         const idx = currentSave.deck.indexOf(id);
         if (idx !== -1) {
-            // 外す
             currentSave.deck[idx] = null;
         } else {
-            // 入れる
             const emptyIdx = currentSave.deck.indexOf(null);
             if (emptyIdx !== -1) {
                 currentSave.deck[emptyIdx] = id;
             } else {
-                // 満員の場合、大将(0)と入れ替える簡易ロジック、あるいはアラート
-                // ここではアラートを出して、ユーザーに入れ替えを促す
                 if(confirm("部隊が満員です。大将と入れ替えますか？")) {
                     currentSave.deck[0] = id;
                 } else {
@@ -299,6 +358,10 @@
     }
 
     function sellChar(id, rewardText, val, type) {
+        if (currentSave.locked_ids && currentSave.locked_ids.includes(id)) {
+            alert("この武将はロックされています。\n解雇するにはロックを解除してください。");
+            return;
+        }
         if(confirm(`本当にこの武将を解雇しますか？\n(報酬: ${rewardText})`)) {
             const idx = currentSave.owned_ids.indexOf(id);
             if (idx !== -1) {
@@ -306,7 +369,6 @@
                 if (type === 't') currentSave.items.ticket = (currentSave.items.ticket || 0) + val;
                 else currentSave.money = (currentSave.money || 0) + val;
                 
-                // 解雇実績の更新
                 if (!currentSave.records) currentSave.records = {};
                 currentSave.records.totalReleased = (currentSave.records.totalReleased || 0) + 1;
                 checkAchievements(currentSave);
